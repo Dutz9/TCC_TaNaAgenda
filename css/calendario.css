@@ -1,0 +1,268 @@
+body {
+  background-color: #0d102b;
+}
+
+.filtrar-calendario {
+  border: 1.5px solid white;
+  border-radius: 15px;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 2px;
+  margin-right: 15px;
+  padding-bottom: 15px;
+  padding-top: 15px;
+  margin-left: 10px;
+}
+
+.filtrar-calendario > h2 {
+  font-weight: 500;
+  font-size: 20px;
+  align-self: center;
+}
+
+.filtrar-calendario-periodo {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  padding-top: 5px;
+}
+
+.filtrar-calendario-periodo > h3 {
+  font-weight: 400;
+  font-size: 16px;
+  margin-left: 10px;
+  width: 40%;
+}
+
+.filtrar-calendario-periodo > svg {
+  max-height: 28px;
+}
+
+.divisao-checkbox {
+  height: 1px;
+  width: 75%;
+  background-color: white;
+  display: flex;
+  align-self: center;
+  margin-top: 10px;
+}
+
+.calendario {
+  width: calc(100% - 500px);
+  margin-left: 250px;
+  background-color: #0d102b;
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 80px);
+}
+
+.header-calendario {
+  display: flex;
+  justify-content: center;
+  background-color: #022E5E;
+  flex-direction: column;
+  color: white;
+  margin-top: 0px;
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
+  height: fit-content;
+}
+
+.header-parte-de-cima {
+  display: flex;
+  padding-top: 30px;
+  height: fit-content;
+  align-items: center;
+  width: 100%;
+  margin-top: 15px;
+  justify-content: center;
+  position: relative;
+}
+
+.header-parte-de-cima > h3 {
+  font-size: 22px;
+}
+
+.header-parte-de-cima > div {
+  display: flex;
+  padding: 5px 15px;
+  height: fit-content;
+  align-items: center;
+}
+
+.header-parte-de-cima > div > h4 {
+  font-size: 14px;
+}
+
+.header-parte-de-cima > div > svg {
+  height: 26px;
+}
+
+.header-parte-de-cima > h4 {
+  font-size: 14px;
+}
+
+.header-turmas {
+  position: absolute;
+  right: 30px;
+}
+
+.header-divisoes-semanas {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 15px;
+  margin-top: 30px;
+  margin-right: 10px;
+  margin-left: 10px;
+  height: fit-content;
+}
+
+
+.fundo-grid {
+  background-color: white;
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.calendario-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: 0;
+  margin: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.time-slot-label {
+  padding: 10px 10px 10px 0px;
+  display: flex;
+  align-items: center;
+  text-align: right;
+  background-color: transparent;
+  border-bottom: 1px solid #afafaf;
+  border-right: 1px solid #afafaf;
+}
+
+.time-slot {
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: stretch;
+  justify-content: flex-start;
+  border-bottom: 1px solid #afafaf;
+  border-right: 1px solid #afafaf;
+  border-top: 1px solid #afafaf;
+}
+
+.calendario-grid > div:nth-child(7n) {
+  border-right: 0;
+}
+
+.calendario-grid .time-slot:nth-child(7n + 1) {
+  background-color: #e0e0e0;
+}
+
+.event {
+  display: flex;
+  height: 15px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  text-align: center;
+  align-items: center;
+  color: white;
+  font-size: 10px;
+}
+
+.event.azul {
+  background-color: #57a1e3;
+}
+
+.event.verde {
+  background-color: #51db51;
+}
+
+.event.amarelo {
+  background-color: #f5c83d;
+}
+
+.dias-da-semana {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  padding: 5px;
+  margin: 0;
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
+  height: 100%;
+  min-width: 12%;
+}
+
+.dias-da-semana > h2 {
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.area-lado-direito {
+  width: 250px;
+  height: 100vh;
+  background-color: #0d102b;
+  top: 0;
+  position: absolute;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-size: 18px;
+  z-index: -1;
+}
+
+.calendario-lado-direito {
+  display: none;
+}
+
+.resumo-geral-lado-direito {
+  width: 225px;
+  background-color: white;
+  border-radius: 15px;
+  margin-top: 80px;
+  display: flex;
+  align-self: center;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.resumo-geral-lado-direito > h3 {
+  font-size: 14px;
+  color: black;
+}
+
+.area-escrita-resumo-geral {
+  color: black;
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  border: 2px solid #4291d8;
+  border-radius: 30px;
+  padding: 2px 10px;
+  margin-top: 10px;
+  max-height: 23px;
+  min-height: 20px;
+}
+
+.day-number {
+  text-align: center;
+  padding: 3px 0px 0 0;
+  font-size: 12px;
+  color: #000000;
+}
+
+.outside .day-number {
+  color: #999;
+}

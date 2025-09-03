@@ -1,0 +1,35 @@
+.seguranca{
+    width: 293px;
+    height: 45px;
+    border: 1px solid #0479F9;
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    background-color: #F3F3F3;
+}
+.informacoes{
+    width: 293px;
+    height: 45px;
+    border: 1px solid #dbdbdb; 
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    background-color: #F3F3F3;
+}
+.perfil-menu > a > div > img{
+    width: 33px;
+    height: 33px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.perfil-menu > a > .seguranca > img{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+}

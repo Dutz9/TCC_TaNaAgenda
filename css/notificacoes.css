@@ -1,0 +1,405 @@
+.menu-professores {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+ 
+.menu-professores > svg {
+    max-height: 42px;
+}
+ 
+.menu-turmas {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+    margin-left: 10px;
+}
+ 
+.menu-turmas > svg {
+    max-height: 42px;
+}
+ 
+.area-notificacoes {
+    margin-left: 260px;
+    padding: 0px;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    padding-right: 25px;
+    padding-left: 25px;
+}
+ 
+.area-notificacoes h2 {
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    color: #000000;
+    padding-bottom: 50px;
+}
+ 
+.notificacao-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px; 
+    padding-right: 10px;
+}
+
+.notificacao {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: black 2px solid;
+}
+ 
+.notificacao p {
+    color: rgb(44, 44, 44);
+    margin: 5px 0;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 16px;
+}
+ 
+.detalhes-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+}
+ 
+.criar-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ 
+.criar-btn svg {
+    max-height: 18px;
+    margin-left: 10px;
+}
+
+.notificacao button:hover {
+    background-color: #0056b3;
+}
+ 
+.menu-sair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    margin-top: 10px;
+    background-color: #ff0000;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    max-width: 190px;
+    min-width: 90%;
+    height: 35px;
+}
+ 
+.menu-sair p {
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+}
+ 
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+ 
+.modal-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 1000px;
+    display: flex;
+    gap: 20px;
+    margin-left: 200px;
+}
+ 
+.modal-left {
+    width: 30%;
+    border-right: 1px solid #ccc;
+    padding-right: 20px;
+}
+ 
+.coordinator-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+ 
+.coordinator-info svg {
+    width: 40px;
+    height: 40px;
+}
+ 
+.coordinator-info h3 {
+    margin: 0;
+    font-size: 18px;
+}
+ 
+.coordinator-info p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+}
+ 
+.responses-section h4 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+}
+ 
+.response-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 5px;
+    border: #858585 2px solid;
+    border-radius: 10px;
+}
+ 
+.response-item svg {
+    width: 30px;
+    height: 30px;
+}
+ 
+.response-item div {
+    display: flex;
+    flex-direction: column;
+}
+ 
+.response-item p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: bold;
+}
+ 
+.response-item span {
+    font-size: 12px;
+}
+ 
+.aprovado {
+    color: green;
+    font-weight: bold;
+}
+ 
+.sem-resposta {
+    color: #0479F9;
+    font-weight: bold;
+}
+ 
+.respostausuario {
+    color: #0479F9;
+}
+ 
+.modal-right {
+    width: 70%;
+}
+ 
+.modal-right h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+ 
+.modal-right label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #333;
+}
+ 
+.modal-right input,
+.modal-right textarea,
+.modal-right select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+    background: #ffffff;
+}
+ 
+.modal-right textarea {
+    height: 60px;
+    resize: none;
+}
+ 
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+ 
+.form-group {
+    width: 45%;
+}
+ 
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+ 
+.recusar {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+ 
+.recusar:hover {
+    background-color: #cc0000;
+}
+ 
+.aprovar {
+    background-color: #00cc00;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+ 
+.aprovar:hover {
+    background-color: #009900;
+}
+ 
+.excluir {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+ 
+.excluir:hover {
+    background-color: #cc0000;
+}
+ 
+.salvar {
+    background-color: #666;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+ 
+.salvar:hover {
+    background-color: #0479F9;
+}
+
+.confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirmation-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: start;
+}
+
+.confirmation-content h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.confirmation-content label {
+    display: flex;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+}
+
+.confirmation-content textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+    height: 80px;
+    resize: none;
+}
+
+.confirmation-content p {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.confirmation-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancelar {
+    background-color: #666;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancelar:hover {
+    background-color: #555;
+}
+
+.recusar-confirm {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.recusar-confirm:hover {
+    background-color: #cc0000;
+}

@@ -1,0 +1,125 @@
+*{
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+ 
+a {
+    color: inherit;
+    text-decoration: none;
+    background: none;
+}
+
+.login{
+    padding: 10px 20px;
+    width: 25vw;
+    min-height: 26vw;
+    border: 1px solid black;
+    display: flex;
+    padding-top:20px ;
+    background-color: #ffffff;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 20px;
+}
+
+body{
+    min-height: 100vh;
+    min-width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #0d102b;
+}
+
+.image{
+    width: 10vw;
+}
+
+#form_login{
+    margin:15px 0 ;
+    display: flex;
+    flex-direction: column;
+   
+}
+
+input[type=text] {
+    border: lightgray 1px solid;
+    border-radius: 10px;
+    width: 20vw;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+  }
+
+  .botao-entrar{
+    border: 0;
+    border-radius: 5px;
+    width: 20vw;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    color: #ffffff;
+    background-color: #007bff;
+    color: white;
+  }
+
+  .entrar :hover{
+    cursor: pointer;
+}
+
+  h1{
+    color: #000000;
+    font-size: 25px;
+    margin: 10px;
+    font-weight:normal;
+  }
+
+  h2{
+    color: #3d3838;
+    font-size: medium;
+  }
+ 
+.login > .image{
+ 
+   top: 0;
+}
+
+h3{
+    color: #3d3838;
+    font-size: small;
+    margin-bottom: 10px;
+}
+ 
+h4{
+    color: #3d3838;
+    margin: 10px;
+}
+ 
+.parteDeCima{
+   
+    display: flex;
+    justify-content: center;        
+    align-items: center;
+    width: 25vw;
+    }
+
+    .seta{
+        width: 2vw;
+    }
+
+    .PartesDeCima{
+        width:  calc(25vw / 3);
+        display: flex;
+        align-content: center;
+    }
+
+    #Primeira_Parte{
+        width:  calc(20vw / 3);
+        padding-left: 20px ;
+    }
+
+    .Titulo{
+        margin-top: 30px;
+    }

@@ -1,0 +1,148 @@
+*{
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+    overflow: hidden;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    background: none;
+  }
+
+.header{
+    width: 100vw;
+    height: 80px;
+    background-color: #0d102b;
+    color: white;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    gap: 20px;
+    padding: 15px;
+}
+
+.header > p {
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.header > svg {
+    max-height: 30px;
+}
+
+.area-lado{
+    width: 250px;
+    min-height: 120vh;
+    background-color: #0d102b;
+    top: 0;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    font-size: 16px;
+}
+
+a > img {
+    max-width: 150px;
+    margin-top: 15px;
+    margin-left: 50px;
+}
+
+.area-menu > div.ativo {
+    background-color: #22253A;
+}
+
+.menu-agenda {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.menu-agenda > a {
+    display: flex;
+}
+
+.menu-agenda > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
+
+.menu-meus-eventos {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.menu-meus-eventos > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
+
+.menu-notificacoes {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.menu-notificacoes > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
+
+.menu-perfil {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.menu-perfil > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
+
+.menu-professores {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+ 
+.menu-professores > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
+ 
+.menu-turmas {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+ 
+.menu-turmas > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
+ 
+
+.menu-sair {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-self: center;
+    margin-top: 10px;
+    background-color: #ff0000;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    max-width: 190px;
+    min-width: 90%;
+    height: 35px;
+}
+ 
+.menu-sair p {
+    font-weight: bold;
+    font-size: 18px;
+    color: white;
+}

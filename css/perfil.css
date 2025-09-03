@@ -1,0 +1,145 @@
+.area-perfil{
+    position: absolute;
+    right: 0;
+    width: calc(100vw - 250px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+.perfil-container{
+    width: calc(100vw - 400px);
+    height: calc(95vh - 80px);
+    border: 1px solid #dbdbdb;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+}
+.perfil-info > img {
+    width: 64px;
+    height: 64px;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-top: 35px;
+    margin-bottom: 20px;
+}
+.perfil-menu{
+    display: flex;
+}
+
+.perfil-informacoes{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.perfil-informacoes h3{
+    font-size: 18px;
+}
+
+.perfil-informacoes p{
+    font-size: 14px;
+    color: #666;
+}
+
+.perfil-info{
+    display: flex;
+}
+.perfil-menu{
+    display: flex;
+    flex-direction: column;
+    
+}  
+.informacoes{
+    width: 293px;
+    height: 45px;
+    border: 1px solid #0479F9;
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    background-color: #F3F3F3;
+}
+
+.informacoes p{
+    font-size: 14px;
+}
+
+.seguranca{
+    width: 293px;
+    height: 45px;
+    border: 1px solid #dbdbdb;
+    border-radius: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-top: 15px;
+    display: flex;
+    align-items: center;
+    background-color: #F3F3F3;
+}
+
+.seguranca p{
+    font-size: 14px;
+}
+
+.informacoes > img{
+    width: 33px;
+    height: 33px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+.seguranca > img{
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
+.lado-direito{
+    width: 60%;
+    height: 616px;
+    border: 1px solid #dbdbdb;
+    border-radius: 10px;
+    margin-top: 18px;
+    padding: 20px;
+}
+
+.lado-direito h1{
+  font-size: 18px;
+}
+
+.infos > input{
+    
+    width: 493px;
+    height: 38px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 15px;
+    margin: 5px 0;
+}
+
+.infos > label{
+    display: block;
+    font-size: 14px;
+    color: #1d1d1d;
+}
+
+.infos {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 0;
+}
+button{
+    width: 245px;
+    height: 33px;
+    border: #898989 solid 1px;
+    border-radius: 5px;
+    font-weight: bold;
+}
+#Salvar{
+    display: flex;
+    width: 900px;
+    align-items: right;
+    justify-content: right;
+}

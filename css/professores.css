@@ -1,0 +1,132 @@
+.areaprof{
+    margin-left: 260px;
+    padding: 0px;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+    overflow-y: auto; 
+    overflow-x: hidden;
+    padding-bottom: 20px;
+}
+
+.areaprof h2 {
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    color: #000000;
+    padding-top: 20px;
+    font-weight: bold;
+    font-size: 24px;
+    margin: 0;
+}
+
+
+.barra-de-pesquisa {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    padding: 0 30px;
+}
+
+.barra {
+    display: flex;
+    align-items: center;
+}
+
+.barra-de-pesquisa label {
+    font-size: 16px;
+    color: #000000;
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.barra-de-pesquisa input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: calc(100vw / 4 - 95px);
+    
+}
+
+.gridprof {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    padding: 0 30px;
+}
+
+.cardprof {
+    background-color: #fff;
+    border: black 2px solid;
+    border-radius: 6px;
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: left;
+}
+
+.prof-infos{
+    display: flex;
+    flex-direction: column;
+    margin-right: 10px;
+    flex: 1;
+}
+
+.prof-infos p {
+    margin: 0;
+    font-size: 14px;
+    color: #000;
+    word-break: break-word;
+    line-height: 1.3;
+}
+
+.cardprof > p {
+    flex: 1;
+    font-size: 14px;
+    color: #555;
+    margin: 0 10px;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.adicionar-btn {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    width: 112px;
+}
+
+.adicionar-btn svg {
+    min-height: 15px;
+    margin-left: 10px;
+}
+
+.adicionar-btn:hover {
+    background-color: #0056b3;
+}
+
+.modificar-btn {
+    background-color: #0d102b;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    width: 112px;
+}
+
+.modificar-btn:hover {
+    background-color: #0a6ad1;
+}
