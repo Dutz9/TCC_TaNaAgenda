@@ -115,7 +115,7 @@
     background-color: #0056b3;
 }
 
-.modificar-btn {
+.Editar-btn {
     background-color: #0d102b;
     color: #fff;
     border: none;
@@ -127,6 +127,6 @@
     width: 112px;
 }
 
-.modificar-btn:hover {
+.Editar-btn:hover {
     background-color: #0a6ad1;
 }

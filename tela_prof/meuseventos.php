@@ -45,15 +45,9 @@
         <section class="area-notificacoes">
                 <h2>Meus Eventos</h2>
             <div class="notificacao-container">
-                <div class="notificacao">
-                    <h3>Novo Evento</h3>
-                    <p>Situação do Evento</p>
-                    <p>Data de Solicitação: --/--/----</p>
-                    <p>Data do Evento: --/--/----</p>
-                    <button class="criar-btn">Criar Evento 
+                    <button class="criar-btn"> 
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
                     </button>
-                </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #0479F9;">Evento Solicitado</p>

@@ -131,10 +131,11 @@ a > img {
     align-items: center;
     justify-content: center;
     justify-self: center;
-    margin-top: 10px;
-    background-color: #ff0000;
+    margin-top: 20px;
+    margin-bottom: 10px;
+    border: 2px solid white;
     border-radius: 5px;
-    padding: 10px;
+    padding: 17px;
     cursor: pointer;
     max-width: 190px;
     min-width: 90%;

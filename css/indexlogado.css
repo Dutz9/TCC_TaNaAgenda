@@ -3,8 +3,8 @@
 }
 
 .filtrar-calendario {
-    border: 1.5px solid white;
-    border-radius: 15px;
+    border: 2px solid white;
+    border-radius: 10px;
     color: white;
     display: flex;
     flex-direction: column;
@@ -52,19 +52,19 @@
 .calendario {
     width: calc(100% - 500px);
     margin-left: 250px;
+    height: calc(100vh - 80px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
     background-color: #0d102b;
 }
 
 .header-calendario {
-    display: flex;
-    justify-content: center;
     background-color: #022E5E;
-    flex-direction: column;
     color: white;
-    margin-top: 0px;
     border-top-right-radius: 15px;
     border-top-left-radius: 15px;
-    height: fit-content;
+    flex-shrink: 0;
 }
 
 .header-parte-de-cima {
@@ -120,6 +120,10 @@
 
 .fundo-grid {
     background-color: white;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(100vh - 80px - 120px);
+    flex-grow: 1;
 }
 
 .calendario-grid {
@@ -127,6 +131,7 @@
     grid-template-columns: 50px repeat(6, 1fr);
     gap: 0;
     margin: 10px;
+    height: calc(100vh - 80px - 150px);
 }
 
 .time-slot-label {

@@ -78,7 +78,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -86,7 +86,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -94,7 +94,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -102,7 +102,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -110,7 +110,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -118,7 +118,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -126,7 +126,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -134,7 +134,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -142,7 +142,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -150,14 +150,14 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>            <div class="cardprof">
                 <div class="prof-infos">
                     <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -165,7 +165,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -173,7 +173,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -181,7 +181,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardprof">
                 <div class="prof-infos">
@@ -189,7 +189,7 @@
                 <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
         </div>
 </section>
@@ -206,7 +206,7 @@
             </div>
         </div>
         <div class="modal-right">
-            <h3>Modificar Professor</h3>
+            <h3>Editar Professor</h3>
 
             <div class="form-row">
             <div class="form-group">
@@ -261,7 +261,7 @@
 </div>
 
 <script>
-    const modificarBtns = document.querySelectorAll('.modificar-btn');
+    const EditarBtns = document.querySelectorAll('.Editar-btn');
     const adicionarBtn = document.querySelector('.adicionar-btn');
     const modalOverlay = document.getElementById('modal-overlay');
     const excluirModalBtn = document.querySelector('.excluir');
@@ -271,7 +271,7 @@
     const cancelarBtn = document.querySelector('.cancelar');
     const excluirConfirmBtn = document.querySelector('.excluir-confirm');
 
-    modificarBtns.forEach(btn => {
+    EditarBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             modalOverlay.style.display = 'flex';
         });

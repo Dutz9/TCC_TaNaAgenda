@@ -78,7 +78,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -86,7 +86,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -94,7 +94,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -102,7 +102,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -110,7 +110,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -118,7 +118,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -126,7 +126,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -134,7 +134,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -142,7 +142,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -150,14 +150,14 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>            <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -165,7 +165,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -173,7 +173,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -181,7 +181,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -189,7 +189,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -197,7 +197,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
             <div class="cardturma">
                 <div class="turma-infos">
@@ -205,7 +205,7 @@
                 <p>Nº de professores:6</p>
                 </div>
                 <p></p>
-                <button class="modificar-btn">Modificar</button>
+                <button class="Editar-btn">Editar</button>
             </div>
         </div>
 </section>
@@ -265,7 +265,7 @@
 
         </div>
         <div class="modal-right">
-            <h3>Modificar Turma</h3>
+            <h3>Editar Turma</h3>
 
             <div class="form-row">
             <div class="form-group">
@@ -308,7 +308,7 @@
 </div>
 
 <script>
-    const modificarBtns = document.querySelectorAll('.modificar-btn');
+    const EditarBtns = document.querySelectorAll('.Editar-btn');
     const adicionarBtn = document.querySelector('.adicionar-btn');
     const modalOverlay = document.getElementById('modal-overlay');
     const excluirBtn = document.querySelector('.excluir');
@@ -318,7 +318,7 @@
     const cancelarBtn = document.querySelector('.cancelar');
     const excluirConfirmBtn = document.querySelector('.excluir-confirm');
 
-    modificarBtns.forEach(btn => {
+    EditarBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             modalOverlay.style.display = 'flex';
         });
