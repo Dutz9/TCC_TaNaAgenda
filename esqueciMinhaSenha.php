@@ -14,7 +14,7 @@
      <div class="login">
                 <div class="parteDeCima">
                     <div id="Primeira_Parte" class="PartesDeCima">
-                        <a href="login.html">
+                        <a href="login.php">
                             <img class="seta" src="image/Seta.svg" alt="seta para voltar">
                         </a>
                     </div>
@@ -25,13 +25,13 @@
                     </div>
                 </div>
         <h1 class="Titulo">Esqueci Minha Senha</h1>
-        <form action="login.html" method="get" id="form_login">
+        <form action="login.php" method="get" id="form_login">
             <h2>
                 RM:
             </h2>
             <input type="text" name="Rm" id="rm" placeholder="RM">
             <div class="enviar">
-                <a href="login.html"><button type="button" class="botao-enviar">Enviar</button></a>
+                <a href="login.php"><button type="button" class="botao-enviar">Enviar</button></a>
                 </div>
         </form>
         <h3>

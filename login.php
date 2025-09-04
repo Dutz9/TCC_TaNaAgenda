@@ -15,7 +15,7 @@
         <div class="parteDeCima">
  
             <div id="Primeira_Parte" class="PartesDeCima">
-                <a href="index.html">
+                <a href="index.php">
                     <img class="seta" src="image/Seta.svg" alt="seta para voltar">
                 </a>
             </div>
@@ -32,7 +32,7 @@
  
         <h1>Login</h1>
  
-        <form action="login.html" method="get" id="form_login">
+        <form action="login.php" method="get" id="form_login">
             <h2>
                 RM:
             </h2>
@@ -40,11 +40,11 @@
            <h2> Senha:</h2>
             <input type="text" name="Senha" placeholder="SENHA">
             <div class="entrar">
-                <a href="tela_prof/notificacoes.html"><button type="button" class="botao-entrar">Entrar</button></a>
+                <a href="tela_prof/notificacoes.php"><button type="button" class="botao-entrar">Entrar</button></a>
                 </div>
         </form>
         <h3>
-           <a href="esqueciMinhaSenha.html"> Esqueci minha senha</a>
+           <a href="esqueciMinhaSenha.php"> Esqueci minha senha</a>
         </h3>
      </div>
 </body>
