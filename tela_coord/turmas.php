@@ -65,7 +65,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                     <p style="font-size: 16px; font-weight: 600;">Sigla da turma</p>
-                    <p>Nº de professores:6</p>
+                    <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="adicionar-btn">Adicionar
@@ -75,7 +75,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -83,7 +83,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -91,7 +91,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -99,7 +99,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -107,7 +107,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -115,7 +115,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -123,7 +123,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -131,7 +131,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -139,7 +139,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -147,14 +147,14 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
             </div>            <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -162,7 +162,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -170,7 +170,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -178,7 +178,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -186,7 +186,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -194,7 +194,7 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -202,7 +202,23 @@
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Nº de professores:6</p>
+                <p>Nº de professores: 6</p>
+                </div>
+                <p></p>
+                <button class="Editar-btn">Editar</button>
+            </div>
+            <div class="cardturma">
+                <div class="turma-infos">
+                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
+                <p>Nº de professores: 6</p>
+                </div>
+                <p></p>
+                <button class="Editar-btn">Editar</button>
+            </div>
+            <div class="cardturma">
+                <div class="turma-infos">
+                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
+                <p>Nº de professores: 6</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
