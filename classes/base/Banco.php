@@ -1,65 +1,87 @@
-<?php 
-class UsuarioController extends Banco {
+<?php class Banco
+ {
+ 	private $conexao = null;
+ 	private $cSQL = null;
+ 	public function __construct() {}
+	private function Conectar()
+ 	{
+ 		try {
+ 			$this->conexao = new PDO('mysql:dbname=escola;host=localhost;', 'root', 'root');
+ 			$this->conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$this->conexao->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8mb4');
+		} catch (PDOException $Erro) {
+			throw new Exception('Erro ao conectar ao Servidor. Tente novamente.');
+		}
+	}
 
-    public function Listar() {
-        try {
-            $dados =$this->Consultar('listarUsuarios', []);
-            return $dados;
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
+	
+	protected function Desconectar()
+	{
+		try {
+			$this->conexao = null;
+		} catch (PDOException $Erro) {
+			throw new Exception('Não foi possível fechar a conexão.');
+		}
+	}
 
-    public function Criar($usuario) {
-        try {
-            $parametros = [
-                'pEmail'=>$usuario->Email,
-                'pNome'=>$usuario->Nome,
-                'pSenha'=>$usuario->Senha,
-                'pTipo'=>$usuario->Tipo
-            ];
-            $this->Executar('criarUsuario', $parametros);
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
+	protected function Consultar($nomeProcedure, $parametros = [])
+	{
+		try {
+			$this->Conectar();
 
-    public function AtualizarDados($usuario) {
-        try {
-            $parametros = [
-                'pEmail'=>$usuario->Email,
-                'pNome'=>$usuario->Nome,
-                'pSenha'=>$usuario->Senha
-            ];
-            $this->Executar('atualizaDadosUsuario', $parametros);
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
+			$listaNomesParametros = [];
+			foreach ($parametros as $chave => $valor) {
+				$listaNomesParametros[] = ':' . $chave;
+			}
 
-    public function Excluir($email) {
-        try {
-            $parametros = [
-                'pEmail'=>$email
-            ];
-            $this->Executar('excluirUsuario', $parametros);
-        } catch (\Throwable $th) {
-            throw $th;
-        }
-    }
+			$comando = 'CALL ' . $nomeProcedure;
+			if (count($listaNomesParametros) > 0) {
+				$comando .= '(' . implode(', ', $listaNomesParametros) . ')';
+			}
 
-    public function VerificarAcesso($login, $senha) {
-        try {
-            $parametros = [
-                'pLogin'=>$login,
-                'pSenha'=>$senha
-            ];
-            $dados = $this->Consultar('verificarAcesso', $parametros);
-            return $dados;
-        } catch (\Throwable $th) {
-            throw new Exception('Login e/ou Senha Inválida');
-        }
-    }
+			$this->cSQL = $this->conexao->prepare($comando);
 
+			foreach ($parametros as $chave => $valor) {
+				$this->cSQL->bindValue(':' . $chave, $valor);
+			}
+
+			$this->cSQL->execute();
+			$dados = $this->cSQL->fetchAll(PDO::FETCH_ASSOC);
+			$this->Desconectar();
+			return $dados;
+		} catch (PDOException $e) {
+			throw $e;
+			//throw new Exception('Erro inesperado na Consulta. Tente novamente.');
+		}
+	}
+
+	protected function Executar($nomeProcedure, $parametros = [])
+	{
+		try {
+			$this->Conectar();
+
+			$listaNomesParametros = [];
+			foreach ($parametros as $chave => $valor) {
+				$listaNomesParametros[] = ':' . $chave;
+			}
+
+			$comando = 'CALL ' . $nomeProcedure;
+			if (count($listaNomesParametros) > 0) {
+				$comando .= '(' . implode(', ', $listaNomesParametros) . ')';
+			}
+
+			$this->cSQL = $this->conexao->prepare($comando);
+
+			foreach ($parametros as $chave => $valor) {
+				$this->cSQL->bindValue(':' . $chave, $valor);
+			}
+
+			$this->cSQL->execute();
+			$this->Desconectar();
+		} catch (PDOException $e) {
+			throw $e;
+			//throw new Exception('Erro inesperado na Execução. Tente novamente.');
+		}
+	}
 }
 ?>
