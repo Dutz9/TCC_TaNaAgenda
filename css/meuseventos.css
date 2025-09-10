@@ -93,6 +93,16 @@
     width: 100%;
     cursor: pointer;
 }
+
+.detalhes-btn-responder-solicitacao {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    width: 100%;
+    cursor: pointer;
+}
  
 .criar-btn {
     background-color: #007bff;
@@ -497,5 +507,101 @@
 }
 
 .apagar-confirm:hover {
+    background-color: #cc0000;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+.confirmation-modal-responder-solicitacao {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirmation-content {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    width: 90%;
+    max-width: 400px;
+    text-align: start;
+}
+
+.confirmation-content h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+.confirmation-content label {
+    display: flex;
+    margin-top: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000000;
+}
+
+.confirmation-content textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+    height: 80px;
+    resize: none;
+}
+
+.confirmation-content p {
+    font-size: 12px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.confirmation-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancelar-solicitacao {
+    background-color: #666;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cancelar-solicitacao:hover {
+    background-color: #555;
+}
+
+.recusar-confirm {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.recusar-confirm:hover {
     background-color: #cc0000;
 }

@@ -27,12 +27,8 @@
                     <a href="agendaprof.php"><p>Agenda</p></a>
                 </div>
                 <div class="menu-meus-eventos ativo">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M224 64C241.7 64 256 78.3 256 96L256 128L384 128L384 96C384 78.3 398.3 64 416 64C433.7 64 448 78.3 448 96L448 128L480 128C515.3 128 544 156.7 544 192L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 192C96 156.7 124.7 128 160 128L192 128L192 96C192 78.3 206.3 64 224 64zM320 256C306.7 256 296 266.7 296 280L296 328L248 328C234.7 328 224 338.7 224 352C224 365.3 234.7 376 248 376L296 376L296 424C296 437.3 306.7 448 320 448C333.3 448 344 437.3 344 424L344 376L392 376C405.3 376 416 365.3 416 352C416 338.7 405.3 328 392 328L344 328L344 280C344 266.7 333.3 256 320 256z"/></svg>
-                    <a href="meuseventos.php"><p>Meus Eventos</p></a>
-                </div>
-                <div class="menu-notificacoes">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 64C302.3 64 288 78.3 288 96L288 99.2C215 114 160 178.6 160 256L160 277.7C160 325.8 143.6 372.5 113.6 410.1L103.8 422.3C98.7 428.6 96 436.4 96 444.5C96 464.1 111.9 480 131.5 480L508.4 480C528 480 543.9 464.1 543.9 444.5C543.9 436.4 541.2 428.6 536.1 422.3L526.3 410.1C496.4 372.5 480 325.8 480 277.7L480 256C480 178.6 425 114 352 99.2L352 96C352 78.3 337.7 64 320 64zM258 528C265.1 555.6 290.2 576 320 576C349.8 576 374.9 555.6 382 528L258 528z"/></svg>
-                    <a href="notificacoes.php"><p>Notificações</p></a>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 64C302.3 64 288 78.3 288 96L288 99.2C215 114 160 178.6 160 256L160 277.7C160 325.8 143.6 372.5 113.6 410.1L103.8 422.3C98.7 428.6 96 436.4 96 444.5C96 464.1 111.9 480 131.5 480L508.4 480C528 480 543.9 464.1 543.9 444.5C543.9 436.4 541.2 428.6 536.1 422.3L526.3 410.1C496.4 372.5 480 325.8 480 277.7L480 256C480 178.6 425 114 352 99.2L352 96C352 78.3 337.7 64 320 64zM258 528C265.1 555.6 290.2 576 320 576C349.8 576 374.9 555.6 382 528L258 528z"/></svg>
+                    <a href="meuseventos.php"><p>Eventos</p></a>
                 </div>
                 <div class="menu-perfil">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
@@ -43,7 +39,7 @@
         </section>
 
         <section class="area-notificacoes">
-                <h2>Meus Eventos</h2>
+                <h2>Eventos</h2>
             <div class="notificacao-container">
                     <button class="criar-btn"> 
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
@@ -54,12 +50,13 @@
 
                 <div class="notificacao">
                 <h3>Título do Evento</h3>
-                <p>Solicitado por: professor</p>
+                <p>Solicitado por: Professor</p>
                 <p>Data de Solicitação: 06/08/2025</p>
                 <p>Data do Evento: 26/08/2025</p>
-                <button class="detalhes-btn-responder-evento">Mais Detalhes</button>
+                <p>Turmas Envolvidas: 1I, 2I, 3I</p>
+                <button class="detalhes-btn-responder-solicitacao">Mais Detalhes</button>
                 </div>   
-                
+
 
 
 
@@ -69,6 +66,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #0479F9;">Evento Solicitado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 05/08/2025</p>
                     <p>Data do Evento: 26/08/2025</p>
                     <button class="detalhes-btn">Mais Detalhes</button>
@@ -76,6 +74,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #0479F9;">Evento Solicitado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 06/08/2025</p>
                     <p>Data do Evento: 27/08/2025</p>
                     <button class="detalhes-btn">Mais Detalhes</button>
@@ -83,6 +82,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 07/08/2025</p>
                     <p>Data do Evento: 28/08/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
@@ -90,6 +90,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 08/08/2025</p>
                     <p>Data do Evento: 29/08/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
@@ -97,6 +98,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 09/08/2025</p>
                     <p>Data do Evento: 30/08/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
@@ -104,6 +106,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 10/08/2025</p>
                     <p>Data do Evento: 31/08/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
@@ -111,6 +114,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
@@ -118,6 +122,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
@@ -125,118 +130,7 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #FF0000;">Evento Recusado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-recusado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #FF0000;">Evento Recusado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-recusado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Data de Solicitação: 11/08/2025</p>
-                    <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
@@ -244,6 +138,15 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #FF0000;">Evento Recusado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-recusado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #FF0000;">Evento Recusado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
                     <button class="detalhes-btn-seu-evento-recusado">Mais Detalhes</button>
@@ -251,6 +154,127 @@
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #FF0000;">Evento Recusado</p>
+                    <p>Solicitado por: Você</p>
+                    <p>Data de Solicitação: 11/08/2025</p>
+                    <p>Data do Evento: 01/09/2025</p>
+                    <button class="detalhes-btn-seu-evento-recusado">Mais Detalhes</button>
+                </div>
+                <div class="notificacao">
+                    <h3>Título do Evento</h3>
+                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
@@ -258,6 +282,114 @@
             </div>
         </section> 
     </main>
+    
+    <div id="modal-overlay-solicitacao" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-left">
+                <div class="coordinator-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+                    <div>
+                        <h3>Nome Professor</h3>
+                        <p>Professor EM</p>
+                    </div>
+                </div>
+                <div class="responses-section">
+                    <h4>Respostas</h4>
+                    <div class="response-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+                        <div>
+                            <p>Professor 1</p>
+                            <span class="aprovado">Aprovado</span>
+                        </div>
+                    </div>
+                    <div class="response-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+                        <div>
+                            <p>Professor 2</p>
+                            <span class="aprovado">Aprovado</span>
+                        </div>
+                    </div>
+                    <div class="response-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+                        <div>
+                            <p>Professor 3</p>
+                            <span class="aprovado">Aprovado</span>
+                        </div>
+                    </div>
+                    <div class="response-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+                        <div>
+                            <p class="respostausuario">Você</p>
+                            <span class="sem-resposta">Ainda sem Resposta</span>
+                        </div>
+                    </div>
+                    <div class="response-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+                        <div>
+                            <p>Professor 5</p>
+                            <span class="sem-resposta">Ainda sem Resposta</span>
+                        </div>
+                    </div>
+                    <div class="response-item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+                        <div>
+                            <p>Professor 6</p>
+                            <span class="sem-resposta">Ainda sem Resposta</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-right">
+                <h3>Nome do Evento</h3>
+                <div class="form-group">
+                <label for="titulo-evento">Título do Evento:</label>
+                <input type="text" id="titulo-evento" readonly value="Nome atual do evento">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="hora-inicio-fim">Hora de Início e Fim:</label>
+                        <input type="text" id="hora-inicio-fim" readonly value="07:00 - 12:00">
+                    </div>
+                    <div class="form-group">
+                        <label for="data-evento">Data do Evento:</label>
+                        <input type="text" id="data-evento" readonly value="12/08/2025">
+                    </div>
+                </div>
+                <div class="form-group">
+                <label for="tipo-evento">Tipo do Evento:</label>
+                <input type="text" id="tipo-evento" readonly value="Palestra">
+            </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="professores-envolvidos">Professores Envolvidos:</label>
+                        <input type="text" id="professores-envolvidos" readonly value="Nomes dos professores">
+                    </div>
+                    <div class="form-group">
+                        <label for="turmas-envolvidas">Turmas Envolvidas:</label>
+                        <input type="text" id="turmas-envolvidas" readonly value="1I, 2N, 3R, 3N">
+                    </div>
+                </div>
+                <label for="descricao-evento">Descrição:</label>
+                <textarea id="descricao-evento" readonly>Descrição do Evento</textarea>
+                <div class="modal-buttons">
+                    <button class="recusar">Recusar</button>
+                    <button class="aprovar">Aprovar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="confirmation-modal-responder-solicitacao" class="confirmation-modal-responder-solicitacao" style="display: none;">
+        <div class="confirmation-content">
+            <h3>Realmente deseja recusar o evento?</h3>
+            <label for="motivo">Motivo:</label>
+            <textarea id="motivo" placeholder="Opcional"></textarea>
+            <div class="confirmation-buttons">
+                <button class="cancelar-solicitacao">Cancelar</button>
+                <button class="recusar-confirm">Recusar</button>
+            </div>
+        </div>
+    </div>
 
     <div id="modal-overlay" class="modal-overlay" style="display: none;">
         <div class="modal-content">
@@ -640,6 +772,49 @@
         const cancelarBtn = document.querySelector('.cancelar');
         const cancelarBtnAprovado = document.querySelector('.cancelarAprovado');
         const cancelarBtnRecusado = document.querySelector('.cancelarRecusado');
+
+        const detalhesBtnsResponder = document.querySelectorAll('.detalhes-btn-responder-solicitacao');
+        const modalOverlaySolicitacao = document.getElementById('modal-overlay-solicitacao');
+        const recusarBtn = document.querySelector('.recusar');
+        const aprovarBtn = document.querySelector('.aprovar');
+        const confirmationModalSolicitacao = document.getElementById('confirmation-modal-responder-solicitacao');
+        const cancelarBtnSolicitacao = document.querySelector('.cancelar-solicitacao');
+        const recusarConfirmBtn = document.querySelector('.recusar-confirm');
+
+        detalhesBtnsResponder.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modalOverlaySolicitacao.style.display = 'flex';
+            });
+        });
+
+        recusarBtn.addEventListener('click', () => {
+            confirmationModalSolicitacao.style.display = 'flex';
+        });
+
+        aprovarBtn.addEventListener('click', () => {
+            modalOverlaySolicitacao.style.display = 'none';
+        });
+
+        cancelarBtnSolicitacao.addEventListener('click', () => {
+            confirmationModalSolicitacao.style.display = 'none';
+        });
+
+        recusarConfirmBtn.addEventListener('click', () => {
+            confirmationModalSolicitacao.style.display = 'none';
+            modalOverlaySolicitacao.style.display = 'none';
+        });
+
+        modalOverlaySolicitacao.addEventListener('click', (e) => {
+            if (e.target === modalOverlay) {
+                modalOverlaySolicitacao.style.display = 'none';
+            }
+        });
+
+        confirmationModalSolicitacao.addEventListener('click', (e) => {
+            if (e.target === confirmationModalSolicitacao) {
+                confirmationModalSolicitacao.style.display = 'none';
+            }
+        });
 
         detalhesBtns.forEach(btn => {
             btn.addEventListener('click', () => {

@@ -96,7 +96,7 @@
     background-color: #0056b3;
 }
  
-.modal-overlay {
+.modal-overlay-solicitacao {
     position: fixed;
     top: 0;
     left: 0;
@@ -299,7 +299,7 @@
     background-color: #0479F9;
 }
 
-.confirmation-modal {
+.confirmation-modal-responder-solicitacao {
     position: fixed;
     top: 0;
     left: 0;
@@ -357,7 +357,7 @@
     margin-top: 20px;
 }
 
-.cancelar {
+.cancelar-solicitacao {
     background-color: #666;
     color: white;
     border: none;
@@ -366,7 +366,7 @@
     cursor: pointer;
 }
 
-.cancelar:hover {
+.cancelar-solicitacao:hover {
     background-color: #555;
 }
 

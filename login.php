@@ -40,7 +40,7 @@
            <h2> Senha:</h2>
             <input type="text" name="Senha" placeholder="SENHA">
             <div class="entrar">
-                <a href="tela_prof/notificacoes.php"><button type="button" class="botao-entrar">Entrar</button></a>
+                <a href="tela_prof/meuseventos.php"><button type="button" class="botao-entrar">Entrar</button></a>
                 </div>
         </form>
         <h3>
