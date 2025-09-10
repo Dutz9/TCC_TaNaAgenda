@@ -48,6 +48,24 @@
                     <button class="criar-btn"> 
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
                     </button>
+
+
+
+
+                <div class="notificacao">
+                <h3>Título do Evento</h3>
+                <p>Solicitado por: professor</p>
+                <p>Data de Solicitação: 06/08/2025</p>
+                <p>Data do Evento: 26/08/2025</p>
+                <button class="detalhes-btn-responder-evento">Mais Detalhes</button>
+                </div>   
+                
+
+
+
+
+
+                
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #0479F9;">Evento Solicitado</p>
@@ -67,175 +85,175 @@
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 07/08/2025</p>
                     <p>Data do Evento: 28/08/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 08/08/2025</p>
                     <p>Data do Evento: 29/08/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 09/08/2025</p>
                     <p>Data do Evento: 30/08/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 10/08/2025</p>
                     <p>Data do Evento: 31/08/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #FF0000;">Evento Recusado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-recusado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-recusado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #FF0000;">Evento Recusado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-recusado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-recusado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #FF0000;">Evento Recusado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-recusado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-recusado">Mais Detalhes</button>
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
                     <p style="color: #1DB81D;">Evento Aprovado</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
-                    <button class="detalhes-btn-aprovado">Mais Detalhes</button>
+                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
             </div>
         </section> 
@@ -602,8 +620,8 @@
 
     <script>
         const detalhesBtns = document.querySelectorAll('.detalhes-btn');
-        const detalhesBtnsAprovado = document.querySelectorAll('.detalhes-btn-aprovado');
-        const detalhesBtnsRecusado = document.querySelectorAll('.detalhes-btn-recusado');
+        const detalhesBtnsAprovado = document.querySelectorAll('.detalhes-btn-seu-evento-aprovado');
+        const detalhesBtnsRecusado = document.querySelectorAll('.detalhes-btn-seu-evento-recusado');
         const criarBtn = document.querySelector('.criar-btn');
         const modalOverlay = document.getElementById('modal-overlay');
         const modalOverlayAprovado = document.getElementById('modal-overlay-aprovado');

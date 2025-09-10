@@ -74,7 +74,7 @@
     cursor: pointer;
 }
 
-.detalhes-btn-aprovado {
+.detalhes-btn-seu-evento-aprovado {
     background-color: #007bff;
     color: white;
     border: none;
@@ -84,7 +84,7 @@
     cursor: pointer;
 }
 
-.detalhes-btn-recusado {
+.detalhes-btn-seu-evento-recusado {
     background-color: #007bff;
     color: white;
     border: none;

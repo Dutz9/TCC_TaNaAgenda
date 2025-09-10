@@ -96,27 +96,6 @@
     background-color: #0056b3;
 }
  
-.menu-sair {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    justify-self: center;
-    margin-top: 10px;
-    background-color: #ff0000;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-    max-width: 190px;
-    min-width: 90%;
-    height: 35px;
-}
- 
-.menu-sair p {
-    font-weight: bold;
-    font-size: 18px;
-    color: white;
-}
- 
 .modal-overlay {
     position: fixed;
     top: 0;
