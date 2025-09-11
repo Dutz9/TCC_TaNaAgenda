@@ -7,15 +7,15 @@ control + j para abrir o cmd
 trocar de powershell para git bash 
 cd /
 //saindo dos arquivos todos
-cd xampp 
-// abrindo o xampp
-cd htdocs 
-// abrindo o htdocs
+cd C/xampp/htdocs
+// abrir ht docs
 
 git clone https://github.com/Dutz9/TCC_TaNaAgenda
 //mandar o arquivo do git hub para seu pc
 
-abrir no visual studio o arquivo pelo htdocs
+cd TCC_TaNaAgenda 
+
+code .
 
 programar
 
