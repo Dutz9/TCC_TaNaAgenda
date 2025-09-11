@@ -65,7 +65,7 @@
                 
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #0479F9;">Evento Solicitado</p>
+                    <p style="color: #0479F9; font-weight: bolder;">Evento Solicitado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 05/08/2025</p>
                     <p>Data do Evento: 26/08/2025</p>
@@ -73,7 +73,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #0479F9;">Evento Solicitado</p>
+                    <p style="color: #0479F9; font-weight: bolder;">Evento Solicitado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 06/08/2025</p>
                     <p>Data do Evento: 27/08/2025</p>
@@ -81,7 +81,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 07/08/2025</p>
                     <p>Data do Evento: 28/08/2025</p>
@@ -89,7 +89,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 08/08/2025</p>
                     <p>Data do Evento: 29/08/2025</p>
@@ -97,23 +97,54 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 09/08/2025</p>
                     <p>Data do Evento: 30/08/2025</p>
                     <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
                 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <div class="notificacao-lido">
+                        <h3>Título do Evento</h3>
+                        <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
+                        <p>Solicitado por: Você</p>
+                        <p>Data de Solicitação: 10/08/2025</p>
+                        <p>Data do Evento: 31/08/2025</p>
+                        <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
-                    <p>Solicitado por: Você</p>
-                    <p>Data de Solicitação: 10/08/2025</p>
-                    <p>Data do Evento: 31/08/2025</p>
-                    <button class="detalhes-btn-seu-evento-aprovado">Mais Detalhes</button>
-                </div>
-                <div class="notificacao">
-                    <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -121,7 +152,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -129,7 +160,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -137,7 +168,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #FF0000;">Evento Recusado</p>
+                    <p style="color: #FF0000; font-weight: bolder;">Evento Recusado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -145,7 +176,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #FF0000;">Evento Recusado</p>
+                    <p style="color: #FF0000; font-weight: bolder;">Evento Recusado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -153,7 +184,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -161,7 +192,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -169,7 +200,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -177,7 +208,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -185,7 +216,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -193,7 +224,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -201,7 +232,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -209,7 +240,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -217,7 +248,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -225,7 +256,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -233,7 +264,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -241,7 +272,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -249,7 +280,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -257,7 +288,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -265,7 +296,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #FF0000;">Evento Recusado</p>
+                    <p style="color: #FF0000; font-weight: bolder;">Evento Recusado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>
@@ -273,7 +304,7 @@
                 </div>
                 <div class="notificacao">
                     <h3>Título do Evento</h3>
-                    <p style="color: #1DB81D;">Evento Aprovado</p>
+                    <p style="color: #1DB81D; font-weight: bolder;">Evento Aprovado</p>
                     <p>Solicitado por: Você</p>
                     <p>Data de Solicitação: 11/08/2025</p>
                     <p>Data do Evento: 01/09/2025</p>

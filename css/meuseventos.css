@@ -53,7 +53,7 @@
     padding: 15px;
     border-radius: 10px;
     text-align: center;
-    border: black 2px solid;
+    border: rgb(187, 187, 187) 3px solid;
 }
  
 .notificacao p {
@@ -63,7 +63,24 @@
     justify-content: flex-start;
     font-size: 16px;
 }
- 
+
+.notificacao-lido {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    border: rgb(187, 187, 187) 3px solid;
+    opacity: 0.7;
+}
+
+.notificacao-lido p {
+    color: rgb(44, 44, 44);
+    margin: 5px 0;
+    display: flex;
+    justify-content: flex-start;
+    font-size: 16px;
+}
+
 .detalhes-btn {
     background-color: #007bff;
     color: white;
