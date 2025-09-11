@@ -222,6 +222,16 @@ insert into turmas (nm_turma, ic_serie, cursos_cd_curso, qt_alunos,cd_sala) valu
 select * from turmas;
  
 insert into eventos(  cd_evento,dt_evento,nm_evento,horario_inicio ,horario_fim ,tipo_evento,ds_descricao) values
- (1,'2025-12-25','Palestra USP ','10:00','10:50','Palestra','palestra sobra ex-alunos da etec que passaram na USP');
+ ('1', '2025-12-25', 'Palestra USP', '10:00', '10:50', 'Palestra', 'palestra sobre ex-alunos da etec que passaram na USP'),
+('2', '2025-10-10', 'Visita à Fábrica', '09:00', '12:00', 'Visita tecnica', 'Visita guiada à indústria de automação'),
+('3', '2025-10-15', 'Reunião Pedagógica', '14:00', '16:00', 'Reuniao', 'Planejamento do próximo semestre'),
+('4', '2025-11-05', 'Palestra sobre Carreira', '08:30', '09:30', 'Palestra', 'Dicas para ingressar no mercado de tecnologia'),
+('5', '2025-11-20', 'Visita ao Museu da Tecnologia', '13:00', '16:00', 'Visita tecnica', 'Exploração de inovações tecnológicas'),
+('6', '2025-12-01', 'Workshop de Programação', '10:00', '12:00', 'Palestra', 'Introdução ao desenvolvimento de jogos'),
+('7', '2025-12-10', 'Reunião de Coordenadores', '15:00', '17:00', 'Reuniao', 'Discussão sobre melhorias no currículo'),
+('8', '2026-01-15', 'Visita à Usina', '07:00', '11:00', 'Visita tecnica', 'Estudo sobre geração de energia'),
+('9', '2026-01-20', 'Palestra de Sustentabilidade', '09:00', '10:30', 'Palestra', 'Impacto ambiental das indústrias'),
+('10', '2026-02-01', 'Reunião de Pais', '18:00', '20:00', 'Reuniao', 'Apresentação dos resultados do ano'),
+('11', '2026-02-10', 'Feira de Ciências', '08:00', '14:00', 'Palestra', 'Exposição de projetos dos alunos');
 select * from eventos;
  
