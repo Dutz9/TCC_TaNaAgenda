@@ -1,4 +1,4 @@
-.body {
+body {
     background-color: #0d102b;
 }
 
@@ -182,7 +182,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: transparent;
+    background-color: #0d102b;
     padding: 5px 0;
     margin-left: 5px;
     margin-right: 5px;
@@ -245,20 +245,32 @@
     font-size: 12px;
     font-weight: 500;
     color: black;
+    text-align: center;
+    flex: 1;
 }
 
 .dias-calendario-lado-direito {
     display: grid;
-    grid-template-columns: 15px repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     gap: 5px;
-    padding-bottom: 5px;
-    margin-left: 13px;
+    padding: 0 5px 5px 5px;
 }
 
 .dias-calendario-lado-direito > p {
     font-size: 12px;
     font-weight: 500;
     color: black;
+    text-align: center;
+    padding: 2px;
+}
+
+.dias-calendario-lado-direito > p.calendar-day {
+    cursor: pointer;
+}
+
+.dias-calendario-lado-direito > p.calendar-day:hover {
+    background-color: #e0e0e0;
+    border-radius: 10px;
 }
 
 .resumo-geral-lado-direito {

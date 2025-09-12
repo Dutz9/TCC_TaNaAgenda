@@ -10,7 +10,7 @@ a {
     color: inherit;
     text-decoration: none;
     background: none;
-  }
+}
 
 .header{
     width: 100vw;
@@ -108,23 +108,22 @@ a > img {
     align-items: center;
     margin-top: 10px;
 }
- 
+
 .menu-professores > svg {
     max-height: 42px;
     margin-left: 10px;
 }
- 
+
 .menu-turmas {
     display: flex;
     align-items: center;
     margin-top: 10px;
 }
- 
+
 .menu-turmas > svg {
     max-height: 42px;
     margin-left: 10px;
 }
- 
 
 .menu-sair {
     display: flex;
@@ -141,7 +140,7 @@ a > img {
     min-width: 90%;
     height: 35px;
 }
- 
+
 .menu-sair p {
     font-weight: bold;
     font-size: 18px;

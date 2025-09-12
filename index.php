@@ -53,22 +53,22 @@
             </div>
             <div class="header-divisoes-semanas">
                 <div></div>
-                <div class="dias-da-semana" style="background-color: #0d102b;">
+                <div class="dias-da-semana">
                     <h2>Segunda-Feira</h2>
                 </div>
-                <div class="dias-da-semana" style="background-color: #0479F9;">
+                <div class="dias-da-semana">
                     <h2>Terça-Feira</h2>
                 </div>
-                <div class="dias-da-semana" style="background-color: #0d102b;">
+                <div class="dias-da-semana">
                     <h2>Quarta-Feira</h2>
                 </div>
-                <div class="dias-da-semana" style="background-color: #0d102b;">
+                <div class="dias-da-semana">
                     <h2>Quinta-Feira</h2>
                 </div>
-                <div class="dias-da-semana" style="background-color: #0d102b;">
+                <div class="dias-da-semana">
                     <h2>Sexta-Feira</h2>
                 </div>
-                <div class="dias-da-semana" style="background-color: #0d102b;">
+                <div class="dias-da-semana">
                     <h2>Sábado</h2>
                 </div>
             </div>
@@ -137,37 +137,7 @@
                 <p style="color: #DD2B2B;">Dom</p>
             </div>
             <div class="dias-calendario-lado-direito">
-                <p>01</p>
-                <p>02</p>
-                <p>03</p>
-                <p>04</p>
-                <p>05</p>
-                <p>06</p>
-                <p>07</p>
-                <p style="background-color: #022E5E; color: white; border-radius: 10px;" >08</p>
-                <p>09</p>
-                <p>10</p>
-                <p>11</p>
-                <p>12</p>
-                <p>13</p>
-                <p>14</p>
-                <p>15</p>
-                <p>16</p>
-                <p>17</p>
-                <p>18</p>
-                <p>19</p>
-                <p>20</p>
-                <p>21</p>
-                <p>22</p>
-                <p>23</p>
-                <p>24</p>
-                <p>25</p>
-                <p>26</p>
-                <p>27</p>
-                <p>28</p>
-                <p>29</p>
-                <p>30</p>
-                <p>31</p>
+                <!-- Dias serão gerados dinamicamente via JavaScript -->
             </div>
         </div>
 
@@ -249,6 +219,81 @@
                     modalOverlay.style.display = 'none';
                 }
             });
+
+            // Código para tornar o calendário dinâmico
+            const today = new Date();
+            let selectedDate = new Date(today);
+            const monthsPt = [
+                "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+                "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+            ];
+
+            const updateCalendar = (date) => {
+                const month = date.getMonth();
+                const year = date.getFullYear();
+                const dayOfWeek = date.getDay();
+
+                // Atualizar cabeçalho principal do calendário semanal
+                document.querySelector('.header-parte-de-cima h3').innerText = `${monthsPt[month]} ${year}`;
+
+                // Atualizar cabeçalho do calendário mensal à direita
+                const rightHeader = document.querySelector('.header-calendario-lado-direito');
+                rightHeader.querySelectorAll('h3')[0].innerText = monthsPt[month];
+                rightHeader.querySelectorAll('h3')[1].innerText = year;
+
+                // Calcular o início da semana (segunda-feira)
+                const monday = new Date(date);
+                monday.setDate(date.getDate() - ((dayOfWeek + 6) % 7));
+
+                // Atualizar dias da semana no calendário principal
+                const diasSemana = document.querySelectorAll('.dias-da-semana');
+                const daysOfWeekPt = [
+                    "Segunda-Feira", "Terça-Feira", "Quarta-Feira",
+                    "Quinta-Feira", "Sexta-Feira", "Sábado"
+                ];
+                diasSemana.forEach((dia, index) => {
+                    const currentDay = new Date(monday);
+                    currentDay.setDate(monday.getDate() + index);
+                    dia.querySelector('h2').innerText = `${daysOfWeekPt[index]} ${currentDay.getDate()}`;
+                    dia.style.backgroundColor = '#0d102b';
+                    if (currentDay.getDate() === date.getDate() && currentDay.getMonth() === month && currentDay.getFullYear() === year) {
+                        dia.style.backgroundColor = '#0479F9';
+                    }
+                });
+
+                // Atualizar calendário mensal à direita
+                const calendarDays = document.querySelector('.dias-calendario-lado-direito');
+                calendarDays.innerHTML = ''; // Limpar conteúdo
+                const firstDay = new Date(year, month, 1);
+                const firstDayWeek = (firstDay.getDay() + 6) % 7; // 0: Seg, 1: Ter, ..., 6: Dom
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                // Adicionar slots vazios para alinhar o primeiro dia
+                for (let i = 0; i < firstDayWeek; i++) {
+                    const empty = document.createElement('p');
+                    calendarDays.appendChild(empty);
+                }
+
+                // Adicionar os dias do mês
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const dayP = document.createElement('p');
+                    dayP.innerText = d < 10 ? `0${d}` : d;
+                    dayP.classList.add('calendar-day');
+                    if (d === date.getDate() && month === date.getMonth() && year === date.getFullYear()) {
+                        dayP.style.backgroundColor = '#022E5E';
+                        dayP.style.color = 'white';
+                        dayP.style.borderRadius = '10px';
+                    }
+                    dayP.addEventListener('click', () => {
+                        selectedDate = new Date(year, month, d);
+                        updateCalendar(selectedDate);
+                    });
+                    calendarDays.appendChild(dayP);
+                }
+            };
+
+            // Inicializar o calendário com a data atual
+            updateCalendar(selectedDate);
         });
     </script>
 </body>
