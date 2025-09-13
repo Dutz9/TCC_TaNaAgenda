@@ -2,10 +2,11 @@
     margin: 0 auto;
     padding: 20px;
     font-family: Arial, sans-serif;
-    margin-left: 260px;
+    margin-left: 250px;
     margin-top: 20px;
     height: calc(100vh - 80px);
     justify-items: center;
+    background-color: white;
 }
 
 .formulario-professor h2 {

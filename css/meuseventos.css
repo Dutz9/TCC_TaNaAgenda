@@ -21,7 +21,7 @@
 }
  
 .area-notificacoes {
-    margin-left: 260px;
+    margin-left: 250px;
     padding: 0px;
     height: calc(100vh - 80px);
     overflow: hidden;
@@ -31,6 +31,7 @@
     padding-bottom: 20px;
     padding-right: 25px;
     padding-left: 25px;
+    background-color: white;
 }
  
 .area-notificacoes h2 {
@@ -55,33 +56,41 @@
     text-align: center;
     border: rgb(145, 145, 145) 3px solid;
 }
+
+.notificacao h3 {
+font-size: medium;
+}
  
 .notificacao p {
     color: rgb(44, 44, 44);
     margin: 5px 0;
     display: flex;
     justify-content: flex-start;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .notificacao-lido {
-    background-color: #0000002a;
+    background-color: #3a3a3a23;
     padding: 15px;
     border-radius: 10px;
     text-align: center;
-    border: rgb(187, 187, 187) 3px solid;
+    border: rgb(145, 145, 145) 3px solid;
 }
 
 .notificacao-lido:hover{
     opacity: 1;
 }
 
+.notificacao-lido h3 {
+    font-size: medium;
+    }
+
 .notificacao-lido p {
     color: rgb(44, 44, 44);
     margin: 5px 0;
     display: flex;
     justify-content: flex-start;
-    font-size: 16px;
+    font-size: 14px;
 }
 
 .detalhes-btn {
