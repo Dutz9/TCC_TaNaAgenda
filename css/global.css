@@ -55,6 +55,12 @@ a > img {
     background-color: #22253A;
 }
 
+.area-menu img{
+    max-height: 42px;
+    margin-left: 10px;
+    margin-right: 5px;
+}
+
 .menu-agenda {
     display: flex;
     align-items: center;
@@ -143,6 +149,6 @@ a > img {
 
 .menu-sair p {
     font-weight: bold;
-    font-size: 18px;
+    font-size: 16px;
     color: white;
 }

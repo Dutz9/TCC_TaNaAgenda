@@ -104,7 +104,7 @@
     display: flex;
     align-items: center;
     white-space: nowrap;
-    width: 112px;
+    width: 115px;
 }
 
 .adicionar-btn svg {
@@ -125,7 +125,7 @@
     font-size: 14px;
     cursor: pointer;
     white-space: nowrap;
-    width: 112px;
+    width: 115px;
 }
 
 .Editar-btn:hover {
