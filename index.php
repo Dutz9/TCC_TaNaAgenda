@@ -128,13 +128,13 @@
                 <h3>2025</h3>
             </div>
             <div class="dias-da-semana-calendario-lado-direito">
-                <p style="color: #022E5E">Seg</p>
-                <p>Ter</p>
-                <p>Qua</p>
-                <p>Qui</p>
-                <p>Sex</p>
-                <p>Sab</p>
-                <p style="color: #DD2B2B;">Dom</p>
+                <p class="dia-semana seg">Seg</p>
+                <p class="dia-semana ter">Ter</p>
+                <p class="dia-semana qua">Qua</p>
+                <p class="dia-semana qui">Qui</p>
+                <p class="dia-semana sex">Sex</p>
+                <p class="dia-semana sab">Sab</p>
+                <p class="dia-semana dom">Dom</p>
             </div>
             <div class="dias-calendario-lado-direito">
                 <!-- Dias serão gerados dinamicamente via JavaScript -->
@@ -203,7 +203,18 @@
         </div>
     </div>
 
-   <script src="js/index.js"></script>
+    <!-- Novo modal para eventos do dia selecionado no mini calendário -->
+    <div id="day-modal-overlay" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Eventos do Dia <span id="selected-day"></span></h3>
+            <p>Evento estático 1: Palestra às 07:10</p>
+            <p>Evento estático 2: Visita Técnica às 08:00</p>
+            <p>Evento estático 3: Oficina às 10:00</p>
+            <!-- Aqui você pode adicionar mais dinamicamente depois -->
+        </div>
+    </div>
+
+    <script src="js/index.js"></script>
 
 </body>
 </html>

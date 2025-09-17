@@ -249,6 +249,40 @@ body {
     flex: 1;
 }
 
+/* Cores dinâmicas dependendo do dia da semana */
+.dia-semana.seg {
+    color: #022E5E; /* Azul para segunda */
+}
+
+.dia-semana.ter {
+    color: #000; /* Preto padrão */
+}
+
+.dia-semana.qua {
+    color: #000;
+}
+
+.dia-semana.qui {
+    color: #000;
+}
+
+.dia-semana.sex {
+    color: #000;
+}
+
+.dia-semana.sab {
+    color: #000;
+}
+
+.dia-semana.dom {
+    color: #DD2B2B; /* Vermelho para domingo */
+}
+
+/* Destaque para o dia atual (adicionado via JS) */
+.dia-semana.atual {
+    color: #0479F9 !important; /* Azul claro para destaque no dia atual */
+}
+
 .dias-calendario-lado-direito {
     display: grid;
     grid-template-columns: repeat(7, 1fr);

@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     const events = document.querySelectorAll('.event');
     const modalOverlay = document.getElementById('modal-overlay');
+    const dayModalOverlay = document.getElementById('day-modal-overlay'); // Novo modal
+    const selectedDaySpan = document.getElementById('selected-day'); // Span pra mostrar o dia
 
-    // Funcionalidade do modal
+    // Funcionalidade do modal de evento
     events.forEach(event => {
         event.addEventListener('click', () => {
             modalOverlay.style.display = 'flex';
@@ -12,6 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
     modalOverlay.addEventListener('click', (e) => {
         if (e.target === modalOverlay) {
             modalOverlay.style.display = 'none';
+        }
+    });
+
+    // Funcionalidade do novo modal de dia
+    dayModalOverlay.addEventListener('click', (e) => {
+        if (e.target === dayModalOverlay) {
+            dayModalOverlay.style.display = 'none';
         }
     });
 
@@ -149,6 +158,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Destaque dinâmico nos dias da semana do mini calendário (dependendo do dia atual)
+        const diasSemanaMini = document.querySelectorAll('.dia-semana');
+        diasSemanaMini.forEach(dia => dia.classList.remove('atual')); // Remove destaque anterior
+        if (dayOfWeek >= 1 && dayOfWeek <= 6) { // 1=Seg, 6=Sab
+            const classes = ['seg', 'ter', 'qua', 'qui', 'sex', 'sab', 'dom'];
+            diasSemanaMini[dayOfWeek - 1].classList.add('atual'); // Adiciona classe 'atual' pro dia atual
+        } else if (dayOfWeek === 0) {
+            diasSemanaMini[6].classList.add('atual'); // Domingo
+        }
+
         // Atualizar calendário lateral direito
         const calendarDays = document.querySelector('.dias-calendario-lado-direito');
         calendarDays.innerHTML = '';
@@ -173,6 +192,9 @@ document.addEventListener('DOMContentLoaded', () => {
             dayP.addEventListener('click', () => {
                 selectedDate = new Date(year, month, d);
                 updateCalendar(selectedDate);
+                // Abre o novo modal com eventos do dia (estático por enquanto)
+                selectedDaySpan.innerText = `${d < 10 ? '0' + d : d}/${month + 1 < 10 ? '0' + (month + 1) : month + 1}/${year}`;
+                dayModalOverlay.style.display = 'flex';
             });
             calendarDays.appendChild(dayP);
         }
