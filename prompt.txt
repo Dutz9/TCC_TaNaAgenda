@@ -1,0 +1,174 @@
+Olá grok, preciso de sua ajuda com meu TCC. O projeto do TCC é um calendário semanal e mensal que exibe eventos escolares, nele professores e coordenadores podem criar eventos, o coordenador cria eventos que apenas são notificados e os coordenadores também aprovam ou recusam eventos criados pelos professores depois que os outros professores aprovam ou não o evento, já os professores criam eventos em que precisam ser aprovados ou recusados pelos outros professores recusados. Os eventos criados são exibidos no calendário para todos verem. Meu TCC tem login de professor e coordenador, somente logados podem criar eventos, quem não estiver logado só pode visualizar o calendário. Até o momento boa parte das coisas estão estáticas. Analise tudo o que eu descrevi para entender melhor do meu projeto e caso precise saber de algo, me fale tudo que você precisa saber de forma detalhada e completa para que você consiga me dar a melhor resposta possível, sem erros e funcionando como deve funcionar. Sempre me fale o que você precisa saber e o que você precisa ter em mãos (como contexto, código, banco de dados, conexão com o banco, etc).
+ 
+As pastas e páginas que tenho no projeto são:
+tcc{
+api{
+  -config.php
+  -usuarios.php
+}
+classes{
+  base{
+   -banco.php
+  }
+  controllers{
+   -UsuarioController.php
+  }
+  models{
+   Usuario.php
+  }
+ 
+css{
+  -addprofessor.css
+  -addturma.css
+  -calendario.css
+  -coordenador.css
+  -criarevento.css
+  -esqueciMinhaSenha.css
+  -global.css
+  -index.css
+  -indexlogado.css
+  -login.css
+  -meuseventos.css
+  -notificacoes.css
+  -perfil.css
+  -professores.css
+  -segurança.css (outra "aba" do perfil, onde da para mudar a senha da conta)
+  -turmas.css
+}
+ 
+image{ imagens utilizadas }
+ 
+js{
+  -agendacoord.js
+  -agendaprof.js
+  -eventoscoord.js
+  -index.js
+  -meuseventos.js
+  -professores.js
+  -turmas.js
+}
+ 
+tela_coord{
+  -addprofessor.php
+  -addturma.php
+  -agendacoord.php
+  -criareventocoord.php
+  -eventoscoord.php
+  -perfilcoord.php
+  -professores.php
+  -segurancacoord.php (outra "aba" do perfil, onde da para mudar a senha da conta)
+  -turmas.php
+}
+ 
+tela_prof{
+  -agendaprof.php
+  -criarevento.php
+  -meuseventos.php (todos eventos incluindo de outros profs que te notificaram)
+  -perfil.php
+  -segurança.php (outra "aba" do perfil, onde da para mudar a senha da conta)
+}
+ 
+-banco.sql
+-calendario.php (exemplo de calendário mensal)
+-config_local.php
+-esqueciMinhaSenha.php
+-index.php (calendário semanal para não logados)
+-login.php
+-StoreProcedure.sql
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Contexto Geral do ProjetoO projeto é um TCC que consiste em um sistema web de calendário escolar semanal e mensal para gerenciar eventos escolares. Ele suporta dois tipos de usuários: professores e coordenadores, com fluxos de aprovação para eventos e visualização pública para não logados. O sistema está sendo desenvolvido em PHP puro (sem frameworks aparentes), com MySQL como banco de dados, e usa HTML/CSS/JavaScript para o frontend. Atualmente, grande parte do sistema está estática (ex.: eventos mockados, sem login funcional), e o objetivo é torná-lo dinâmico, integrando banco de dados, implementando fluxos de aprovação, e finalizando funcionalidades como notificações.
+Funcionalidades do Sistema
+Calendário:
+Semanal: Exibido em index.php para não logados (somente visualização de eventos aprovados).
+Mensal: Exibido em calendario.php (exemplo de calendário).
+Eventos exibidos: Apenas eventos aprovados aparecem no calendário. Eventos pendentes, solicitados ou recusados aparecem apenas em meuseventos.php para usuários logados.
+Formato: Eventos são exibidos como cards com:
+Título do evento.
+Status (Solicitado, Aprovado, Recusado).
+Solicitado por (nome do professor/coordenador).
+Data de solicitação.
+Data do evento (quando ocorrerá).
+(Pendente esclarecer: outros campos como descrição, local, ou turmas vinculadas?)
+Autenticação e Perfis:
+Tipos de usuário: Diferenciados por um campo tipo_usuario no banco (professor ou coordenador).
+Login: Implementado em login.php, mas atualmente não funcional (sem sessões PHP ou autenticação).
+Páginas protegidas: Apenas usuários logados podem criar/editar eventos (criarevento.php, criareventocoord.php) ou gerenciar turmas/professores (tela_coord/addprofessor.php, tela_coord/turmas.php).
+Recuperação de senha: Página esqueciMinhaSenha.php (não implementada dinamicamente).
+Páginas de perfil: perfil.php (professor), perfilcoord.php (coordenador), com abas de segurança (segurança.php, segurancacoord.php) para alterar senha.
+Criação e Aprovação de Eventos:
+Eventos de Professores:
+Criados em criarevento.php (ou agendaprof.php?).
+Vinculados a turmas específicas (relação N:N entre eventos e turmas).
+Fluxo de aprovação:
+Paralelo: Todos os professores relacionados às turmas do evento recebem solicitação de aprovação simultaneamente.
+Regra: Idealmente, todos os professores devem aprovar. Se alguns recusarem, o coordenador pode intervir, convencer os professores e aprovar o evento.
+Uma recusa não interrompe o fluxo; o evento segue para aprovação final do coordenador.
+Notificações: Aparecem em meuseventos.php para professores envolvidos.
+Eventos de Coordenadores:
+Criados em criareventocoord.php (ou agendacoord.php?).
+Publicados diretamente, sem aprovação, com notificação automática para todos os professores (ou apenas os das turmas vinculadas?).
+Notificações:
+Exibidas em meuseventos.php.
+Indicador visual (não implementado): Número de notificações não lidas ao lado de "Eventos" na barra lateral (area-lado), com fundo circular vermelho.
+(Pendente esclarecer: notificações só na UI ou haverá email/SMS? Barra lateral é global ou só em meuseventos.php?)
+Gerenciamento de Turmas e Professores:
+Turmas:
+Gerenciadas pelo coordenador em turmas.php (adicionar/editar).
+Cada coordenador gerencia apenas as turmas de seu curso (ex.: Ensino Médio, Fundamental).
+Relação N:N com eventos (um evento pode vincular várias turmas, e uma turma pode ter vários eventos).
+Professores: Gerenciados em professores.php e addprofessor.php (pelo coordenador).
+Seleção de turmas: Ao criar um evento, o usuário (professor ou coordenador) seleciona as turmas envolvidas (ex.: via dropdown <select>?).
+Visualização por Tipo de Usuário:
+Não logados: Veem apenas eventos aprovados no calendário (index.php, calendario.php).
+Logados:
+Veem eventos aprovados no calendário.
+Veem eventos pendentes, solicitados ou recusados em meuseventos.php (não no calendário).
+(Pendente esclarecer: professores veem só seus eventos pendentes ou também os de outros profs que os envolvem por turma?)
+Estrutura Técnica
+Backend:
+PHP puro, sem frameworks (versão exata pendente).
+Banco de dados: MySQL (banco.sql define schema, StoreProcedure.sql contém procedures).
+Arquivos principais:
+api/config.php: Configurações gerais (ex.: conexão com BD).
+api/usuarios.php: Endpoints para autenticação/CRUD de usuários (não funcional).
+classes/base/banco.php: Conexão com banco (PDO ou mysqli?).
+classes/models/Usuario.php: Modelo de usuário.
+classes/controllers/UsuarioController.php: Lógica de controle para usuários.
+config_local.php: Configurações locais (ex.: host, user, pass do BD).
+Frontend:
+HTML/CSS/JS puro ou com bibliotecas leves (pendente confirmar se usa FullCalendar.js ou similar).
+Pastas:
+css/: Estilos específicos por página (ex.: calendario.css, meuseventos.css).
+js/: Scripts para interatividade limitada (ex.: agendaprof.js, meuseventos.js).
+image/: Assets visuais.
+Páginas principais:
+index.php: Calendário semanal (não logados).
+calendario.php: Calendário mensal (exemplo).
+login.php: Formulário de login (estático).
+tela_prof/: Páginas para professores (criarevento.php, meuseventos.php, etc.).
+tela_coord/: Páginas para coordenadores (criareventocoord.php, turmas.php, etc.).
+Estado Atual:
+Estático: Eventos, login e aprovações não estão integrados ao banco.
+JavaScript: Limitado a detalhes visuais (ex.: animações, validações de formulário).
+Pendências: Conexão com banco, sessões PHP, fluxos dinâmicos de aprovação, notificações, e renderização de calendário.
