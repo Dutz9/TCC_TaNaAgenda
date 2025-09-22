@@ -1,4 +1,3 @@
-
 DROP DATABASE IF EXISTS escola;
 CREATE DATABASE escola;
 USE escola;
@@ -14,7 +13,7 @@ DROP TABLE IF EXISTS usuarios;
 CREATE TABLE usuarios (
     cd_usuario VARCHAR(10) NOT NULL,
     nm_usuario VARCHAR(45) NOT NULL,
-    cd_senha VARCHAR(45) NOT NULL,
+    cd_senha VARCHAR(255) NOT NULL,
     cd_telefone VARCHAR(45),
     nm_email VARCHAR(45),
     tipo_usuario_ic_usuario ENUM('Coordenador', 'Professor', 'Administrador') NOT NULL,
@@ -56,6 +55,7 @@ CREATE TABLE eventos (
     ds_descricao VARCHAR(200),
     status ENUM('Solicitado', 'Aprovado', 'Recusado') NOT NULL DEFAULT 'Solicitado',
     cd_usuario_solicitante VARCHAR(10) NOT NULL,
+    dt_solicitacao DATE NOT NULL, /* ADICIONADO/ ALTERADO 22/09 */
     PRIMARY KEY (cd_evento),
     FOREIGN KEY (cd_usuario_solicitante) REFERENCES usuarios(cd_usuario)
 ) ;
@@ -201,10 +201,10 @@ SELECT * FROM turmas;
 
 
 
-INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante) VALUES 
-('EVT001', '2025-12-25', 'Palestra USP', '10:00', '10:50', 'Palestra', 'Palestra sobre ex-alunos da ETEC que passaram na USP', 'Aprovado', '1001'),
-('EVT002', '2025-10-10', 'Visita à Fábrica', '09:00', '12:00', 'Visita tecnica', 'Visita guiada à indústria de automação', 'Solicitado', '1001'),
-('EVT003', '2025-10-15', 'Reunião Pedagógica', '14:00', '16:00', 'Reuniao', 'Planejamento do próximo semestre', 'Aprovado', '0002');
+INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao) VALUES 
+('EVT001', '2025-12-25', 'Palestra USP', '10:00', '10:50', 'Palestra', 'Palestra sobre ex-alunos da ETEC que passaram na USP', 'Aprovado', '1001', '2025-11-16'),
+('EVT002', '2025-10-10', 'Visita à Fábrica', '09:00', '12:00', 'Visita tecnica', 'Visita guiada à indústria de automação', 'Solicitado', '1001', '2025-08-24'),
+('EVT003', '2025-10-15', 'Reunião Pedagógica', '14:00', '16:00', 'Reuniao', 'Planejamento do próximo semestre', 'Aprovado', '0002', '2025-09-15');
 SELECT * FROM eventos;
 
 

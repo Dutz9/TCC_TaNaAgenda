@@ -53,6 +53,15 @@ input[type=text] {
     box-sizing: border-box;
   }
 
+  #form_login > input {
+    border: lightgray 1px solid;
+    border-radius: 10px;
+    width: 20vw;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+  }
+
   .botao-entrar{
     border: 0;
     border-radius: 5px;
@@ -122,4 +131,14 @@ h4{
 
     .Titulo{
         margin-top: 30px;
+    }
+
+    .mensagem-erro {
+        color: #D8000C;
+        background-color: #FFD2D2;
+        border: 1px solid #D8000C;
+        padding: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        text-align: center;
     }

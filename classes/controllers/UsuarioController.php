@@ -1,5 +1,5 @@
+<?php
 
-<?php 
 class UsuarioController extends Banco {
 
     public function Listar() {
