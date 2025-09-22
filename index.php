@@ -1,3 +1,64 @@
+<?php
+
+// =================================================================
+// BLOCO DE DADOS DA PÁGINA PÚBLICA
+// =================================================================
+
+// 1. CONFIGURAÇÃO
+// Carrega o autoloader para encontrar as classes. Usamos o 'local' pois estamos na raiz.
+require_once 'config_local.php'; 
+
+// 2. CONFIGURAÇÃO DE DATAS
+date_default_timezone_set('America/Sao_Paulo');
+$hoje = new DateTime();
+$dia_da_semana_hoje = (int)$hoje->format('N');
+
+$inicio_semana = clone $hoje;
+$inicio_semana->modify('-' . ($dia_da_semana_hoje - 1) . ' days');
+
+$dias_desta_semana = [];
+for ($i = 0; $i < 6; $i++) {
+    $dia_atual = clone $inicio_semana;
+    $dia_atual->modify("+$i days");
+    $dias_desta_semana[] = $dia_atual;
+}
+
+$meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+$dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+
+$mes_atual_num = (int)$hoje->format('n') - 1;
+$mes_ano_atual = $meses_pt[$mes_atual_num] . ' ' . $hoje->format('Y');
+
+// 3. LÓGICA DE EVENTOS
+$eventoController = new EventoController();
+$lista_eventos = $eventoController->listarAprovados();
+
+$calendario_grid = [];
+$horarios_semana = ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40"];
+
+foreach ($horarios_semana as $horario) {
+    for ($i = 1; $i <= 6; $i++) {
+        $calendario_grid[$horario][$i] = [];
+    }
+}
+
+foreach ($lista_eventos as $evento) {
+    $data_evento_obj = new DateTime($evento['dt_evento']);
+    $dia_da_semana_num = (int)$data_evento_obj->format('N');
+    $horario_inicio = substr($evento['horario_inicio'], 0, 5);
+
+    if (isset($calendario_grid[$horario_inicio][$dia_da_semana_num])) {
+        $calendario_grid[$horario_inicio][$dia_da_semana_num][] = $evento;
+    }
+}
+
+?>
+
+<script>
+    // A PONTE DE DADOS para o JavaScript
+    const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
+</script>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -51,77 +112,40 @@
     <section class="calendario">
         <div class="header-calendario">
             <div class="header-parte-de-cima">
-                <h3>Janeiro 2025</h3>
+                <h3><?php echo $mes_ano_atual; ?></h3>
                 <div class="header-turmas">
                     <h4>Todas as turmas</h4>
                 </div>
             </div>
             <div class="header-divisoes-semanas">
-                <div></div>
-                <div class="dias-da-semana">
-                    <h2>Segunda-Feira</h2>
-                </div>
-                <div class="dias-da-semana">
-                    <h2>Terça-Feira</h2>
-                </div>
-                <div class="dias-da-semana">
-                    <h2>Quarta-Feira</h2>
-                </div>
-                <div class="dias-da-semana">
-                    <h2>Quinta-Feira</h2>
-                </div>
-                <div class="dias-da-semana">
-                    <h2>Sexta-Feira</h2>
-                </div>
-                <div class="dias-da-semana">
-                    <h2>Sábado</h2>
-                </div>
+                <div></div> <?php foreach ($dias_desta_semana as $dia): ?>
+                    <div class="dias-da-semana" style="background-color: <?php echo ($hoje->format('Y-m-d') == $dia->format('Y-m-d')) ? '#0479F9' : '#0d102b'; ?>;">
+                        <h2>
+                            <?php
+                                $dia_semana_num = (int)$dia->format('N') - 1;
+                                echo $dias_semana_pt[$dia_semana_num] . " " . $dia->format('d');
+                            ?>
+                        </h2>
+                    </div>
+                <?php endforeach; ?>
             </div>
         </div>
         <div class="fundo-grid">
             <div class="calendario-grid">
-                <div class="time-slot-label">07:10</div>
-                <div class="time-slot"><div class="event azul">Palestra</div></div>
-                <div class="time-slot"><div class="event verde">Visita Técnica</div></div>
-                <div class="time-slot"><div class="event amarelo">Oficina</div><div class="event verde">Visita Técnica</div></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
-                <div class="time-slot-label">08:00</div>
-                <div class="time-slot"></div>
-                <div class="time-slot"><div class="event azul">Palestra</div></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"><div class="event amarelo">Oficina</div></div>
-                <div class="time-slot"><div class="event azul">Palestra</div></div>
-                <div class="time-slot"></div>
-                <div class="time-slot-label">08:50</div>
-                <div class="time-slot"></div>
-                <div class="time-slot"><div class="event azul">Palestra</div></div>
-                <div class="time-slot"><div class="event azul">Palestra</div></div>
-                <div class="time-slot"><div class="event amarelo">Oficina</div></div>
-                <div class="time-slot"><div class="event azul">Palestra</div></div>
-                <div class="time-slot"><div class="event verde">Visita Técnica</div><div class="event amarelo">Oficina</div><div class="event amarelo">Oficina</div></div>
-                <div class="time-slot-label">10:00</div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"><div class="event amarelo">Oficina</div></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"><div class="event verde">Visita Técnica</div></div>
-                <div class="time-slot-label">10:50</div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"><div class="event verde">Visita Técnica</div><div class="event amarelo">Oficina</div></div>
-                <div class="time-slot"><div class="event amarelo">Oficina</div></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
-                <div class="time-slot-label">11:40</div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"><div class="event amarelo">Oficina</div></div>
-                <div class="time-slot"></div>
-                <div class="time-slot"></div>
+                <?php foreach ($horarios_semana as $horario): ?>
+                    <div class="time-slot-label"><?php echo $horario; ?></div>
+                    <?php for ($dia_num = 1; $dia_num <= 6; $dia_num++): ?>
+                        <div class="time-slot">
+                            <?php if (!empty($calendario_grid[$horario][$dia_num])):
+                                foreach ($calendario_grid[$horario][$dia_num] as $evento): ?>
+                                    <div class="event azul" data-nome="<?php echo htmlspecialchars($evento['nm_evento']); ?>" data-data="<?php echo htmlspecialchars($evento['dt_evento']); ?>" data-inicio="<?php echo htmlspecialchars($evento['horario_inicio']); ?>" data-fim="<?php echo htmlspecialchars($evento['horario_fim']); ?>" data-descricao="<?php echo htmlspecialchars($evento['ds_descricao']); ?>">
+                                        <?php echo htmlspecialchars($evento['nm_evento']); ?>
+                                    </div>
+                                <?php endforeach;
+                            endif; ?>
+                        </div>
+                    <?php endfor; ?>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>

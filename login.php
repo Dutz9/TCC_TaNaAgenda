@@ -79,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,70… rel="stylesheet">
 </head>
 <body>
-    
     <div class="login">
         <div class="parteDeCima">
             <div id="Primeira_Parte" class="PartesDeCima">
@@ -117,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="esqueciMinhaSenha.php">Esqueci minha senha</a>
         </h3>
     </div>
+
 
 </body>
 </html>

@@ -210,4 +210,22 @@ BEGIN
     ORDER BY e.dt_solicitacao DESC;
 END$$
 
+CREATE PROCEDURE `listarEventosAprovados`()
+BEGIN
+    SELECT 
+        cd_evento,
+        dt_evento,
+        nm_evento,
+        horario_inicio,
+        horario_fim,
+        tipo_evento,
+        ds_descricao
+    FROM 
+        eventos
+    WHERE 
+        status = 'Aprovado'
+    ORDER BY 
+        dt_evento, horario_inicio;
+END$$
+
 DELIMITER ;

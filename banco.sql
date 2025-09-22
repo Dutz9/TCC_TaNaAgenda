@@ -204,7 +204,7 @@ SELECT * FROM turmas;
 INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao) VALUES 
 ('EVT001', '2025-12-25', 'Palestra USP', '10:00', '10:50', 'Palestra', 'Palestra sobre ex-alunos da ETEC que passaram na USP', 'Aprovado', '1001', '2025-11-16'),
 ('EVT002', '2025-10-10', 'Visita à Fábrica', '09:00', '12:00', 'Visita tecnica', 'Visita guiada à indústria de automação', 'Solicitado', '1001', '2025-08-24'),
-('EVT003', '2025-10-15', 'Reunião Pedagógica', '14:00', '16:00', 'Reuniao', 'Planejamento do próximo semestre', 'Aprovado', '0002', '2025-09-15');
+('EVT003', '2025-09-23', 'Palestra de Teste', '08:50', '09:40', 'Palestra', 'Planejamento do próximo semestre', 'Aprovado', '0002', '2025-08-24');
 SELECT * FROM eventos;
 
 
