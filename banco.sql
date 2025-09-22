@@ -101,7 +101,7 @@ SELECT * FROM tipo_usuario;
 
 INSERT INTO usuarios (cd_usuario, nm_usuario, cd_senha, cd_telefone, nm_email, tipo_usuario_ic_usuario) VALUES 
 ('0001', 'Maristela', '123', '13 9999-9999', 'maristela@etec.com', 'Professor'),
-('0002', 'Andre', '1234', '13 8888-8888', 'andre@etec.com', 'Coordenador'),
+('0002', 'André', '1234', '13 8888-8888', 'andre@etec.com', 'Coordenador'),
 ('0003', 'Marquinhos', '12345', '13 7777-7777', 'marquinhos@etec.com', 'Administrador'),
 ('1001', 'Ana Silva', 'pass123', '13 9111-1111', 'ana.silva@etec.com', 'Professor'),
 ('2001', 'Karen Rodrigues', 'coord123', '13 9221-2221', 'karen.rodrigues@etec.com', 'Coordenador'),

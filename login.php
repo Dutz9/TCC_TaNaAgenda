@@ -79,6 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,70… rel="stylesheet">
 </head>
 <body>
+    
     <div class="login">
         <div class="parteDeCima">
             <div id="Primeira_Parte" class="PartesDeCima">
@@ -101,8 +102,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <div class="mensagem-erro"><?php echo htmlspecialchars($mensagemErro); ?></div>
             <?php endif; ?>
  
-            <h2>E-mail:</h2>
-            <input type="email" name="email" id="email" placeholder="seuemail@etec.com" required>
+            <h2>E-mail ou RM:</h2>
+            <input type="text" name="email" id="email" placeholder="Digite seu e-mail ou RM" required>
             
             <h2>Senha:</h2>
             <input type="password" name="senha" placeholder="SENHA" required>
@@ -116,5 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="esqueciMinhaSenha.php">Esqueci minha senha</a>
         </h3>
     </div>
+
 </body>
 </html>

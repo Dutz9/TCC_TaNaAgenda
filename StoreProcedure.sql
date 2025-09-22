@@ -99,20 +99,21 @@ END$$
 DROP PROCEDURE IF EXISTS verificarAcesso$$
 CREATE PROCEDURE verificarAcesso(
     IN pLogin VARCHAR(45), 
-    IN pSenha VARCHAR(45)  -- Plain-text; futuro: compare com password_verify
+    IN pSenha VARCHAR(255)  -- Plain-text; futuro: compare com password_verify
 )
 BEGIN
     DECLARE qtd INT DEFAULT 0;
     
+    -- A MUDANÇA ESTÁ AQUI, NO "OR"
     SELECT COUNT(*) INTO qtd FROM usuarios 
-    WHERE nm_email = pLogin AND cd_senha = pSenha;
+    WHERE (nm_email = pLogin OR cd_usuario = pLogin) AND cd_senha = pSenha;
         
     IF (qtd = 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Login e/ou Senha inválidos';
     ELSE
         SELECT u.cd_usuario, u.nm_usuario, u.nm_email, u.tipo_usuario_ic_usuario
         FROM usuarios u
-        WHERE u.nm_email = pLogin AND u.cd_senha = pSenha;
+        WHERE (nm_email = pLogin OR cd_usuario = pLogin) AND cd_senha = pSenha;
     END IF;
 END$$
 
