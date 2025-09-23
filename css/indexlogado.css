@@ -218,15 +218,17 @@
 .calendario-lado-direito {
     width: 225px;
     background-color: white;
-    border-radius: 15px 15px 15px 15px;
+    border-radius: 30px 30px 15px 15px;
     margin-top: 80px;
     display: flex;
     align-self: center;
     flex-direction: column;
-    padding-bottom: 15px;
+    padding-bottom: 5px;
 }
 
+
 .header-calendario-lado-direito {
+    border-radius: 15px 15px 0px 0px;
     display: flex;
     justify-content: space-around;
     padding-top: 10px;
@@ -250,20 +252,66 @@
     font-size: 12px;
     font-weight: 500;
     color: black;
+    text-align: center;
+    flex: 1;
+}
+
+/* Cores dinâmicas dependendo do dia da semana */
+.dia-semana.seg {
+    color: #000; /* Azul para segunda */
+}
+
+.dia-semana.ter {
+    color: #000; /* Preto padrão */
+}
+
+.dia-semana.qua {
+    color: #000;
+}
+
+.dia-semana.qui {
+    color: #000;
+}
+
+.dia-semana.sex {
+    color: #000;
+}
+
+.dia-semana.sab {
+    color: #000;
+}
+
+.dia-semana.dom {
+    color: #DD2B2B; /* Vermelho para domingo */
+}
+
+/* Destaque para o dia atual (adicionado via JS) */
+.dia-semana.atual {
+    color: #0479F9 !important; /* Azul claro para destaque no dia atual */
 }
 
 .dias-calendario-lado-direito {
     display: grid;
-    grid-template-columns: 15px repeat(6, 1fr);
+    grid-template-columns: repeat(7, 1fr);
     gap: 5px;
-    padding-bottom: 5px;
-    margin-left: 13px;
+    padding: 0 5px 5px 5px;
 }
 
 .dias-calendario-lado-direito > p {
     font-size: 12px;
     font-weight: 500;
     color: black;
+    text-align: center;
+    padding: 2px;
+}
+
+.dias-calendario-lado-direito > p.calendar-day {
+    cursor: pointer;
+}
+
+.dias-calendario-lado-direito > p.calendar-day:hover {
+    background-color: #e0e0e0;
+    border-radius: 10px;
 }
 
 .resumo-geral-lado-direito {
