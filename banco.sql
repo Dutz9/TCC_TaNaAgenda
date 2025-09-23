@@ -46,7 +46,7 @@ CREATE TABLE turmas (
 
 DROP TABLE IF EXISTS eventos;
 CREATE TABLE eventos (
-    cd_evento VARCHAR(10) NOT NULL,
+    cd_evento VARCHAR(25) NOT NULL,
     dt_evento DATE NOT NULL,
     nm_evento VARCHAR(45) NOT NULL,
     horario_inicio VARCHAR(10) NOT NULL,
@@ -74,7 +74,7 @@ CREATE TABLE usuarios_has_turmas (
 
 DROP TABLE IF EXISTS eventos_has_turmas;
 CREATE TABLE eventos_has_turmas (
-    eventos_cd_evento VARCHAR(10) NOT NULL,
+    eventos_cd_evento VARCHAR(25) NOT NULL,
     turmas_cd_turma INT NOT NULL,
     PRIMARY KEY (eventos_cd_evento, turmas_cd_turma),
     FOREIGN KEY (eventos_cd_evento) REFERENCES eventos(cd_evento),
@@ -84,7 +84,7 @@ CREATE TABLE eventos_has_turmas (
 
 DROP TABLE IF EXISTS resolucao_eventos_usuarios;
 CREATE TABLE resolucao_eventos_usuarios (
-    eventos_cd_evento VARCHAR(10) NOT NULL,
+    eventos_cd_evento VARCHAR(25) NOT NULL,
     usuarios_cd_usuario VARCHAR(10) NOT NULL,
     status_resolucao ENUM('Aprovado', 'Recusado') NOT NULL DEFAULT 'Aprovado',
     PRIMARY KEY (eventos_cd_evento, usuarios_cd_usuario),
@@ -209,8 +209,15 @@ SELECT * FROM eventos;
 
 
 INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES 
-('1001', 1), ('1001', 2), 
-('0001', 3);
+('1001', 1), 
+('1001', 2), 
+('0001', 3),
+('0001', 4), -- Maristela na turma 1N1
+('1011', 1), -- Lucas Pereira na turma 1K2
+('1011', 2), -- Lucas Pereira na turma 2K2
+('1012', 4), -- Mariana Costa na turma 1N1
+('1012', 5), -- Mariana Costa na turma 2N1
+('1013', 16); -- Rafael Souza na turma 1I1
 SELECT * FROM usuarios_has_turmas;
 
 INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES 

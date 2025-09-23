@@ -1,12 +1,72 @@
 <?php 
 
-// 1. Gire a chave: Carrega o autoloader para que o PHP encontre as classes.
-require_once '../config_local.php'; 
-
-// 2. Chame o guardião: Ele verifica a sessão E cria a variável $usuario_logado para nós.
+require_once '../api/config.php'; 
 require_once '../api/verifica_sessao.php'; 
 
+// --- CARREGAMENTO DE DADOS PARA O FORMULÁRIO ---
+$turmaController = new TurmaController();
+$lista_turmas = $turmaController->listar();
+
+// Busca a relação de professores e turmas
+$usuarioController = new UsuarioController();
+$relacao_prof_turma_raw = $usuarioController->listarRelacaoProfessorTurma();
+
+// Organiza a relação em um formato fácil para o JavaScript usar
+// Ex: [ 'id_da_turma' => [ {id: prof_id, nome: 'Nome Prof'} ], ... ]
+$relacao_turma_prof = [];
+foreach ($relacao_prof_turma_raw as $rel) {
+    $turma_id = $rel['turmas_cd_turma'];
+    if (!isset($relacao_turma_prof[$turma_id])) {
+        $relacao_turma_prof[$turma_id] = [];
+    }
+    $relacao_turma_prof[$turma_id][] = [
+        'id' => $rel['cd_usuario'],
+        'nome' => $rel['nm_usuario']
+    ];
+}
+
+// --- PROCESSAMENTO DO FORMULÁRIO (se for enviado) ---
+$mensagem = '';
+$tipo_mensagem = '';
+// --- PROCESSAMENTO DO FORMULÁRIO (se for enviado) ---
+$mensagem = '';
+$tipo_mensagem = '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    try {
+        // Instancia o controller aqui no início do bloco
+        $eventoController = new EventoController();
+
+        // Monta o array de dados PEGANDO as informações do formulário via $_POST
+        $dadosEvento = [
+            'cd_evento' => uniqid('EVT_'),
+            'nm_evento' => $_POST['titulo'],
+            'dt_evento' => $_POST['data'], // <--- Agora estamos pegando a data
+            'horario_inicio' => $_POST['horario_inicio'],
+            'horario_fim' => $_POST['horario_fim'],
+            'tipo_evento' => $_POST['tipo'],
+            'ds_descricao' => $_POST['descricao'],
+            'turmas' => $_POST['turmas'] ?? [], // Usa ?? [] para o caso de nenhuma turma ser selecionada
+            'cd_usuario_solicitante' => $usuario_logado['cd_usuario']
+        ];
+        
+        // Agora sim, chama o método para criar o evento com os dados corretos
+        $eventoController->criar($dadosEvento);
+
+        $mensagem = "Evento solicitado com sucesso!";
+        $tipo_mensagem = 'sucesso';
+
+    } catch (Exception $e) {
+        $mensagem = "Erro ao criar evento: " . $e->getMessage();
+        $tipo_mensagem = 'erro';
+    }
+}
+
 ?>
+
+    <script>
+        // Ponte de dados: passa a relação Turma->Professor para o JavaScript
+        const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
+    </script>
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -22,6 +82,8 @@ require_once '../api/verifica_sessao.php';
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js" defer></script> 
 </head>
 <body>
 
@@ -52,99 +114,88 @@ require_once '../api/verifica_sessao.php';
             </div>
         </section>
 
-        <section class="formulario-evento" >
-            <h2 >Criar Evento</h2>
-            <div class="linha-form">
-                <div  class="campo">
-                    <label  for="titulo">Título do Evento</label>
-                    <input  type="text" id="titulo" name="titulo" placeholder="Título">
+        <section class="formulario-evento">
+            <form action="criarevento.php" method="POST">
+                <h2>Criar Evento</h2>
+
+                <?php if (!empty($mensagem)): ?>
+                    <div class="mensagem <?php echo $tipo_mensagem; ?>"><?php echo $mensagem; ?></div>
+                <?php endif; ?>
+
+                <div class="linha-form">
+                    <div class="campo">
+                        <label for="titulo">Título do Evento</label>
+                        <input type="text" id="titulo" name="titulo" placeholder="Título" required>
+                    </div>
+                    <div class="campo">
+                        <label for="selecao-turmas">Turmas Envolvidas</label>
+                        <select id="selecao-turmas" name="turmas[]" multiple="multiple" required>
+                            <?php foreach ($lista_turmas as $turma): ?>
+                                <option value="<?php echo $turma['cd_turma']; ?>">
+                                    <?php echo htmlspecialchars($turma['nm_turma']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
                 </div>
-    
-                <div class="campo">
-                    <label  placeholder="3I,2I,1I" for="turmas"> Turmas Envolvidas</label >
-                    <select  id="turmas" name="turmas">
-                        <option>1I</option>
-                        <option>2I</option>
-                        <option>3I</option>
-    
-                        <option>1P</option>
-                        <option>2P</option>
-                        <option>3P</option>
-    
-                        <option>1R</option>
-                        <option>2R</option>
-                        <option>3R</option>
-    
-                        <option>1N</option>
-                        <option>2N</option>
-                        <option>3N</option>
-    
-                        <option>1G</option>
-                        <option>2G</option>
-                        <option>3G</option>
-    
-                        <option>1K</option>
-                        <option>2K</option>
-                        <option>3K</option>
-    
-                        
-                    </select>
+                <div class="linha-form">
+                    <div class="campo">
+                        <label for="horario_inicio">Hora de Início</label>
+                        <select id="horario_inicio" name="horario_inicio" required>
+                            <option>07:10</option>
+                            <option>08:00</option>
+                            <option>08:50</option>
+                            <option>10:00</option>
+                            <option>10:50</option>
+                            <option>11:40</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="horario_fim">Hora de Fim</label>
+                        <select id="horario_fim" name="horario_fim" required>
+                            <option>08:00</option>
+                            <option>08:50</option>
+                            <option>09:40</option>
+                            <option>10:50</option>
+                            <option>11:40</option>
+                            <option>12:30</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            <div class="linha-form">
-                <div class="campo">
-                    <label for="horario">Hora de Início</label>
-                    <select id="horario" name="horario">
-                        <option>07:10</option>
-                        <option>08:00</option>
-                         <option>08:50</option>
-                          <option>10:00</option>
-                          <option>10:50</option>
-                          <option>11:40</option>
-                    </select>
+                <div class="linha-form">
+                    <div class="campo">
+                        <label for="data">Data do Evento</label>
+                        <input type="date" id="data" name="data" required>
+                    </div>
+                    <div class="campo">
+                        <label>Professores a Notificar (automático)</label>
+                        <div id="display-professores" class="display-box">
+                            <p>Selecione uma ou mais turmas...</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="campo">
-                    <label for="horario">Hora de  Fim</label>
-                    <select id="horario" name="horario">
-                        <option>08:00</option>
-                        <option>08:50 </option>
-                         <option>9:40 </option>
-                          <option>10:50</option>
-                          <option>11:40</option>
-                          <option>12:30</option>
-                    </select>
+                <div class="linha-form">
+                    <div class="campo">
+                        <label for="tipo">Tipo do Evento</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="Palestra">Palestra</option>
+                            <option value="Visita tecnica">Visita Técnica</option>
+                            <option value="Reuniao">Reunião</option>
+                        </select>
+                    </div>
+                    <div class="campo">
+                        <label for="descricao">Descrição</label>
+                        <input type="text" id="descricao" name="descricao" placeholder="Descrição do evento" required>
+                    </div>
                 </div>
-            </div>
-               
-            <div class="linha-form">
-                <div class="campo">
-                    <label for="data">Data do Evento</label>
-                    <input type="text" id="data" name="data" value="26/02/2025">
-                </div>
-                 <div class="campo">
-                    <label for="professores">Professores a Notificar</label>
-                    <select id="professores" name="professores">
-                        <option>Seleção de professores</option>
-                    </select>
-                </div>
-            </div>
-            <div class="linha-form">
-                <div class="campo">
-                    <label for="tipo">Tipo do Evento</label>
-                    <select id="tipo" name="tipo">
-                        <option>Palestra</option>
-                    </select>
-                </div> 
-                  <div class="campo">
-                    <label for="descricao">Descrição</label>
-                    <input type="text" id="descricao" name="descricao" placeholder="Descrição do evento">
-                </div>
-            </div>   
                 <div class="botoes">
-                    <a href="meuseventos.php"><button type="button" class="botao-cancelar">Cancelar</button></a>
-                    <a href="meuseventos.php"><button type="submit" class="botao-enviar">Enviar Solicitação</button></a>
+                    <a href="meuseventos.php" class="botao-cancelar">Cancelar</a>
+                    <button type="submit" class="botao-enviar">Enviar Solicitação</button>
                 </div>
-            </div>
+            </form>
         </section>
+
+        <script src="../js/criarevento.js" defer></script>
+
 </body>
 </html>

@@ -1,63 +1,57 @@
 .formulario-evento {
-    margin: 0 auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    margin-left: 250px;
-    margin-top: 20px;
+    margin-left: 270px; /* Ajuste para não colar na sidebar */
+    padding: 40px;
+    width: calc(100% - 270px);
     height: calc(100vh - 80px);
-    justify-items: center;
     background-color: white;
 }
 
 .formulario-evento h2 {
-    display: flex;
-    justify-content: center;
     text-align: center;
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 40px;
-    color: #000000;
+    color: #000;
 }
 
 .linha-form {
     display: flex;
     justify-content: space-between;
+    gap: 20px; /* Adiciona um espaço entre as colunas */
     margin-bottom: 20px;
     width: 80%;
+    margin-left: auto; /* Centraliza o conjunto */
+    margin-right: auto;
 }
 
 .campo {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    width: 48%;
+    width: 48%; /* Cada campo ocupa quase metade da linha */
 }
 
 .campo label {
-    width: 100%;
-    text-align: left;
     font-size: 16px;
     color: #555;
     font-weight: bold;
-    margin-bottom: 5px; 
+    margin-bottom: 8px; 
 }
 
 .campo input,
-.campo select {
-    flex: 1;
+.campo select,
+.campo textarea {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
     background-color: #f9f9f9;
     width: 100%; 
+    box-sizing: border-box; /* Garante que o padding não aumente a largura */
 }
 
-.campo select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 10px center;
+/* Ajuste específico para o select multiple de turmas */
+.campo select[multiple] {
+    height: 100px; /* Aumenta a altura para mostrar mais opções */
 }
 
 .botoes {
@@ -65,6 +59,9 @@
     justify-content: flex-end;
     gap: 10px;
     width: 80%;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .botao-cancelar,
@@ -74,26 +71,58 @@
     border-radius: 4px;
     font-size: 14px;
     cursor: pointer;
-     height: 100%;
-     
+    font-weight: bold;
 }
 
 .botao-cancelar {
-    background-color: #fff;
+    background-color: #f0f0f0;
     color: #333;
     border: 1px solid #ccc;
 }
 
 .botao-enviar {
-   
     background-color: #007bff;
     color: white;
 }
 
-.botao-cancelar:hover {
-    background-color: #f0f0f0;
+/* Efeitos hover */
+.botao-cancelar:hover { 
+    background-color: #e0e0e0; 
 }
 
-.botao-enviar:hover {
-    background-color: #1a91d3;
+.botao-enviar:hover { 
+    background-color: #0056b3; 
+}
+
+/* Classes para mensagens de feedback */
+.mensagem {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    color: #fff;
+    text-align: center;
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.sucesso { 
+    background-color: #28a745; 
+}
+
+.erro { 
+    background-color: #dc3545; 
+}
+
+.display-box {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    width: 100%;
+    min-height: 100px; /* Mesma altura do select de turmas */
+    box-sizing: border-box;
+}
+.display-box p {
+    font-size: 14px;
+    color: #555;
 }

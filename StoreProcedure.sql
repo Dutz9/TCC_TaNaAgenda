@@ -118,6 +118,7 @@ BEGIN
 END$$
 
 -- Procedure para criar evento (nova: salva com status 'Solicitado')
+-- Procedure para criar evento (VERSÃO CORRIGIDA SEM CARACTERES INVÁLIDOS)
 DROP PROCEDURE IF EXISTS criarEvento$$
 CREATE PROCEDURE criarEvento(
     IN pCdEvento VARCHAR(45),
@@ -137,7 +138,7 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Código de evento já existe';
     ELSE
         INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao)
-        VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Solicitado', pCdUsuarioSolicitante, CURRENT_DATE());
+        VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Solicitado', pCdUsuarioSolicitante, CURDATE());
     END IF;
 END$$
 
@@ -226,6 +227,102 @@ BEGIN
         status = 'Aprovado'
     ORDER BY 
         dt_evento, horario_inicio;
+END$$
+
+CREATE PROCEDURE `listarTurmas`()
+BEGIN
+    SELECT cd_turma, nm_turma FROM turmas ORDER BY nm_turma;
+END$$
+
+CREATE PROCEDURE `criarEventoAprovado`(
+    IN pCdEvento VARCHAR(45),
+    IN pDtEvento DATE,
+    IN pNmEvento VARCHAR(45),
+    IN pHorarioInicio VARCHAR(45),
+    IN pHorarioFim VARCHAR(45),
+    IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao'),
+    IN pDsDescricao VARCHAR(200),
+    IN pCdUsuarioSolicitante VARCHAR(45)
+)
+BEGIN
+    -- A única diferença é que o status é 'Aprovado' diretamente.
+    INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao)
+    VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Aprovado', pCdUsuarioSolicitante, CURDATE());
+END$$
+
+DROP PROCEDURE IF EXISTS `listarEventosParaProfessor`$$
+
+CREATE PROCEDURE `listarEventosParaProfessor`(IN pCdUsuario VARCHAR(25))
+BEGIN
+    -- Parte 1: Eventos criados pelo próprio professor
+    SELECT
+        e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
+        e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
+        solicitante.nm_usuario AS nm_solicitante,
+        GROUP_CONCAT(DISTINCT t.nm_turma SEPARATOR ', ') AS turmas_envolvidas,
+        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', IFNULL(reu.status_resolucao, 'Pendente'))), ']')
+         FROM usuarios_has_turmas uht
+         JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
+         LEFT JOIN resolucao_eventos_usuarios reu ON reu.usuarios_cd_usuario = u.cd_usuario AND reu.eventos_cd_evento = e.cd_evento
+         WHERE 
+            uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
+            AND u.tipo_usuario_ic_usuario = 'Professor'
+            AND u.cd_usuario != e.cd_usuario_solicitante
+        ) AS respostas_professores,
+        CAST(NULL AS CHAR(10)) AS minha_resposta
+    FROM eventos e
+    JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
+    LEFT JOIN eventos_has_turmas eht ON e.cd_evento = eht.eventos_cd_evento
+    LEFT JOIN turmas t ON eht.turmas_cd_turma = t.cd_turma
+    WHERE e.cd_usuario_solicitante = pCdUsuario
+    GROUP BY e.cd_evento
+
+    UNION
+
+    -- Parte 2: Eventos criados por outros, nos quais o professor está envolvido
+    SELECT
+        e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
+        e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
+        solicitante.nm_usuario AS nm_solicitante,
+        GROUP_CONCAT(DISTINCT t.nm_turma SEPARATOR ', ') AS turmas_envolvidas,
+        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', IFNULL(reu.status_resolucao, 'Pendente'))), ']')
+         FROM usuarios_has_turmas uht
+         JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
+         LEFT JOIN resolucao_eventos_usuarios reu ON reu.usuarios_cd_usuario = u.cd_usuario AND reu.eventos_cd_evento = e.cd_evento
+         WHERE 
+            uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
+            AND u.tipo_usuario_ic_usuario = 'Professor'
+            AND u.cd_usuario != e.cd_usuario_solicitante
+        ) AS respostas_professores,
+        -- AQUI ESTÁ A CORREÇÃO: Usamos MAX() para satisfazer o sql_mode
+        MAX(reu_usuario_logado.status_resolucao) AS minha_resposta
+    FROM eventos e
+    JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
+    JOIN eventos_has_turmas eht ON e.cd_evento = eht.eventos_cd_evento
+    LEFT JOIN turmas t ON eht.turmas_cd_turma = t.cd_turma
+    LEFT JOIN resolucao_eventos_usuarios reu_usuario_logado ON reu_usuario_logado.eventos_cd_evento = e.cd_evento AND reu_usuario_logado.usuarios_cd_usuario = pCdUsuario
+    WHERE 
+        e.cd_usuario_solicitante != pCdUsuario
+        AND eht.turmas_cd_turma IN (
+            SELECT turmas_cd_turma FROM usuarios_has_turmas WHERE usuarios_cd_usuario = pCdUsuario
+        )
+    GROUP BY e.cd_evento
+    ORDER BY dt_solicitacao DESC;
+
+END$$
+
+CREATE PROCEDURE `listarRelacaoProfessorTurma`()
+BEGIN
+    SELECT 
+        uht.turmas_cd_turma,
+        u.cd_usuario,
+        u.nm_usuario
+    FROM 
+        usuarios_has_turmas uht
+    JOIN 
+        usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
+    WHERE 
+        u.tipo_usuario_ic_usuario = 'Professor';
 END$$
 
 DELIMITER ;

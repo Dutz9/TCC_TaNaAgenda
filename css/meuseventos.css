@@ -634,3 +634,53 @@ font-size: medium;
 .recusar-confirm:hover {
     background-color: #cc0000;
 }
+
+.status-aprovado { 
+    color: #1DB81D; 
+    font-weight: bold; 
+}
+
+.status-recusado { 
+    color: #FF0000; 
+    font-weight: bold; 
+}
+
+.status-solicitado { 
+    color: #0479F9; 
+    font-weight: bold; 
+}
+
+.botoes-acao { 
+    display: flex; 
+    gap: 10px; 
+    margin-top: 10px; 
+}
+
+.botoes-acao button { 
+    flex: 1; 
+    padding: 5px; 
+    border: none; 
+    border-radius: 5px; 
+    color: white; 
+    cursor: pointer; 
+}
+
+.btn-aprovar { 
+    background-color: #1DB81D; }
+
+.btn-recusar { 
+    background-color: #FF0000; }
+
+.sem-eventos { 
+    grid-column: 1 / -1; 
+    text-align: center; 
+    font-size: 18px; 
+    color: #888; 
+    margin-top: 20px; 
+}
+
+/* Garante que o botão de detalhes se ajuste bem quando estiver junto com os outros */
+.botoes-acao .detalhes-btn {
+    width: 100%;
+    background-color: #007bff;
+}

@@ -62,5 +62,9 @@ class UsuarioController extends Banco {
         }
     }
 
+    public function listarRelacaoProfessorTurma() {
+        return $this->Consultar('listarRelacaoProfessorTurma');
+    }
+
 }
 ?>
