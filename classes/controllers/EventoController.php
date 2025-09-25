@@ -97,6 +97,48 @@ class EventoController extends Banco {
         }
     }
 
+    // Adicione esta nova função dentro da classe EventoController
+    public function listarParaCoordenador() {
+        try {
+            return $this->Consultar('listarEventosParaCoordenador');
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    // Adicione estas duas funções na classe EventoController
+    public function aprovarDefinitivo($cdEvento) {
+        try {
+            $this->Executar('aprovarEventoDefinitivo', ['pCdEvento' => $cdEvento]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function recusarDefinitivo($cdEvento) {
+        try {
+            $this->Executar('recusarEventoDefinitivo', ['pCdEvento' => $cdEvento]);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    // Adicione esta nova função na classe EventoController
+    public function darDecisaoFinal($cdEvento, $decisao) {
+        try {
+            if ($decisao === 'Aprovado') {
+                $this->Executar('aprovarEventoDefinitivo', ['pCdEvento' => $cdEvento]);
+            } elseif ($decisao === 'Recusado') {
+                $this->Executar('recusarEventoDefinitivo', ['pCdEvento' => $cdEvento]);
+            } else {
+                // Lança um erro se a decisão for inválida
+                throw new Exception("Decisão inválida.");
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
 }
 
 ?>

@@ -329,4 +329,58 @@ BEGIN
         u.tipo_usuario_ic_usuario = 'Professor';
 END$$
 
+CREATE PROCEDURE `listarEventosParaCoordenador`()
+BEGIN
+    SELECT
+        e.cd_evento,
+        e.nm_evento,
+        e.dt_evento,
+        e.horario_inicio,
+        e.horario_fim,
+        e.ds_descricao,
+        e.status,
+        e.cd_usuario_solicitante,
+        e.dt_solicitacao,
+        solicitante.nm_usuario AS nm_solicitante,
+        solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
+        
+        -- Pega a lista completa de turmas do evento
+        (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') 
+         FROM eventos_has_turmas eht_inner
+         JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
+         WHERE eht_inner.eventos_cd_evento = e.cd_evento
+        ) AS turmas_envolvidas,
+        
+        -- Busca as respostas dos professores, se houver
+        (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', IFNULL(reu.status_resolucao, 'Pendente'))), ']')
+         FROM usuarios_has_turmas uht
+         JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
+         LEFT JOIN resolucao_eventos_usuarios reu ON reu.usuarios_cd_usuario = u.cd_usuario AND reu.eventos_cd_evento = e.cd_evento
+         WHERE 
+            uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
+            AND u.tipo_usuario_ic_usuario = 'Professor'
+            AND u.cd_usuario != e.cd_usuario_solicitante
+        ) AS respostas_professores
+        
+    FROM eventos e
+    JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
+    -- A condição principal: mostra todos os eventos solicitados por professores
+    WHERE e.status = 'Solicitado' AND solicitante.tipo_usuario_ic_usuario = 'Professor'
+    GROUP BY e.cd_evento
+    ORDER BY dt_solicitacao ASC;
+
+END$$
+
+-- Procedure para o coordenador APROVAR um evento
+CREATE PROCEDURE `aprovarEventoDefinitivo`(IN pCdEvento VARCHAR(25))
+BEGIN
+    UPDATE eventos SET status = 'Aprovado' WHERE cd_evento = pCdEvento;
+END$$
+
+-- Procedure para o coordenador RECUSAR um evento
+CREATE PROCEDURE `recusarEventoDefinitivo`(IN pCdEvento VARCHAR(25))
+BEGIN
+    UPDATE eventos SET status = 'Recusado' WHERE cd_evento = pCdEvento;
+END$$
+
 DELIMITER ;
