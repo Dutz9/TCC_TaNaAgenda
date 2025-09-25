@@ -77,14 +77,36 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- 4. FUNÇÃO PARA ABRIR O MODAL DE DETALHES ---
     function abrirModalDetalhes(evento) {
         let respostas = [];
-        try {
-            respostas = JSON.parse(evento.respostas_professores) || [];
-        } catch (e) {
-            console.warn("Não foi possível analisar as respostas dos professores para o evento:", evento.cd_evento);
+        if (evento.respostas_professores) {
+            try {
+                respostas = JSON.parse(evento.respostas_professores) || [];
+            } catch (e) {
+                console.warn("Não foi possível analisar as respostas para o evento:", evento.cd_evento);
+            }
         }
 
         let respostasHtml = '';
-        if (respostas.length > 0) {
+        let tituloRespostas = 'Respostas'; // Título padrão
+
+        // Se o evento foi criado por um Coordenador
+        if (evento.tipo_solicitante === 'Coordenador') {
+            tituloRespostas = 'Professores Envolvidos'; // Muda o título
+            if (respostas.length > 0) {
+                respostas.forEach(resposta => {
+                    // Monta o HTML SEM status de aprovação
+                    respostasHtml += `
+                        <div class="response-item">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                            <div><p>${resposta.nome}</p></div>
+                        </div>
+                    `;
+                });
+            } else {
+                respostasHtml = '<p>Nenhum professor diretamente envolvido nas turmas.</p>';
+            }
+        } 
+        // Se o evento foi criado por um Professor
+        else if (respostas.length > 0) {
             respostas.forEach(resposta => {
                 let statusClass = 'sem-resposta';
                 if (resposta.status === 'Aprovado') statusClass = 'aprovado';
@@ -103,21 +125,23 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             respostasHtml = '<p>Nenhum outro professor envolvido.</p>';
         }
-
+        
+        // Preenche a parte esquerda do modal
         modalLeft.innerHTML = `
             <div class="coordinator-info">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
                 <div>
                     <h3>${evento.nm_solicitante}</h3>
-                    <p>Solicitante</p>
+                    <p>${evento.tipo_solicitante}</p>
                 </div>
             </div>
             <div class="responses-section">
-                <h4>Respostas</h4>
+                <h4>${tituloRespostas}</h4>
                 ${respostasHtml}
             </div>
         `;
 
+        // Preenche a parte direita do modal
         modalRight.innerHTML = `
             <h3>Detalhes do Evento</h3>
             <div class="form-group"><label>Título do Evento:</label><input type="text" readonly value="${evento.nm_evento}"></div>

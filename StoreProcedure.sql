@@ -251,60 +251,64 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS `listarEventosParaProfessor`$$
-
 CREATE PROCEDURE `listarEventosParaProfessor`(IN pCdUsuario VARCHAR(25))
 BEGIN
-    -- Parte 1: Eventos criados pelo próprio professor
+    -- Unificamos as duas consultas em uma só para simplificar e corrigir o bug
     SELECT
-        e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
-        e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
+        e.cd_evento,
+        e.nm_evento,
+        e.dt_evento,
+        e.horario_inicio,
+        e.horario_fim,
+        e.ds_descricao,
+        e.status,
+        e.cd_usuario_solicitante,
+        e.dt_solicitacao,
         solicitante.nm_usuario AS nm_solicitante,
-        GROUP_CONCAT(DISTINCT t.nm_turma SEPARATOR ', ') AS turmas_envolvidas,
-        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', IFNULL(reu.status_resolucao, 'Pendente'))), ']')
-         FROM usuarios_has_turmas uht
-         JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
-         LEFT JOIN resolucao_eventos_usuarios reu ON reu.usuarios_cd_usuario = u.cd_usuario AND reu.eventos_cd_evento = e.cd_evento
-         WHERE 
-            uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
-            AND u.tipo_usuario_ic_usuario = 'Professor'
-            AND u.cd_usuario != e.cd_usuario_solicitante
-        ) AS respostas_professores,
-        CAST(NULL AS CHAR(10)) AS minha_resposta
-    FROM eventos e
-    JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
-    LEFT JOIN eventos_has_turmas eht ON e.cd_evento = eht.eventos_cd_evento
-    LEFT JOIN turmas t ON eht.turmas_cd_turma = t.cd_turma
-    WHERE e.cd_usuario_solicitante = pCdUsuario
-    GROUP BY e.cd_evento
-
-    UNION
-
-    -- Parte 2: Eventos criados por outros, nos quais o professor está envolvido
-    SELECT
-        e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
-        e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
-        solicitante.nm_usuario AS nm_solicitante,
-        GROUP_CONCAT(DISTINCT t.nm_turma SEPARATOR ', ') AS turmas_envolvidas,
-        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', IFNULL(reu.status_resolucao, 'Pendente'))), ']')
-         FROM usuarios_has_turmas uht
-         JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
-         LEFT JOIN resolucao_eventos_usuarios reu ON reu.usuarios_cd_usuario = u.cd_usuario AND reu.eventos_cd_evento = e.cd_evento
-         WHERE 
-            uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
-            AND u.tipo_usuario_ic_usuario = 'Professor'
-            AND u.cd_usuario != e.cd_usuario_solicitante
-        ) AS respostas_professores,
-        -- AQUI ESTÁ A CORREÇÃO: Usamos MAX() para satisfazer o sql_mode
+        solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
+        
+        -- Pega a lista COMPLETA de turmas do evento
+        (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') 
+         FROM eventos_has_turmas eht_inner
+         JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
+         WHERE eht_inner.eventos_cd_evento = e.cd_evento
+        ) AS turmas_envolvidas,
+        
+        -- Lógica condicional para as respostas
+        CASE 
+            WHEN solicitante.tipo_usuario_ic_usuario = 'Professor' THEN
+                (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', IFNULL(reu.status_resolucao, 'Pendente'))), ']')
+                 FROM usuarios_has_turmas uht
+                 JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
+                 LEFT JOIN resolucao_eventos_usuarios reu ON reu.usuarios_cd_usuario = u.cd_usuario AND reu.eventos_cd_evento = e.cd_evento
+                 WHERE uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
+                   AND u.tipo_usuario_ic_usuario = 'Professor'
+                   AND u.cd_usuario != e.cd_usuario_solicitante)
+            ELSE -- Se o criador for Coordenador, apenas lista os professores envolvidos, sem status
+                (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario)), ']')
+                 FROM usuarios_has_turmas uht
+                 JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
+                 WHERE uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
+                   AND u.tipo_usuario_ic_usuario = 'Professor')
+        END AS respostas_professores,
+        
         MAX(reu_usuario_logado.status_resolucao) AS minha_resposta
+        
     FROM eventos e
     JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
-    JOIN eventos_has_turmas eht ON e.cd_evento = eht.eventos_cd_evento
-    LEFT JOIN turmas t ON eht.turmas_cd_turma = t.cd_turma
     LEFT JOIN resolucao_eventos_usuarios reu_usuario_logado ON reu_usuario_logado.eventos_cd_evento = e.cd_evento AND reu_usuario_logado.usuarios_cd_usuario = pCdUsuario
     WHERE 
-        e.cd_usuario_solicitante != pCdUsuario
-        AND eht.turmas_cd_turma IN (
-            SELECT turmas_cd_turma FROM usuarios_has_turmas WHERE usuarios_cd_usuario = pCdUsuario
+        -- Condição: O evento é relevante para mim (ou eu criei, ou estou envolvido)
+        e.cd_usuario_solicitante = pCdUsuario 
+        OR 
+        -- A 'mágica' está aqui: usamos EXISTS para verificar o envolvimento sem filtrar as turmas
+        EXISTS (
+            SELECT 1
+            FROM eventos_has_turmas eht_check
+            WHERE eht_check.eventos_cd_evento = e.cd_evento
+              AND eht_check.turmas_cd_turma IN (
+                  SELECT turmas_cd_turma FROM usuarios_has_turmas WHERE usuarios_cd_usuario = pCdUsuario
+              )
         )
     GROUP BY e.cd_evento
     ORDER BY dt_solicitacao DESC;
