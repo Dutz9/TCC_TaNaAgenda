@@ -38,7 +38,7 @@ $lista_eventos_pendentes = $eventoController->listarParaCoordenador();
 
     <main>
         <section class="area-lado">
-            <a href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
+            <a class="area-lado-logo" href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu">
                 <div class="menu-agenda"><img src="../image/icones/agenda.png" alt=""><a href="agendacoord.php"><p>Agenda</p></a></div>
                 <div class="menu-meus-eventos ativo"><img src="../image/icones/eventos.png" alt=""><a href="eventoscoord.php"><p>Eventos</p></a></div>

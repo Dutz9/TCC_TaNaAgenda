@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <main>
         <section class="area-lado">
-            <a href="agendaprof.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
+            <a class="area-lado-logo" href="agendaprof.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu">         
                 <div class="menu-agenda">
                 <img src="../image/icones/agenda.png" alt="">

@@ -35,7 +35,7 @@ $lista_eventos = $eventoController->listarParaProfessor($cd_usuario_logado);
 
     <main>
         <section class="area-lado">
-            <a href="agendaprof.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
+            <a class="area-lado-logo" href="agendaprof.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu"> 
                 <div class="menu-agenda"><img src="../image/icones/agenda.png" alt=""><a href="agendaprof.php"><p>Agenda</p></a></div>
                 <div class="menu-meus-eventos ativo"><img src="../image/icones/eventos.png" alt=""><a href="meuseventos.php"><p>Eventos</p></a></div>
