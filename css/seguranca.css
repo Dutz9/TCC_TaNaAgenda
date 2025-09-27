@@ -1,7 +1,7 @@
 .seguranca{
     width: 293px;
     height: 45px;
-    border: 1px solid #0479F9;
+    border: 2px solid #0479F9;
     border-radius: 10px;
     margin-left: 10px;
     margin-right: 10px;
@@ -13,7 +13,7 @@
 .informacoes{
     width: 293px;
     height: 45px;
-    border: 1px solid #dbdbdb; 
+    border: 2px solid #dbdbdb; 
     border-radius: 10px;
     margin-left: 10px;
     margin-right: 10px;

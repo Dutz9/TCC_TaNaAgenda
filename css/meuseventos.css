@@ -144,11 +144,11 @@ font-size: medium;
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 120px;
 }
  
 .criar-btn svg {
-    max-height: 90px;
-    margin-left: 10px;
+    max-height: 80px;
 }
 
 .notificacao button:hover {
@@ -672,11 +672,11 @@ font-size: medium;
     background-color: #FF0000; }
 
 .sem-eventos { 
-    grid-column: 1 / -1; 
-    text-align: center; 
+    text-align: initial; 
     font-size: 18px; 
     color: #888; 
-    margin-top: 20px; 
+    margin-top: 0px;
+    margin-left: 10px;
 }
 
 /* Garante que o botão de detalhes se ajuste bem quando estiver junto com os outros */

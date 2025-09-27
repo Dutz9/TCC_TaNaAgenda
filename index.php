@@ -65,7 +65,7 @@ foreach ($lista_eventos as $evento) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda - TáNaAgenda</title>
-    <link rel="shortcut icon" href="image/Favicon.png" type="image/x-icon">
+    <link id="favicon" rel="shortcut icon" href="image/Favicon-light.png">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/index.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,6 +73,7 @@ foreach ($lista_eventos as $evento) {
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <script src="js/favicon.js"></script>
     <header class="header">
         <a href="login.php"><p>Login</p></a>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
@@ -157,7 +158,7 @@ foreach ($lista_eventos as $evento) {
                 <h3>2025</h3>
             </div>
             <div class="dias-da-semana-calendario-lado-direito">
-                <p class="dia-semana seg">Seg</p>
+                <p class="dia-semana seg" style="color: #022E5E">Seg</p>
                 <p class="dia-semana ter">Ter</p>
                 <p class="dia-semana qua">Qua</p>
                 <p class="dia-semana qui">Qui</p>
@@ -172,46 +173,10 @@ foreach ($lista_eventos as $evento) {
 
         <section class="resumo-geral-lado-direito">
             <h3>Resumo geral de hoje:</h3>
-            <div class="area-escrita-resumo-geral">
-                <p>Palestra</p>
-                <p>7:10</p>
-            </div>
-            <div class="area-escrita-resumo-geral" style="border: 2px solid #34CF34;">
-                <p>Visita Técnica</p>
-                <p>7:10</p>
-            </div>
-            <div class="area-escrita-resumo-geral">
-                <p>Palestra</p>
-                <p>8:50</p>
-            </div>
-            <div class="area-escrita-resumo-geral" style="border: 2px solid #34CF34;">
-                <p>Visita Técnica</p>
-                <p>10:00</p>
-            </div>
         </section>
 
         <section class="resumo-geral-lado-direito">
             <h3>Resumo geral de amanhã:</h3>
-            <div class="area-escrita-resumo-geral">
-                <p>Palestra</p>
-                <p>7:10</p>
-            </div>
-            <div class="area-escrita-resumo-geral" style="border: 2px solid #34CF34;">
-                <p>Visita Técnica</p>
-                <p>7:10</p>
-            </div>
-            <div class="area-escrita-resumo-geral" style="border: 2px solid #F9C833;">
-                <p>Oficina</p>
-                <p>8:50</p>
-            </div>
-            <div class="area-escrita-resumo-geral" style="border: 2px solid #F9C833;">
-                <p>Oficina</p>
-                <p>10:00</p>
-            </div>
-            <div class="area-escrita-resumo-geral" style="border: 2px solid #F9C833;">
-                <p>Oficina</p>
-                <p>10:50</p>
-            </div>
         </section>
     </section>
 

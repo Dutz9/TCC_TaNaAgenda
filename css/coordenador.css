@@ -103,11 +103,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    min-height: 120px;
 }
  
 .criar-btn svg {
-    max-height: 90px;
-    margin-left: 10px;
+    max-height: 80px;
 }
 
 .notificacao button:hover {
@@ -415,20 +415,6 @@
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 .confirmation-modal-responder-solicitacao {
     position: fixed;
     top: 0;
@@ -511,4 +497,12 @@
 
 .recusar-confirm:hover {
     background-color: #cc0000;
+}
+
+.sem-eventos { 
+    text-align: initial; 
+    font-size: 18px; 
+    color: #888; 
+    margin-top: 0px;
+    margin-left: 10px;
 }

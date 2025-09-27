@@ -1,103 +1,4 @@
-Olá grok, preciso de sua ajuda com meu TCC. O projeto do TCC é um calendário semanal e mensal que exibe eventos escolares, nele professores e coordenadores podem criar eventos, o coordenador cria eventos que apenas são notificados e os coordenadores também aprovam ou recusam eventos criados pelos professores depois que os outros professores aprovam ou não o evento, já os professores criam eventos em que precisam ser aprovados ou recusados pelos outros professores recusados. Os eventos criados são exibidos no calendário para todos verem. Meu TCC tem login de professor e coordenador, somente logados podem criar eventos, quem não estiver logado só pode visualizar o calendário. Até o momento boa parte das coisas estão estáticas. Analise tudo o que eu descrevi para entender melhor do meu projeto e caso precise saber de algo, me fale tudo que você precisa saber de forma detalhada e completa para que você consiga me dar a melhor resposta possível, sem erros e funcionando como deve funcionar. Sempre me fale o que você precisa saber e o que você precisa ter em mãos (como contexto, código, banco de dados, conexão com o banco, etc).
- 
-As pastas e páginas que tenho no projeto são:
-tcc{
-api{
-  -config.php
-  -usuarios.php
-}
-classes{
-  base{
-   -banco.php
-  }
-  controllers{
-   -UsuarioController.php
-  }
-  models{
-   Usuario.php
-  }
- 
-css{
-  -addprofessor.css
-  -addturma.css
-  -calendario.css
-  -coordenador.css
-  -criarevento.css
-  -esqueciMinhaSenha.css
-  -global.css
-  -index.css
-  -indexlogado.css
-  -login.css
-  -meuseventos.css
-  -notificacoes.css
-  -perfil.css
-  -professores.css
-  -segurança.css (outra "aba" do perfil, onde da para mudar a senha da conta)
-  -turmas.css
-}
- 
-image{ imagens utilizadas }
- 
-js{
-  -agendacoord.js
-  -agendaprof.js
-  -eventoscoord.js
-  -index.js
-  -meuseventos.js
-  -professores.js
-  -turmas.js
-}
- 
-tela_coord{
-  -addprofessor.php
-  -addturma.php
-  -agendacoord.php
-  -criareventocoord.php
-  -eventoscoord.php
-  -perfilcoord.php
-  -professores.php
-  -segurancacoord.php (outra "aba" do perfil, onde da para mudar a senha da conta)
-  -turmas.php
-}
- 
-tela_prof{
-  -agendaprof.php
-  -criarevento.php
-  -meuseventos.php (todos eventos incluindo de outros profs que te notificaram)
-  -perfil.php
-  -segurança.php (outra "aba" do perfil, onde da para mudar a senha da conta)
-}
- 
--banco.sql
--calendario.php (exemplo de calendário mensal)
--config_local.php
--esqueciMinhaSenha.php
--index.php (calendário semanal para não logados)
--login.php
--StoreProcedure.sql
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Contexto Geral do ProjetoO projeto é um TCC que consiste em um sistema web de calendário escolar semanal e mensal para gerenciar eventos escolares. Ele suporta dois tipos de usuários: professores e coordenadores, com fluxos de aprovação para eventos e visualização pública para não logados. O sistema está sendo desenvolvido em PHP puro (sem frameworks aparentes), com MySQL como banco de dados, e usa HTML/CSS/JavaScript para o frontend. Atualmente, grande parte do sistema está estática (ex.: eventos mockados, sem login funcional), e o objetivo é torná-lo dinâmico, integrando banco de dados, implementando fluxos de aprovação, e finalizando funcionalidades como notificações.
+Contexto Geral do Projeto. O projeto é um TCC que consiste em um sistema web de calendário escolar semanal e mensal para gerenciar eventos escolares. Ele suporta três tipos de usuários: professores, coordenadores e administradores com fluxos de aprovação para eventos e visualização pública para não logados. O sistema está sendo desenvolvido em PHP puro (sem frameworks aparentes), com MySQL como banco de dados, e usa HTML/CSS/JavaScript para o frontend. Atualmente, bastante coisa permanece estática e outras estão em andamento para torna-las dinâmicas, e o objetivo é torná-lo dinâmico, integrando banco de dados, implementando fluxos de aprovação, e finalizando funcionalidades como notificações.
 Funcionalidades do Sistema
 Calendário:
 Semanal: Exibido em index.php para não logados (somente visualização de eventos aprovados).
@@ -111,8 +12,8 @@ Data de solicitação.
 Data do evento (quando ocorrerá).
 (Pendente esclarecer: outros campos como descrição, local, ou turmas vinculadas?)
 Autenticação e Perfis:
-Tipos de usuário: Diferenciados por um campo tipo_usuario no banco (professor ou coordenador).
-Login: Implementado em login.php, mas atualmente não funcional (sem sessões PHP ou autenticação).
+Tipos de usuário: Diferenciados por um campo tipo_usuario no banco (professor, coordenador ou administrador).
+Login: Implementado em login.php.
 Páginas protegidas: Apenas usuários logados podem criar/editar eventos (criarevento.php, criareventocoord.php) ou gerenciar turmas/professores (tela_coord/addprofessor.php, tela_coord/turmas.php).
 Recuperação de senha: Página esqueciMinhaSenha.php (não implementada dinamicamente).
 Páginas de perfil: perfil.php (professor), perfilcoord.php (coordenador), com abas de segurança (segurança.php, segurancacoord.php) para alterar senha.
@@ -144,7 +45,6 @@ Não logados: Veem apenas eventos aprovados no calendário (index.php, calendari
 Logados:
 Veem eventos aprovados no calendário.
 Veem eventos pendentes, solicitados ou recusados em meuseventos.php (não no calendário).
-(Pendente esclarecer: professores veem só seus eventos pendentes ou também os de outros profs que os envolvem por turma?)
 Estrutura Técnica
 Backend:
 PHP puro, sem frameworks (versão exata pendente).
@@ -172,3 +72,89 @@ Estado Atual:
 Estático: Eventos, login e aprovações não estão integrados ao banco.
 JavaScript: Limitado a detalhes visuais (ex.: animações, validações de formulário).
 Pendências: Conexão com banco, sessões PHP, fluxos dinâmicos de aprovação, notificações, e renderização de calendário.
+
+As pastas estão assim:
+
+TCC_TaNaAgenda{
+api{
+  -config.php
+  -decisao_final_evento.php
+  -responder_evento.php	
+  -usuarios.php
+  -verifica sessão.php
+}
+classes{
+  base{
+   -banco.php
+  }
+  controllers{
+   -EventoController.php
+   -TurmaController.php
+   -UsuarioController.php
+  }
+  models{
+   Usuario.php
+  }
+ 
+css{
+  -addprofessor.css
+  -addturma.css
+  -calendario.css
+  -coordenador.css
+  -criarevento.css
+  -esqueciMinhaSenha.css
+  -global.css
+  -index.css
+  -indexlogado.css
+  -login.css
+  -meuseventos.css
+  -notificacoes.css
+  -perfil.css
+  -professores.css
+  -segurança.css (outra "aba" do perfil, onde da para mudar a senha da conta)
+  -turmas.css
+}
+ 
+image{ imagens utilizadas }
+ 
+js{
+  -agendacoord.js
+  -agendaprof.js
+  -criarevento.js
+  -eventoscoord.js
+  -index.js
+  -login.js
+  -meuseventos.js
+  -professores.js
+  -turmas.js
+}
+ 
+tela_coord{
+  -addprofessor.php
+  -addturma.php
+  -agendacoord.php
+  -criareventocoord.php
+  -eventoscoord.php
+  -perfilcoord.php
+  -professores.php
+  -segurancacoord.php (outra "aba" do perfil, onde da para mudar a senha da conta)
+  -turmas.php
+}
+ 
+tela_prof{
+  -agendaprof.php
+  -criarevento.php
+  -meuseventos.php (todos eventos incluindo de outros profs que te notificaram)
+  -perfil.php
+  -segurança.php (outra "aba" do perfil, onde da para mudar a senha da conta)
+}
+ 
+-banco.sql
+-calendario.php (exemplo de calendário mensal)
+-config_local.php
+-esqueciMinhaSenha.php
+-index.php (calendário semanal para não logados)
+-login.php
+-logout.php
+-StoreProcedure.sql
+}

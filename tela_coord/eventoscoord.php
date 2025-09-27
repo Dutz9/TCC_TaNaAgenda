@@ -19,8 +19,8 @@ $lista_eventos_pendentes = $eventoController->listarParaCoordenador();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eventos Pendentes - TáNaAgenda</title>
-    <link rel="shortcut icon" href="../image/Favicon.png" type="image/x-icon">
+    <title>Eventos - TáNaAgenda</title>
+    <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/coordenador.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -28,7 +28,7 @@ $lista_eventos_pendentes = $eventoController->listarParaCoordenador();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
-
+<script src="../js/favicon.js"></script>
     <header class="header">
         <a href="perfilcoord.php">
             <p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></p>
@@ -50,7 +50,7 @@ $lista_eventos_pendentes = $eventoController->listarParaCoordenador();
         </section>
 
         <section class="area-notificacoes">
-            <h2>Eventos Pendentes de Aprovação</h2>
+            <h2>Eventos</h2>
             <div class="notificacao-container">
                 <a href="criareventocoord.php" class="criar-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>

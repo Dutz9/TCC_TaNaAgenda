@@ -75,13 +75,14 @@ foreach ($lista_eventos as $evento) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda - TáNaAgenda</title>
-    <link rel="shortcut icon" href="../image/Favicon.png" type="image/x-icon">
+    <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/indexlogado.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
+<script src="../js/favicon.js"></script>
 <body>
     <header class="header">
         <a href="perfilcoord.php">
@@ -211,37 +212,6 @@ foreach ($lista_eventos as $evento) {
                     <p style="color: #DD2B2B;">Dom</p>
                 </div>
                 <div class="dias-calendario-lado-direito">
-                    <p>01</p>
-                    <p>02</p>
-                    <p>03</p>
-                    <p>04</p>
-                    <p>05</p>
-                    <p>06</p>
-                    <p>07</p>
-                    <p style="background-color: #022E5E; color: white; border-radius: 10px;" >08</p>
-                    <p>09</p>
-                    <p>10</p>
-                    <p>11</p>
-                    <p>12</p>
-                    <p>13</p>
-                    <p>14</p>
-                    <p>15</p>
-                    <p>16</p>
-                    <p>17</p>
-                    <p>18</p>
-                    <p>19</p>
-                    <p>20</p>
-                    <p>21</p>
-                    <p>22</p>
-                    <p>23</p>
-                    <p>24</p>
-                    <p>25</p>
-                    <p>26</p>
-                    <p>27</p>
-                    <p>28</p>
-                    <p>29</p>
-                    <p>30</p>
-                    <p>31</p>
                 </div>
             </div>
 

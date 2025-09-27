@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Evento - TáNaAgenda</title>
-    <link rel="shortcut icon" href="../image/Favicon.png" type="image/x-icon">
+    <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/index.css">
     <link rel="stylesheet" href="../css/coordenador.css">
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js" defer></script> 
 </head>
 <body>
-
+<script src="../js/favicon.js"></script>
     <header class="header">
         <a href="perfil.php">
             <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>

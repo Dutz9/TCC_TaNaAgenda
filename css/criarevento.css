@@ -1,7 +1,7 @@
 .formulario-evento {
-    margin-left: 270px; /* Ajuste para não colar na sidebar */
+    margin-left: 250px; /* Ajuste para não colar na sidebar */
     padding: 40px;
-    width: calc(100% - 270px);
+    width: calc(100% - 250px);
     height: calc(100vh - 80px);
     background-color: white;
 }
