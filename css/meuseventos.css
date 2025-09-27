@@ -62,12 +62,21 @@ font-size: medium;
 }
  
 .notificacao p {
-    color: rgb(44, 44, 44);
-    margin: 5px 0;
+    margin: 5px;
     display: flex;
     justify-content: flex-start;
     font-size: 14px;
 }
+
+.notificacao b {
+    color: rgb(44, 44, 44);
+    display: flex;
+    justify-content: flex-start;
+    font-size: 14px;
+    font-weight: 600;
+    margin-right: 5px;
+}
+
 
 .notificacao-lido {
     background-color: #3a3a3a23;
@@ -154,6 +163,15 @@ font-size: medium;
 .notificacao button:hover {
     background-color: #0056b3;
 }
+
+.respostas-vinculadas{
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-y: scroll;
+    max-height: 29vh;
+    padding: 5px;
+    border-radius: 5px 5px 5px 5px;
+}
  
 .modal-overlay {
     position: fixed;
@@ -227,6 +245,9 @@ font-size: medium;
 .response-item svg {
     width: 30px;
     height: 30px;
+    margin-left: 5px;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
  
 .response-item div {
@@ -538,18 +559,6 @@ font-size: medium;
 .apagar-confirm:hover {
     background-color: #cc0000;
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 .confirmation-modal-responder-solicitacao {
     position: fixed;

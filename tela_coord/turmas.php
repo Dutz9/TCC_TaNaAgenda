@@ -15,10 +15,8 @@ require_once '../api/verifica_sessao.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Turmas - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
-    <link rel="stylesheet" href="../css/turmas.css">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" href="../css/coordenador.css">
+    <link rel="stylesheet" href="../css/turmas.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -249,6 +247,7 @@ require_once '../api/verifica_sessao.php';
             </div>
             <div class="responses-section">
                 <h4>Professores Vinculados</h4>
+                <div class="professores-vinculados">
                 <div class="response-item">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
                     <div>
@@ -285,6 +284,13 @@ require_once '../api/verifica_sessao.php';
                         <p>Professor 6</p>
                     </div>
                 </div>
+                    <div class="response-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+                    <div>
+                        <p>Professor 7</p>
+                    </div>
+                </div>
+                </div>
             </div>
 
         </div>
@@ -293,25 +299,33 @@ require_once '../api/verifica_sessao.php';
 
             <div class="form-row">
             <div class="form-group">
-                <label for="nome-evento">Nome da Turma</label>
-                <input type="text" id="nome-evento" value="Nome Atual da Turma">
+                <label for="nome-turma">Nome da Turma</label>
+                <input type="text" id="nome-turma" value="Nome Atual da Turma">
             </div>
             <div class="form-group">
-                <label for="nome-evento">Sigla</label>
-                <input type="text" id="nome-evento" value="1N1">
+                <label for="sigla-turma">Sigla</label>
+                <input type="text" id="sigla-turma" value="1N1">
             </div>
+            </div>
+            <div class="form-row">
+            <div class="form-group">
+                <label for="sala-turma">Sala</label>
+                <input type="text" id="sala-turma" value="Sala 7">
             </div>
             <div class="form-group">
-                <label for="nome-evento">Sala</label>
-                <input type="text" id="nome-evento" value="Sala 7">
+                <label for="qtd-alunos">Quantidade de Alunos</label>
+                <input type="number" id="qtd-alunos" value="30">
             </div>
+            </div>
+            <div class="form-row">
             <div class="form-group">
-                <label for="tipo-evento">Ano Escolar</label>
-                <select id="tipo-evento">
+                <label for="ano-turma">Ano Escolar</label>
+                <select id="ano-turma">
                     <option value="1ºAno">1º</option>
                     <option value="2ºAno">2º</option>
                     <option value="3ºAno">3º</option>
                 </select>
+            </div> 
             </div>
             <div class="modal-buttons">
                 <button class="excluir">Excluir Turma</button>

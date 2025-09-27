@@ -76,8 +76,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Criar Evento - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" href="../css/coordenador.css">
     <link rel="stylesheet" href="../css/criarevento.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

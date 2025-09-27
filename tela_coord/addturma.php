@@ -16,8 +16,6 @@ require_once '../api/verifica_sessao.php';
     <title>Adicionar Turma - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" href="../css/coordenador.css">
     <link rel="stylesheet" href="../css/addturma.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

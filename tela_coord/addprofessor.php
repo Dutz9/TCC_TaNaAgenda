@@ -16,8 +16,6 @@ require_once '../api/verifica_sessao.php';
     <title>Adicionar Professor - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/index.css">
-    <link rel="stylesheet" href="../css/coordenador.css">
     <link rel="stylesheet" href="../css/addprofessor.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,7 +23,7 @@ require_once '../api/verifica_sessao.php';
 </head>
 <body>
 <script src="../js/favicon.js"></script>
-    <header class="header"></header>
+    <header class="header">
         <a href="perfilcoord.php">
             <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
         </a>
@@ -33,7 +31,6 @@ require_once '../api/verifica_sessao.php';
     </header>
 
     <main>
-        
         <section class="area-lado">
             <a class="area-lado-logo" href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu">

@@ -113,6 +113,15 @@
 .notificacao button:hover {
     background-color: #0056b3;
 }
+
+.respostas-vinculadas{
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow-y: scroll;
+    max-height: 38vh;
+    padding: 5px;
+    border-radius: 5px 5px 5px 5px;
+}
  
 .modal-overlay {
     position: fixed;
@@ -186,6 +195,9 @@
 .response-item svg {
     width: 30px;
     height: 30px;
+    margin-left: 5px;
+    margin-top: 4px;
+    margin-bottom: 4px;
 }
  
 .response-item div {

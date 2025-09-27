@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <p>${resposta.nome}</p>
                             <span class="${statusClass}">${resposta.status}</span>
                         </div>
-                    </div>
+                    </div> 
                 `;
             });
         } else {
@@ -137,7 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="responses-section">
                 <h4>Respostas dos Professores</h4>
+                <div class="respostas-vinculadas">
                 ${respostasHtml}
+                </div>
             </div>
         `;
 

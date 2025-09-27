@@ -19,7 +19,7 @@ $lista_eventos = $eventoController->listarParaProfessor($cd_usuario_logado);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Eventos - TáNaAgenda</title>
+    <title>Eventos - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/meuseventos.css">
@@ -30,7 +30,9 @@ $lista_eventos = $eventoController->listarParaProfessor($cd_usuario_logado);
 <body>
 <script src="../js/favicon.js"></script>
     <header class="header">
-        <a href="perfil.php"><p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></p></a>
+        <a href="perfil.php">
+        <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
+        </a>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
     </header>
 
@@ -97,7 +99,7 @@ $lista_eventos = $eventoController->listarParaProfessor($cd_usuario_logado);
                                     elseif ($evento['cd_usuario_solicitante'] != $cd_usuario_logado && $evento['minha_resposta'] !== null): 
                                         $cor_minha_resposta = ($evento['minha_resposta'] == 'Aprovado') ? 'status-aprovado' : 'status-recusado';
                                     ?>
-                                        <p class="<?php echo $cor_minha_resposta; ?>">Sua resposta: <?php echo $evento['minha_resposta']; ?></p>
+                                        <p class="<?php echo $cor_minha_resposta; ?>"><b>Sua resposta:</b> <?php echo $evento['minha_resposta']; ?></p>
                                     <?php endif; ?>
                                 </div>
                             </div>

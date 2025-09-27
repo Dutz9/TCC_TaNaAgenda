@@ -137,7 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="responses-section">
                 <h4>${tituloRespostas}</h4>
+                <div class="respostas-vinculadas">
                 ${respostasHtml}
+                </div
             </div>
         `;
 
