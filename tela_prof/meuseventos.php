@@ -10,8 +10,11 @@ $lista_eventos = $eventoController->listarParaProfessor($cd_usuario_logado);
 ?>
 
 <script>
-    // Passa a lista de eventos para uma variável JavaScript
+    // Passa a lista de eventos para o JavaScript
     const eventosDaPagina = <?php echo json_encode($lista_eventos); ?>;
+    
+    // Passa o nome do usuário logado para o JavaScript
+    const nomeUsuarioLogado = "<?php echo addslashes($usuario_logado['nm_usuario']); ?>";
 </script>
 
 <!DOCTYPE html>

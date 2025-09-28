@@ -45,20 +45,24 @@ CREATE TABLE turmas (
 
 
 DROP TABLE IF EXISTS eventos;
+DROP TABLE IF EXISTS eventos;
 CREATE TABLE eventos (
     cd_evento VARCHAR(25) NOT NULL,
     dt_evento DATE NOT NULL,
     nm_evento VARCHAR(45) NOT NULL,
     horario_inicio VARCHAR(10) NOT NULL,
     horario_fim VARCHAR(10) NOT NULL,
-    tipo_evento ENUM('Palestra', 'Visita tecnica', 'Reuniao') NOT NULL,
+    tipo_evento ENUM('Palestra', 'Visita tecnica', 'Reuniao', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro') NOT NULL,
     ds_descricao VARCHAR(200),
     status ENUM('Solicitado', 'Aprovado', 'Recusado') NOT NULL DEFAULT 'Solicitado',
     cd_usuario_solicitante VARCHAR(10) NOT NULL,
-    dt_solicitacao DATE NOT NULL, /* ADICIONADO/ ALTERADO 22/09 */
+    dt_solicitacao DATE NOT NULL,
+    cd_usuario_aprovador VARCHAR(10) NULL DEFAULT NULL, -- Nova coluna
     PRIMARY KEY (cd_evento),
-    FOREIGN KEY (cd_usuario_solicitante) REFERENCES usuarios(cd_usuario)
-) ;
+    FOREIGN KEY (cd_usuario_solicitante) REFERENCES usuarios(cd_usuario),
+    CONSTRAINT `fk_evento_aprovador`
+	FOREIGN KEY (`cd_usuario_aprovador`) REFERENCES `usuarios` (`cd_usuario`)
+);
 
 
 DROP TABLE IF EXISTS usuarios_has_turmas;

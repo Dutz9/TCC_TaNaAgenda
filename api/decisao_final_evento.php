@@ -19,22 +19,26 @@
       exit();
   }
 
-  try {
-      $cd_evento = $_POST['cd_evento'] ?? null;
-      $decisao = $_POST['decisao'] ?? null; // 'Aprovado' ou 'Recusado'
+    try {
+        $cd_evento = $_POST['cd_evento'] ?? null;
+        $decisao = $_POST['decisao'] ?? null; // 'Aprovado' ou 'Recusado'
 
-      if (empty($cd_evento) || empty($decisao)) {
-          http_response_code(400);
-          echo json_encode(['status' => 'erro', 'mensagem' => 'Dados incompletos.']);
-          exit();
-      }
+        if (empty($cd_evento) || empty($decisao)) {
+            http_response_code(400);
+            echo json_encode(['status' => 'erro', 'mensagem' => 'Dados incompletos.']);
+            exit();
+        }
       
-      $eventoController = new EventoController();
-      $eventoController->darDecisaoFinal($cd_evento, $decisao);
+        // Pega o código do coordenador que está na sessão
+        $cd_coordenador_logado = $usuario_logado['cd_usuario'];
 
-      echo json_encode(['status' => 'sucesso', 'mensagem' => 'Decisão registrada com sucesso!']);
+        $eventoController = new EventoController();
+        // Passa o código do coordenador como terceiro parâmetro
+        $eventoController->darDecisaoFinal($cd_evento, $decisao, $cd_coordenador_logado);
 
-  } 
+        echo json_encode(['status' => 'sucesso', 'mensagem' => 'Decisão registrada com sucesso!']);
+
+    } 
 
   catch (Exception $e) {
       http_response_code(500);

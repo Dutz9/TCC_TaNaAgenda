@@ -1,24 +1,24 @@
 <?php
 // =================================================================
-// BLOCO DE CONTROLE E DADOS DA PÁGINA
+// BLOCO DE CONTROLE E DADOS - PÁGINAS LOGADAS
 // =================================================================
 
 // 1. CONFIGURAÇÃO E SEGURANÇA
-// Carrega o autoloader (para encontrar as classes) e o guardião da sessão (para proteger a página).
-require_once '../api/config.php'; 
-require_once '../api/verifica_sessao.php'; 
+// Usamos o config da API pois estamos em uma subpasta
+require_once '../api/config.php';
+// Garante que o usuário está logado
+require_once '../api/verifica_sessao.php';
 
 // 2. CONFIGURAÇÃO DE DATAS
-// Define o fuso horário e prepara as variáveis de data para a semana atual.
 date_default_timezone_set('America/Sao_Paulo');
-$hoje = new DateTime(); // Data e hora de agora
-$dia_da_semana_hoje = (int)$hoje->format('N'); // Dia da semana (1=Seg, 7=Dom)
+$hoje = new DateTime();
+$dia_da_semana_hoje = (int)$hoje->format('N');
 
-// Calcula o primeiro dia da semana (Segunda-feira)
+// Calcula a data da Segunda-Feira desta semana
 $inicio_semana = clone $hoje;
 $inicio_semana->modify('-' . ($dia_da_semana_hoje - 1) . ' days');
 
-// Cria um array contendo os 6 objetos de data (Seg a Sab) para o cabeçalho
+// Prepara um array com as datas da semana (Segunda a Sábado)
 $dias_desta_semana = [];
 for ($i = 0; $i < 6; $i++) {
     $dia_atual = clone $inicio_semana;
@@ -26,7 +26,7 @@ for ($i = 0; $i < 6; $i++) {
     $dias_desta_semana[] = $dia_atual;
 }
 
-// Dicionários em português para evitar problemas de acentuação com o servidor
+// Dicionários em português para evitar problemas de acentuação
 $meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
 $dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
 
@@ -34,29 +34,30 @@ $dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feir
 $mes_atual_num = (int)$hoje->format('n') - 1;
 $mes_ano_atual = $meses_pt[$mes_atual_num] . ' ' . $hoje->format('Y');
 
-// 3. LÓGICA DE EVENTOS
-// Busca os eventos aprovados no banco de dados.
-$eventoController = new EventoController();
-$lista_eventos = $eventoController->listarAprovados();
+// 3. LÓGICA DE EVENTOS (COM FILTRO DE DATA)
+// Calcula a data de início (Segunda) e fim (Sábado) da semana atual para o filtro
+$data_inicio_semana = $dias_desta_semana[0]->format('Y-m-d');
+$data_fim_semana = $dias_desta_semana[5]->format('Y-m-d');
 
-// Prepara uma matriz (grid) para organizar os eventos por horário e dia da semana
+$eventoController = new EventoController();
+// Passa as datas para o método, filtrando os resultados
+$lista_eventos = $eventoController->listarAprovados($data_inicio_semana, $data_fim_semana);
+
+// 4. PROCESSAMENTO PARA O GRID
 $calendario_grid = [];
 $horarios_semana = ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40"];
 
-// Inicia a matriz do calendário vazia
 foreach ($horarios_semana as $horario) {
-    for ($i = 1; $i <= 6; $i++) { // 1=Seg, 2=Ter... 6=Sab
+    for ($i = 1; $i <= 6; $i++) {
         $calendario_grid[$horario][$i] = [];
     }
 }
 
-// Preenche a matriz com os eventos vindos do banco
 foreach ($lista_eventos as $evento) {
     $data_evento_obj = new DateTime($evento['dt_evento']);
     $dia_da_semana_num = (int)$data_evento_obj->format('N');
     $horario_inicio = substr($evento['horario_inicio'], 0, 5);
 
-    // Adiciona o evento na posição correta do grid (se a posição existir)
     if (isset($calendario_grid[$horario_inicio][$dia_da_semana_num])) {
         $calendario_grid[$horario_inicio][$dia_da_semana_num][] = $evento;
     }
@@ -64,8 +65,7 @@ foreach ($lista_eventos as $evento) {
 ?>
 
 <script>
-    // Cria uma variável JavaScript chamada 'eventosDoBanco' 
-    // e o PHP a preenche com os eventos que buscamos do banco, em formato JSON.
+    // Ponte de dados para o JavaScript
     const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
 </script>
 
@@ -170,12 +170,18 @@ foreach ($lista_eventos as $evento) {
                                     // Se houver, percorre cada evento e o exibe
                                     foreach ($calendario_grid[$horario][$dia_num] as $evento):
                                 ?>
-                                        <div class="event azul"
+                                        <?php
+                                            // Converte o tipo do evento para um nome de classe CSS válido (ex: "Visita Técnica" vira "tipo-visita-tecnica")
+                                            $tipo_classe = 'tipo-' . str_replace(' ', '-', strtolower($evento['tipo_evento']));
+                                        ?>
+                                        <div class="event <?php echo $tipo_classe; ?>"
                                             data-nome="<?php echo htmlspecialchars($evento['nm_evento']); ?>"
                                             data-data="<?php echo htmlspecialchars($evento['dt_evento']); ?>"
                                             data-inicio="<?php echo htmlspecialchars($evento['horario_inicio']); ?>"
                                             data-fim="<?php echo htmlspecialchars($evento['horario_fim']); ?>"
-                                            data-descricao="<?php echo htmlspecialchars($evento['ds_descricao']); ?>">
+                                            data-descricao="<?php echo htmlspecialchars($evento['ds_descricao']); ?>"
+                                            data-turmas="<?php echo htmlspecialchars($evento['turmas_envolvidas']); ?>"
+                                            data-professores="<?php echo htmlspecialchars($evento['professores_envolvidos']); ?>">
                                             <?php echo htmlspecialchars($evento['nm_evento']); ?>
                                         </div>
                                 <?php

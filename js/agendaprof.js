@@ -42,11 +42,13 @@ document.addEventListener('DOMContentLoaded', () => {
     function showEventModal(eventData) {
         modalContent.innerHTML = `
             <h3>${eventData.nome}</h3>
-            <p><strong>Data:</strong> ${formatarData(eventData.data)}</p>
-            <p style="font-weight: 600;">Turmas:</p>
-            <p>A ser implementado</p> <p style="font-weight: 600;">Horário:</p>
-            <p>${eventData.inicio.substr(0, 5)} - ${eventData.fim.substr(0, 5)}</p>
-            <p style="font-weight: 600;">Descrição:</p>
+            <p><strong>Data:</strong> ${new Date(eventData.data + 'T00:00:00').toLocaleDateString('pt-BR')}</p>
+            <p><strong>Horário:</strong> ${eventData.inicio.substr(0, 5)} - ${eventData.fim.substr(0, 5)}</p>
+            <p style="font-weight: 600; margin-top: 10px;">Turmas Envolvidas:</p>
+            <p>${eventData.turmas || 'Nenhuma turma especificada.'}</p>
+            <p style="font-weight: 600; margin-top: 10px;">Professores Envolvidos:</p>
+            <p>${eventData.professores || 'Nenhum professor especificado.'}</p>
+            <p style="font-weight: 600; margin-top: 10px;">Descrição:</p>
             <p>${eventData.descricao}</p>
         `;
         modalOverlay.style.display = 'flex';

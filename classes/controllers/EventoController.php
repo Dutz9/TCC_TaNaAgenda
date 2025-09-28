@@ -6,12 +6,17 @@ class EventoController extends Banco {
      * Busca no banco de dados todos os eventos que já foram aprovados.
      * @return array Lista de eventos aprovados.
      */
-    public function listarAprovados() {
+    public function listarAprovados($dataInicio, $dataFim) {
         try {
-            // Chama a Stored Procedure que criamos no Passo 1
-            $dados = $this->Consultar('listarEventosAprovados', []);
+            $parametros = [
+                'pDataInicio' => $dataInicio,
+                'pDataFim' => $dataFim
+            ];
+            $dados = $this->Consultar('listarEventosAprovados', $parametros);
             return $dados;
-        } catch (\Throwable $th) {
+        } 
+        
+        catch (\Throwable $th) {
             // Em caso de erro, lança a exceção para a página que chamou tratar.
             throw $th;
         }
@@ -98,13 +103,15 @@ class EventoController extends Banco {
     }
 
     // Adicione esta nova função dentro da classe EventoController
-    public function listarParaCoordenador() {
-        try {
-            return $this->Consultar('listarEventosParaCoordenador');
-        } catch (\Throwable $th) {
-            throw $th;
-        }
+    public function listarParaCoordenador($cdUsuario) {
+    try {
+        return $this->Consultar('listarEventosParaCoordenador', ['pCdUsuario' => $cdUsuario]);
+    } 
+    
+    catch (\Throwable $th) {
+        throw $th;
     }
+}
 
     // Adicione estas duas funções na classe EventoController
     public function aprovarDefinitivo($cdEvento) {
@@ -124,17 +131,28 @@ class EventoController extends Banco {
     }
 
     // Adicione esta nova função na classe EventoController
-    public function darDecisaoFinal($cdEvento, $decisao) {
+    public function darDecisaoFinal($cdEvento, $decisao, $cdCoordenador) {
         try {
+            // Agora os parâmetros incluem o código do coordenador
+            $parametros = [
+                'pCdEvento' => $cdEvento,
+                'pCdCoordenador' => $cdCoordenador
+            ];
+
             if ($decisao === 'Aprovado') {
-                $this->Executar('aprovarEventoDefinitivo', ['pCdEvento' => $cdEvento]);
-            } elseif ($decisao === 'Recusado') {
-                $this->Executar('recusarEventoDefinitivo', ['pCdEvento' => $cdEvento]);
-            } else {
-                // Lança um erro se a decisão for inválida
+                $this->Executar('aprovarEventoDefinitivo', $parametros);
+            } 
+            
+            elseif ($decisao === 'Recusado') {
+                $this->Executar('recusarEventoDefinitivo', $parametros);
+            } 
+            
+            else {
                 throw new Exception("Decisão inválida.");
             }
-        } catch (\Throwable $th) {
+        } 
+        
+        catch (\Throwable $th) {
             throw $th;
         }
     }

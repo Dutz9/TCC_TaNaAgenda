@@ -334,13 +334,14 @@
     color: black;
     display: flex;
     justify-content: space-between;
+    align-items: center; /* Alinha melhor o texto e a hora */
     font-size: 12px;
     border: 2px solid #4291D8;
     border-radius: 30px;
-    padding: 2px 10px;
+    padding: 5px 10px; /* Aumenta um pouco o padding vertical */
     margin-top: 10px;
-    max-height: 23px;
-    min-height: 20px;
+    min-height: 23px;
+    height: auto; /* PERMITE QUE A ALTURA SE AJUSTE AO CONTEÚDO */
 }
 
 .modal-overlay {
@@ -375,3 +376,21 @@
     margin-bottom: 5px;
     color: #333;
 }
+
+/* --- CORES DINÂMICAS PARA OS EVENTOS --- */
+.event:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    z-index: 10;
+}
+.event {
+    transition: all 0.2s ease-in-out;
+}
+
+.event.tipo-palestra { background-color: #57A1E3; } /* Azul */
+.event.tipo-reuniao { background-color: #51DB51; } /* Verde */
+.event.tipo-visita-tecnica { background-color: #e6ae08; } /* Amarelo */
+.event.tipo-prova { background-color: #e35757; } /* Vermelho */
+.event.tipo-conselho-de-classe { background-color: #8e57e3; } /* Roxo */
+.event.tipo-evento-esportivo { background-color: #e38e57; } /* Laranja */
+.event.tipo-outro { background-color: #888888; } /* Cinza */

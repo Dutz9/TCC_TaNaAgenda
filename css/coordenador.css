@@ -518,3 +518,66 @@
     margin-top: 0px;
     margin-left: 10px;
 }
+
+/* --- ESTILO DAS RESPOSTAS NO MODAL --- */
+.response-item .aprovado {
+    color: #1DB81D; /* Verde */
+}
+
+.response-item .recusado {
+    color: #FF0000; /* Vermelho */
+    font-weight: bold;
+}
+
+.response-item .sem-resposta {
+    color: #0479F9; /* Azul */
+}
+
+/* --- ESTILO DA BARRA DE FEEDBACK --- */
+.feedback-bar {
+    position: fixed;
+    top: -100px; /* Começa escondida fora da tela */
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    z-index: 2000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: top 0.5s ease-in-out;
+}
+
+.feedback-bar.show {
+    top: 90px; /* Posição quando está visível */
+}
+
+.feedback-bar.sucesso {
+    background-color: #28a745; /* Verde */
+}
+
+.feedback-bar.erro {
+    background-color: #dc3545; /* Vermelho */
+}
+
+/* --- ESTILO DOS STATUS DOS EVENTOS (VERSÃO CORRIGIDA E MAIS ESPECÍFICA) --- */
+
+.notificacao p b {
+    margin-right: 5px;
+}
+
+/* Agora especificamos: aplique esta cor em um <p> com a classe .status-solicitado DENTRO de .notificacao */
+.notificacao .status-solicitado {
+    color: #0479F9; /* Azul */
+    font-weight: bold;
+}
+
+.notificacao .status-aprovado {
+    color: #1DB81D; /* Verde */
+    font-weight: bold;
+}
+
+.notificacao .status-recusado {
+    color: #FF0000; /* Vermelho */
+    font-weight: bold;
+}

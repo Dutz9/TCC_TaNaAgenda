@@ -644,21 +644,6 @@ font-size: medium;
     background-color: #cc0000;
 }
 
-.status-aprovado { 
-    color: #1DB81D; 
-    font-weight: bold; 
-}
-
-.status-recusado { 
-    color: #FF0000; 
-    font-weight: bold; 
-}
-
-.status-solicitado { 
-    color: #0479F9; 
-    font-weight: bold; 
-}
-
 .botoes-acao { 
     display: flex; 
     gap: 10px; 
@@ -692,4 +677,24 @@ font-size: medium;
 .botoes-acao .detalhes-btn {
     width: 100%;
     background-color: #007bff;
+}
+
+.notificacao p b {
+    margin-right: 5px;
+}
+
+/* Agora especificamos: aplique esta cor em um <p> com a classe .status-solicitado DENTRO de .notificacao */
+.notificacao .status-solicitado {
+    color: #0479F9; /* Azul */
+    font-weight: bold;
+}
+
+.notificacao .status-aprovado {
+    color: #1DB81D; /* Verde */
+    font-weight: bold;
+}
+
+.notificacao .status-recusado {
+    color: #FF0000; /* Vermelho */
+    font-weight: bold;
 }

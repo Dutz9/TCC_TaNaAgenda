@@ -1,12 +1,12 @@
 <?php
-
 // =================================================================
-// BLOCO DE DADOS DA PÁGINA PÚBLICA
+// BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX)
 // =================================================================
 
 // 1. CONFIGURAÇÃO
-// Carrega o autoloader para encontrar as classes. Usamos o 'local' pois estamos na raiz.
-require_once 'config_local.php'; 
+// Usamos o config local pois estamos na raiz do projeto
+require_once 'config_local.php';
+// NÃO HÁ VERIFICAÇÃO DE SESSÃO AQUI, POIS A PÁGINA É PÚBLICA
 
 // 2. CONFIGURAÇÃO DE DATAS
 date_default_timezone_set('America/Sao_Paulo');
@@ -29,10 +29,14 @@ $dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feir
 $mes_atual_num = (int)$hoje->format('n') - 1;
 $mes_ano_atual = $meses_pt[$mes_atual_num] . ' ' . $hoje->format('Y');
 
-// 3. LÓGICA DE EVENTOS
-$eventoController = new EventoController();
-$lista_eventos = $eventoController->listarAprovados();
+// 3. LÓGICA DE EVENTOS (COM FILTRO DE DATA)
+$data_inicio_semana = $dias_desta_semana[0]->format('Y-m-d');
+$data_fim_semana = $dias_desta_semana[5]->format('Y-m-d');
 
+$eventoController = new EventoController();
+$lista_eventos = $eventoController->listarAprovados($data_inicio_semana, $data_fim_semana);
+
+// 4. PROCESSAMENTO PARA O GRID
 $calendario_grid = [];
 $horarios_semana = ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40"];
 
@@ -51,11 +55,10 @@ foreach ($lista_eventos as $evento) {
         $calendario_grid[$horario_inicio][$dia_da_semana_num][] = $evento;
     }
 }
-
 ?>
 
 <script>
-    // A PONTE DE DADOS para o JavaScript
+    // Ponte de dados para o JavaScript
     const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
 </script>
 
@@ -139,7 +142,18 @@ foreach ($lista_eventos as $evento) {
                         <div class="time-slot">
                             <?php if (!empty($calendario_grid[$horario][$dia_num])):
                                 foreach ($calendario_grid[$horario][$dia_num] as $evento): ?>
-                                    <div class="event azul" data-nome="<?php echo htmlspecialchars($evento['nm_evento']); ?>" data-data="<?php echo htmlspecialchars($evento['dt_evento']); ?>" data-inicio="<?php echo htmlspecialchars($evento['horario_inicio']); ?>" data-fim="<?php echo htmlspecialchars($evento['horario_fim']); ?>" data-descricao="<?php echo htmlspecialchars($evento['ds_descricao']); ?>">
+                                    <?php
+                                        // Converte o tipo do evento para um nome de classe CSS válido (ex: "Visita Técnica" vira "tipo-visita-tecnica")
+                                        $tipo_classe = 'tipo-' . str_replace(' ', '-', strtolower($evento['tipo_evento']));
+                                    ?>
+                                    <div class="event <?php echo $tipo_classe; ?>"
+                                        data-nome="<?php echo htmlspecialchars($evento['nm_evento']); ?>"
+                                        data-data="<?php echo htmlspecialchars($evento['dt_evento']); ?>"
+                                        data-inicio="<?php echo htmlspecialchars($evento['horario_inicio']); ?>"
+                                        data-fim="<?php echo htmlspecialchars($evento['horario_fim']); ?>"
+                                        data-descricao="<?php echo htmlspecialchars($evento['ds_descricao']); ?>"
+                                        data-turmas="<?php echo htmlspecialchars($evento['turmas_envolvidas']); ?>"
+                                        data-professores="<?php echo htmlspecialchars($evento['professores_envolvidos']); ?>">
                                         <?php echo htmlspecialchars($evento['nm_evento']); ?>
                                     </div>
                                 <?php endforeach;

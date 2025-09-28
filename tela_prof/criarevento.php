@@ -177,8 +177,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <label for="tipo">Tipo do Evento</label>
                         <select id="tipo" name="tipo" required>
                             <option value="Palestra">Palestra</option>
-                            <option value="Visita tecnica">Visita Técnica</option>
-                            <option value="Reuniao">Reunião</option>
+                            <option value="Visita Técnica">Visita Técnica</option>
+                            <option value="Reunião">Reunião</option>
+                            <option value="Prova">Prova</option>
+                            <option value="Conselho de Classe">Conselho de Classe</option>
+                            <option value="Evento Esportivo">Evento Esportivo</option>
+                            <option value="Outro">Outro</option>
                         </select>
                     </div>
                     <div class="campo">

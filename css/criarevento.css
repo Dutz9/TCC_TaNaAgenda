@@ -1,9 +1,10 @@
 .formulario-evento {
-    margin-left: 250px; /* Ajuste para não colar na sidebar */
+    margin-left: 250px; /* Mantém o espaçamento da sidebar */
     padding: 40px;
     width: calc(100% - 250px);
-    height: calc(100vh - 80px);
+    height: calc(100vh - 80px); /* Ocupa o espaço visível */
     background-color: white;
+    overflow-y: auto; /* PERMITE O SCROLL VERTICAL SÓ AQUI */
 }
 
 .formulario-evento h2 {

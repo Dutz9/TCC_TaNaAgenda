@@ -3,15 +3,15 @@
 require_once '../api/config.php'; 
 require_once '../api/verifica_sessao.php'; 
 
-// Busca todos os eventos pendentes para o coordenador
+// Busca todos os eventos RELEVANTES para o coordenador
 $eventoController = new EventoController();
-$lista_eventos_pendentes = $eventoController->listarParaCoordenador();
+$lista_eventos = $eventoController->listarParaCoordenador($usuario_logado['cd_usuario']);
 
 ?>
 
 <script>
-    // Ponte de dados para o JavaScript
-    const eventosDaPagina = <?php echo json_encode($lista_eventos_pendentes); ?>;
+    const eventosDaPagina = <?php echo json_encode($lista_eventos); ?>;
+    const usuario_logado = <?php echo json_encode($usuario_logado); ?>; // <--- Adicione esta linha
 </script>
 
 <!DOCTYPE html>
@@ -28,6 +28,9 @@ $lista_eventos_pendentes = $eventoController->listarParaCoordenador();
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<div id="feedback-bar" class="feedback-bar"></div>
+
 <script src="../js/favicon.js"></script>
     <header class="header">
         <a href="perfilcoord.php">
@@ -56,19 +59,33 @@ $lista_eventos_pendentes = $eventoController->listarParaCoordenador();
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
                 </a>
 
-                <?php if (empty($lista_eventos_pendentes)): ?>
-                    <p class="sem-eventos">Nenhum evento pendente no momento.</p>
-                <?php else: ?>
-                    <?php foreach ($lista_eventos_pendentes as $evento): ?>
-                        <div class="notificacao">
-                            <h3><?php echo htmlspecialchars($evento['nm_evento']); ?></h3>
-                            <p><b>Solicitado por:</b> <?php echo htmlspecialchars($evento['nm_solicitante']); ?></p>
-                            <p><b>Data do Evento:</b> <?php echo (new DateTime($evento['dt_evento']))->format('d/m/Y'); ?></p>
-                            <p><b>Turmas:</b> <?php echo htmlspecialchars($evento['turmas_envolvidas'] ?? 'N/A'); ?></p>
-                            <button class="detalhes-btn" data-id="<?php echo $evento['cd_evento']; ?>">Analisar Pedido</button>
-                        </div> 
-                    <?php endforeach; ?>
-                <?php endif; ?>
+                <?php if (empty($lista_eventos)): ?>
+                        <p class="sem-eventos">Nenhum evento para gerenciar no momento.</p>
+                    <?php else: ?>
+                        <?php foreach ($lista_eventos as $evento): 
+                            // Lógica de cor para o status
+                            $cor_status = '';
+                            switch ($evento['status']) {
+                                case 'Aprovado': $cor_status = 'status-aprovado'; break;
+                                case 'Recusado': $cor_status = 'status-recusado'; break;
+                                default: $cor_status = 'status-solicitado'; break;
+                            }
+                        ?>
+                            <div class="notificacao">
+                                <h3><?php echo htmlspecialchars($evento['nm_evento']); ?></h3>
+                                <p class="<?php echo $cor_status; ?>"><b>Status:</b> <?php echo $evento['status']; ?></p>
+                                <p><b>Solicitado por:</b> <?php echo htmlspecialchars($evento['nm_solicitante']); ?></p>
+                                <p><b>Data do Evento:</b> <?php echo (new DateTime($evento['dt_evento']))->format('d/m/Y'); ?></p>
+                                <p><b>Turmas:</b> <?php echo htmlspecialchars($evento['turmas_envolvidas'] ?? 'N/A'); ?></p>
+                                
+                                <?php if ($evento['status'] == 'Solicitado'): ?>
+                                    <button class="detalhes-btn" data-id="<?php echo $evento['cd_evento']; ?>">Analisar Pedido</button>
+                                <?php else: ?>
+                                    <button class="detalhes-btn" data-id="<?php echo $evento['cd_evento']; ?>">Ver Detalhes</button>
+                                <?php endif; ?>
+                            </div> 
+                        <?php endforeach; ?>
+                    <?php endif; ?>
             </div>
         </section> 
     </main>
