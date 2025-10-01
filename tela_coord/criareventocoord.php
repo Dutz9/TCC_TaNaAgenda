@@ -1,6 +1,9 @@
 <?php 
 require_once '../api/config.php'; 
 require_once '../api/verifica_sessao.php'; 
+require_once '../classes/controllers/EventoController.php'; // Certifique-se de incluir
+require_once '../classes/controllers/UsuarioController.php'; // Certifique-se de incluir
+require_once '../classes/controllers/TurmaController.php'; // Certifique-se de incluir
 
 // Garante que apenas coordenadores acessem esta página
 if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
@@ -19,8 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($titulo)) {
             throw new Exception("O título do evento não pode ser vazio.");
         }
-        if (strlen($titulo) > 16) {
-            throw new Exception("O título do evento não pode exceder 16 caracteres.");
+        if (strlen($titulo) > 10) {
+            throw new Exception("O título do evento não pode exceder 10 caracteres.");
         }
         
         $eventoController = new EventoController();
@@ -33,11 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'tipo_evento' => $_POST['tipo'],
             'ds_descricao' => $_POST['descricao'],
             'turmas' => $_POST['turmas'] ?? [],
+            'professores_envolvidos' => $_POST['professores_envolvidos'] ?? [], // <--- NOVO: Professores selecionados manualmente
             'cd_usuario_solicitante' => $usuario_logado['cd_usuario']
         ];
         
         $eventoController->criarAprovado($dadosEvento);
-        $mensagem = "Evento criado e publicado com sucesso!";
+        $mensagem = "Evento criado e publicado com sucesso! Todos os coordenadores e professores envolvidos foram notificados.";
         $tipo_mensagem = 'sucesso';
     } catch (Exception $e) {
         $mensagem = "Erro ao criar evento: " . $e->getMessage();
@@ -50,20 +54,24 @@ $turmaController = new TurmaController();
 $lista_turmas = $turmaController->listar();
 
 $usuarioController = new UsuarioController();
-$relacao_prof_turma_raw = $usuarioController->listarRelacaoProfessorTurma();
+// Não precisamos mais da relação professor-turma para o display automático
+// $relacao_prof_turma_raw = $usuarioController->listarRelacaoProfessorTurma();
+// $relacao_turma_prof = [];
+// foreach ($relacao_prof_turma_raw as $rel) {
+//     $turma_id = $rel['turmas_cd_turma'];
+//     if (!isset($relacao_turma_prof[$turma_id])) {
+//         $relacao_turma_prof[$turma_id] = [];
+//     }
+//     $relacao_turma_prof[$turma_id][] = ['id' => $rel['cd_usuario'], 'nome' => $rel['nm_usuario']];
+// }
 
-$relacao_turma_prof = [];
-foreach ($relacao_prof_turma_raw as $rel) {
-    $turma_id = $rel['turmas_cd_turma'];
-    if (!isset($relacao_turma_prof[$turma_id])) {
-        $relacao_turma_prof[$turma_id] = [];
-    }
-    $relacao_turma_prof[$turma_id][] = ['id' => $rel['cd_usuario'], 'nome' => $rel['nm_usuario']];
-}
+// <--- NOVO: Carregar a lista de todos os professores
+$lista_professores = $usuarioController->listarTodosProfessores();
+
 ?>
 <script>
-    // Ponte de dados do PHP para o JavaScript
-    const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
+    // Remove a variável 'relacaoTurmaProfessor' se não for mais usada para evitar erros no JS
+    // const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
 </script>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -112,13 +120,13 @@ foreach ($relacao_prof_turma_raw as $rel) {
                     <?php endif; ?>
 
                     <div class="linha-form">
-                    <div class="campo">
-                     <label for="titulo">Título do Evento</label>
-                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Palestra USP" maxlength="10" required>
-                        <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
-                    </div>
                         <div class="campo">
-                             <label for="selecao-turmas">Turmas Envolvidas</label>
+                            <label for="titulo">Título do Evento</label>
+                            <input type="text" id="titulo" name="titulo" placeholder="Ex: Palestra USP" maxlength="10" required>
+                            <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
+                        </div>
+                        <div class="campo">
+                            <label for="selecao-turmas">Turmas Envolvidas</label>
                             <select id="selecao-turmas" name="turmas[]" multiple="multiple" required>
                                 <?php foreach ($lista_turmas as $turma): ?>
                                     <option value="<?php echo $turma['cd_turma']; ?>"><?php echo htmlspecialchars($turma['nm_turma']); ?></option>
@@ -184,8 +192,8 @@ foreach ($relacao_prof_turma_raw as $rel) {
                             <label for="tipo">Tipo do Evento</label>
                             <select id="tipo" name="tipo" required>
                                 <option value="Palestra">Palestra</option>
-                                <option value="Visita Técnica">Visita Técnica</option>
-                                <option value="Reunião">Reunião</option>
+                                <option value="Visita Tecnica">Visita Técnica</option>
+                                <option value="Reuniao">Reunião</option>
                                 <option value="Prova">Prova</option>
                                 <option value="Conselho de Classe">Conselho de Classe</option>
                                 <option value="Evento Esportivo">Evento Esportivo</option>
@@ -194,11 +202,20 @@ foreach ($relacao_prof_turma_raw as $rel) {
                         </div>
                     </div>
                     <div class="linha-form">
-                         <div class="campo">
+                        <!-- <div class="campo">
                             <label>Professores Envolvidos (automático)</label>
                             <div id="display-professores" class="display-box">
                                 <p>Selecione uma ou mais turmas...</p>
                             </div>
+                        </div> -->
+                        <!-- NOVO: Campo de seleção manual de professores -->
+                        <div class="campo">
+                            <label for="selecao-professores">Professores a Notificar</label>
+                            <select id="selecao-professores" name="professores_envolvidos[]" multiple="multiple">
+                                <?php foreach ($lista_professores as $professor): ?>
+                                    <option value="<?php echo $professor['cd_usuario']; ?>"><?php echo htmlspecialchars($professor['nm_usuario']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="campo">
                             <label for="descricao">Descrição</label>
@@ -207,7 +224,7 @@ foreach ($relacao_prof_turma_raw as $rel) {
                     </div>
                     <div class="botoes">
                         <a href="eventoscoord.php" class="botao-cancelar">Cancelar</a>
-                        <button type="submit" class="botao-enviar">Criar e Notificar</button>
+                        <button type="submit" class="botao-enviar">Criar e Publicar</button>
                     </div>
                 </form>
             </section>

@@ -1,82 +1,61 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Verifica se a variável com os dados do PHP existe
-    if (typeof relacaoTurmaProfessor === 'undefined') {
-        console.error("A variável 'relacaoTurmaProfessor' não foi encontrada. Verifique o script no arquivo .php");
-        return;
-    }
-
+    // Inicialização para a seleção de TURMAS (já existente)
     const turmasElement = document.getElementById('selecao-turmas');
-    
-    // Se o <select> de turmas existir na página, inicializa o Choices.js
     if (turmasElement) {
-        const selectTurmas = new Choices(turmasElement, {
+        new Choices(turmasElement, {
             removeItemButton: true,
             placeholder: true,
-            placeholderValue: 'Clique para selecionar ou digite para buscar...',
+            placeholderValue: 'Selecione as turmas envolvidas...',
             allowHTML: false,
-            // Configuração de busca que faz a mágica acontecer
             fuseOptions: {
-                keys: ['label'], // Busca apenas no texto visível da opção
-                threshold: 0.3   // Define a busca como "flexível"
-            }
-        });
-
-        const displayProfessores = document.getElementById('display-professores');
-
-        // Lógica para atualizar a lista de professores (exatamente como antes)
-        selectTurmas.passedElement.element.addEventListener('change', function() {
-            const turmasSelecionadasIds = Array.from(this.selectedOptions).map(option => option.value);
-            const professoresParaExibir = {};
-
-            turmasSelecionadasIds.forEach(turmaId => {
-                if (relacaoTurmaProfessor[turmaId]) {
-                    relacaoTurmaProfessor[turmaId].forEach(prof => {
-                        professoresParaExibir[prof.id] = prof.nome;
-                    });
-                }
-            });
-
-            displayProfessores.innerHTML = '';
-            const nomesProfessores = Object.values(professoresParaExibir);
-
-            if (nomesProfessores.length > 0) {
-                nomesProfessores.forEach(nome => {
-                    const p = document.createElement('p');
-                    p.textContent = nome;
-                    displayProfessores.appendChild(p);
-                });
-            } else if (turmasSelecionadasIds.length > 0) {
-                displayProfessores.innerHTML = '<p>Nenhum professor encontrado para esta(s) turma(s).</p>';
-            } else {
-                displayProfessores.innerHTML = '<p>Selecione uma ou mais turmas...</p>';
+                keys: ['label'],
+                threshold: 0.3
             }
         });
     }
 
+    // NOVO: Inicialização para a seleção de PROFESSORES
+    const professoresElement = document.getElementById('selecao-professores');
+    if (professoresElement) {
+        new Choices(professoresElement, {
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: 'Selecione os professores a notificar...',
+            allowHTML: false,
+            fuseOptions: {
+                keys: ['label'],
+                threshold: 0.3
+            }
+        });
+    }
+
+    // Lógica do contador de caracteres (já existente)
     const inputTitulo = document.getElementById('titulo');
     const tituloContador = document.getElementById('titulo-contador');
-    const maxLength = inputTitulo.getAttribute('maxlength');
+    const maxLength = inputTitulo ? parseInt(inputTitulo.getAttribute('maxlength'), 10) : 0; // Garante que maxLength é um número
 
-    // Função para atualizar o contador de caracteres
     function updateCharCounter() {
-        const currentLength = inputTitulo.value.length;
-        const remaining = maxLength - currentLength;
-        tituloContador.textContent = `Caracteres restantes: ${remaining}`;
+        if (inputTitulo && tituloContador) { // Verifica se os elementos existem
+            const currentLength = inputTitulo.value.length;
+            const remaining = maxLength - currentLength;
+            tituloContador.textContent = `Caracteres restantes: ${remaining}`;
 
-        if (remaining < 1) {
-            tituloContador.style.color = 'red';
-        } else if (remaining <= 5) {
-            tituloContador.style.color = 'orange';
-        } else {
-            tituloContador.style.color = '#888';
+            if (remaining < 1) {
+                tituloContador.style.color = 'red';
+            } else if (remaining <= 5) {
+                tituloContador.style.color = 'orange';
+            } else {
+                tituloContador.style.color = '#888';
+            }
         }
     }
 
-    // Adiciona o listener para o evento 'input' (a cada caractere digitado)
-    if (inputTitulo && tituloContador) {
+    if (inputTitulo && tituloContador) { // Adiciona listeners apenas se os elementos existirem
         inputTitulo.addEventListener('input', updateCharCounter);
-        // Chama a função uma vez ao carregar a página caso já haja texto
-        updateCharCounter();
+        updateCharCounter(); // Chama uma vez ao carregar a página
     }
 
+    // REMOVENDO a lógica antiga de display automático de professores
+    // Não precisamos mais do `relacaoTurmaProfessor` nem do `displayProfessores`
+    // já que a seleção é manual agora.
 });

@@ -2,6 +2,9 @@
 
 require_once '../api/config.php'; 
 require_once '../api/verifica_sessao.php'; 
+require_once '../classes/controllers/EventoController.php'; // Certifique-se de incluir
+require_once '../classes/controllers/UsuarioController.php'; // Certifique-se de incluir
+require_once '../classes/controllers/TurmaController.php'; // Certifique-se de incluir
 
 // --- CARREGAMENTO DE DADOS PARA O FORMULÁRIO ---
 $turmaController = new TurmaController();
@@ -39,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if (empty($titulo)) {
             throw new Exception("O título do evento não pode ser vazio.");
         }
-        if (strlen($titulo) > 16) {
-            throw new Exception("O título do evento não pode exceder 16 caracteres.");
+        if (strlen($titulo) > 10) {
+            throw new Exception("O título do evento não pode exceder 10 caracteres.");
         }
         // Fim da validação do título
         
@@ -54,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'tipo_evento' => $_POST['tipo'],
             'ds_descricao' => $_POST['descricao'],
             'turmas' => $_POST['turmas'] ?? [], // Usa ?? [] para o caso de nenhuma turma ser selecionada
+            'professores_envolvidos' => $_POST['professores_envolvidos'] ?? [], // <--- NOVO: Professores selecionados manualmente
             'cd_usuario_solicitante' => $usuario_logado['cd_usuario']
         ];
         
@@ -69,11 +73,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
+// --- CARREGAMENTO DE DADOS PARA O FORMULÁRIO ---
+$turmaController = new TurmaController();
+$lista_turmas = $turmaController->listar();
+
+$usuarioController = new UsuarioController();
+// Não precisamos mais da relação professor-turma para o display automático
+// $relacao_prof_turma_raw = $usuarioController->listarRelacaoProfessorTurma();
+// $relacao_turma_prof = [];
+// foreach ($relacao_prof_turma_raw as $rel) {
+//     $turma_id = $rel['turmas_cd_turma'];
+//     if (!isset($relacao_turma_prof[$turma_id])) {
+//         $relacao_turma_prof[$turma_id] = [];
+//     }
+//     $relacao_turma_prof[$turma_id][] = ['id' => $rel['cd_usuario'], 'nome' => $rel['nm_usuario']];
+// }
+
+// <--- NOVO: Carregar a lista de todos os professores
+$lista_professores = $usuarioController->listarTodosProfessores();
+
 ?>
 
     <script>
         // Ponte de dados: passa a relação Turma->Professor para o JavaScript
-        const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
+        //const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
     </script>
 
 <!DOCTYPE html>
@@ -202,11 +225,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <input type="date" id="data" name="data" required>
                     </div>
                     <div class="campo">
-                        <label>Professores a Notificar (automático)</label>
-                        <div id="display-professores" class="display-box">
-                            <p>Selecione uma ou mais turmas...</p>
+                            <label for="selecao-professores">Professores a Notificar</label>
+                            <select id="selecao-professores" name="professores_envolvidos[]" multiple="multiple">
+                                <?php foreach ($lista_professores as $professor): ?>
+                                    <option value="<?php echo $professor['cd_usuario']; ?>"><?php echo htmlspecialchars($professor['nm_usuario']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
-                    </div>
                 </div>
                 <div class="linha-form">
                     <div class="campo">
@@ -232,8 +257,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </div>
             </form>
         </section>
-
         <script src="../js/criarevento.js" defer></script>
-
 </body>
 </html>
