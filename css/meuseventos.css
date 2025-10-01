@@ -62,7 +62,8 @@ font-size: medium;
 }
  
 .notificacao p {
-    margin: 5px;
+    color: rgb(44, 44, 44);
+    margin: 5px 0;
     display: flex;
     justify-content: flex-start;
     font-size: 14px;

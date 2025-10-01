@@ -61,23 +61,27 @@ foreach ($relacao_prof_turma_raw as $rel) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Evento (Coord.) - TáNaAgenda</title>
-    <link rel="shortcut icon" href="../image/Favicon.png" type="image/x-icon">
-    <link rel="stylesheet" href="../css/global.css">
+    <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
+    <link rel="stylesheet" href="../css/global.css">    
     <link rel="stylesheet" href="../css/criarevento.css">
-    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js" defer></script>
 </head>
 <body>
-
+<script src="../js/favicon.js"></script>
     <header class="header">
-        <a href="perfilcoord.php"><p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></p></a>
+        <a href="perfilcoord.php">
+            <p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></p>
+        </a>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffffff" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
     </header>
 
     <main>
         <section class="area-lado">
-            <a href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
+            <a class="area-lado-logo" href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu">
                 <div class="menu-agenda"><img src="../image/icones/agenda.png" alt=""><a href="agendacoord.php"><p>Agenda</p></a></div>
                 <div class="menu-meus-eventos ativo"><img src="../image/icones/eventos.png" alt=""><a href="eventoscoord.php"><p>Eventos</p></a></div>
@@ -115,13 +119,48 @@ foreach ($relacao_prof_turma_raw as $rel) {
                         <div class="campo">
                             <label for="horario_inicio">Hora de Início</label>
                             <select id="horario_inicio" name="horario_inicio" required>
-                                <option>07:10</option><option>08:00</option><option>08:50</option><option>10:00</option><option>10:50</option><option>11:40</option>
+                            <option>07:10</option>
+                            <option>08:00</option>
+                            <option>08:50</option>
+                            <option>10:00</option>
+                            <option>10:50</option>
+                            <option>11:40</option>
+                            
+                            <option>13:30</option>
+                            <option>14:20</option>
+                            <option>15:10</option>
+                            <option>16:20</option>
+                            <option>17:10</option>
+                            <option>18:00</option>
+
+                            <option>18:30</option>
+                            <option>19:20</option>
+                            <option>20:10</option>
+                            <option>21:20</option>
+                            <option>22:10</option>
                             </select>
                         </div>
                         <div class="campo">
                             <label for="horario_fim">Hora de Fim</label>
                             <select id="horario_fim" name="horario_fim" required>
-                               <option>08:00</option><option>08:50</option><option>09:40</option><option>10:50</option><option>11:40</option><option>12:30</option>
+                            <option>08:00</option>
+                            <option>08:50</option>
+                            <option>09:40</option>
+                            <option>10:50</option>
+                            <option>11:40</option>
+
+                            <option>12:30</option>
+                            <option>14:20</option>
+                            <option>15:10</option>
+                            <option>16:00</option>
+                            <option>17:10</option>
+                            <option>18:50</option>
+
+                            <option>19:20</option>
+                            <option>20:10</option>
+                            <option>21:00</option>
+                            <option>22:10</option>
+                            <option>23:00</option>
                             </select>
                         </div>
                     </div>

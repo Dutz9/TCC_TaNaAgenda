@@ -45,7 +45,8 @@ $lista_eventos = $eventoController->listarAprovados($data_inicio_semana, $data_f
 
 // 4. PROCESSAMENTO PARA O GRID
 $calendario_grid = [];
-$horarios_semana = ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40"];
+$horarios_semana = ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40", "", "13:30", "14:20", "15:10", "16:20", "17:10", "18:00", "",
+"18:30", "19:20", "20:10", "21:20", "22:10"];
 
 foreach ($horarios_semana as $horario) {
     for ($i = 1; $i <= 6; $i++) {

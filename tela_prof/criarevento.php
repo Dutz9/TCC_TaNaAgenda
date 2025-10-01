@@ -87,7 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <script src="../js/favicon.js"></script>
     <header class="header">
         <a href="perfil.php">
-            <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
+            <p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
         </a>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
     </header>
@@ -146,6 +146,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <option>10:00</option>
                             <option>10:50</option>
                             <option>11:40</option>
+                            
+                            <option>13:30</option>
+                            <option>14:20</option>
+                            <option>15:10</option>
+                            <option>16:20</option>
+                            <option>17:10</option>
+                            <option>18:00</option>
+
+                            <option>18:30</option>
+                            <option>19:20</option>
+                            <option>20:10</option>
+                            <option>21:20</option>
+                            <option>22:10</option>
+
+                            copiar e colar esses horarios no criar evento coord
                         </select>
                     </div>
                     <div class="campo">
@@ -156,7 +171,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <option>09:40</option>
                             <option>10:50</option>
                             <option>11:40</option>
+
                             <option>12:30</option>
+                            <option>14:20</option>
+                            <option>15:10</option>
+                            <option>16:00</option>
+                            <option>17:10</option>
+                            <option>18:50</option>
+
+                            <option>19:20</option>
+                            <option>20:10</option>
+                            <option>21:00</option>
+                            <option>22:10</option>
+                            <option>23:00</option>
                         </select>
                     </div>
                 </div>
