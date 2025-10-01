@@ -28,18 +28,26 @@ foreach ($relacao_prof_turma_raw as $rel) {
 // --- PROCESSAMENTO DO FORMULÁRIO (se for enviado) ---
 $mensagem = '';
 $tipo_mensagem = '';
-// --- PROCESSAMENTO DO FORMULÁRIO (se for enviado) ---
-$mensagem = '';
-$tipo_mensagem = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
         // Instancia o controller aqui no início do bloco
         $eventoController = new EventoController();
 
+        // 1. Limpeza e Validação do Título (Adição Principal aqui)
+        $titulo = trim($_POST['titulo']); // Remove espaços em branco no início/fim
+
+        if (empty($titulo)) {
+            throw new Exception("O título do evento não pode ser vazio.");
+        }
+        if (strlen($titulo) > 16) {
+            throw new Exception("O título do evento não pode exceder 16 caracteres.");
+        }
+        // Fim da validação do título
+        
         // Monta o array de dados PEGANDO as informações do formulário via $_POST
         $dadosEvento = [
             'cd_evento' => uniqid('EVT_'),
-            'nm_evento' => $_POST['titulo'],
+            'nm_evento' => $titulo, // <-- Use a variável $titulo JÁ VALIDADA
             'dt_evento' => $_POST['data'], // <--- Agora estamos pegando a data
             'horario_inicio' => $_POST['horario_inicio'],
             'horario_fim' => $_POST['horario_fim'],
@@ -121,9 +129,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
 
                 <div class="linha-form">
-                    <div class="campo">
-                        <label for="titulo">Título do Evento</label>
-                        <input type="text" id="titulo" name="titulo" placeholder="Título" required>
+                <div class="campo">
+                     <label for="titulo">Título do Evento</label>
+                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Palestra USP" maxlength="10" required>
+                        <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
                     </div>
                     <div class="campo">
                         <label for="selecao-turmas">Turmas Envolvidas</label>

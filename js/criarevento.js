@@ -52,4 +52,31 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+
+    const inputTitulo = document.getElementById('titulo');
+    const tituloContador = document.getElementById('titulo-contador');
+    const maxLength = inputTitulo.getAttribute('maxlength');
+
+    // Função para atualizar o contador de caracteres
+    function updateCharCounter() {
+        const currentLength = inputTitulo.value.length;
+        const remaining = maxLength - currentLength;
+        tituloContador.textContent = `Caracteres restantes: ${remaining}`;
+
+        if (remaining < 1) {
+            tituloContador.style.color = 'red';
+        } else if (remaining <= 5) {
+            tituloContador.style.color = 'orange';
+        } else {
+            tituloContador.style.color = '#888';
+        }
+    }
+
+    // Adiciona o listener para o evento 'input' (a cada caractere digitado)
+    if (inputTitulo && tituloContador) {
+        inputTitulo.addEventListener('input', updateCharCounter);
+        // Chama a função uma vez ao carregar a página caso já haja texto
+        updateCharCounter();
+    }
+
 });

@@ -13,10 +13,20 @@ $mensagem = '';
 $tipo_mensagem = '';
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     try {
+        $titulo = trim($_POST['titulo']); // Remover espaços em branco no início/fim
+
+        // Validação de backend para o título
+        if (empty($titulo)) {
+            throw new Exception("O título do evento não pode ser vazio.");
+        }
+        if (strlen($titulo) > 16) {
+            throw new Exception("O título do evento não pode exceder 16 caracteres.");
+        }
+        
         $eventoController = new EventoController();
         $dadosEvento = [
             'cd_evento' => uniqid('EVT_'),
-            'nm_evento' => $_POST['titulo'],
+            'nm_evento' => $titulo, // Use a variável $titulo validada
             'dt_evento' => $_POST['data'],
             'horario_inicio' => $_POST['horario_inicio'],
             'horario_fim' => $_POST['horario_fim'],
@@ -102,10 +112,11 @@ foreach ($relacao_prof_turma_raw as $rel) {
                     <?php endif; ?>
 
                     <div class="linha-form">
-                        <div class="campo">
-                            <label for="titulo">Título do Evento</label>
-                            <input type="text" id="titulo" name="titulo" placeholder="Ex: Reunião Geral" required>
-                        </div>
+                    <div class="campo">
+                     <label for="titulo">Título do Evento</label>
+                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Palestra USP" maxlength="10" required>
+                        <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
+                    </div>
                         <div class="campo">
                              <label for="selecao-turmas">Turmas Envolvidas</label>
                             <select id="selecao-turmas" name="turmas[]" multiple="multiple" required>

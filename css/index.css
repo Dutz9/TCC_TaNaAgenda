@@ -338,6 +338,41 @@ body {
     height: auto; /* PERMITE QUE A ALTURA SE AJUSTE AO CONTEÚDO */
 }
 
+/* Cores das bordas para tipos específicos de evento */
+.area-escrita-resumo-geral.event-summary.tipo-palestra {
+    border-color: #4291D8; /* Azul (usando sua cor padrão do cabeçalho) */
+}
+
+.area-escrita-resumo-geral.event-summary.tipo-visita-tecnica {
+    border-color: #e6ae08; 
+}
+
+.area-escrita-resumo-geral.event-summary.tipo-conselho-de-classe {
+    border-color: #8e57e3; /* Roxo */
+}
+
+.area-escrita-resumo-geral.event-summary.tipo-reuniao {
+    border-color: #51DB51; /* Vermelho */
+}
+
+/* Adicione mais classes conforme os tipos de evento que você tiver */
+.area-escrita-resumo-geral.event-summary.tipo-prova {
+    border-color: #e35757; /* Roxo */
+}
+
+.area-escrita-resumo-geral.event-summary.tipo-evento-esportivo {
+    border-color: #e38e57; /* Laranja */
+}
+
+.area-escrita-resumo-geral.event-summary.tipo-outro {
+    border-color: #888888; /* Cinza */
+}
+
+/* Se quiser uma borda arredondada */
+.area-escrita-resumo-geral.event-summary {
+    border-radius: 30px; /* Arredonda apenas os cantos direitos da borda */
+}
+
 .modal-overlay {
     position: fixed;
     top: 0;

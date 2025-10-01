@@ -126,7 +126,7 @@ CREATE PROCEDURE criarEvento(
     IN pNmEvento VARCHAR(45),
     IN pHorarioInicio VARCHAR(45),
     IN pHorarioFim VARCHAR(45),
-    IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao'),
+    IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
     IN pDsDescricao VARCHAR(200),
     IN pCdUsuarioSolicitante VARCHAR(45)
 )
@@ -240,7 +240,7 @@ CREATE PROCEDURE `criarEventoAprovado`(
     IN pNmEvento VARCHAR(45),
     IN pHorarioInicio VARCHAR(45),
     IN pHorarioFim VARCHAR(45),
-    IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao'),
+    IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
     IN pDsDescricao VARCHAR(200),
     IN pCdUsuarioSolicitante VARCHAR(45)
 )
