@@ -126,7 +126,7 @@ body {
     grid-template-columns: 50px repeat(6, 1fr);
     gap: 0;
     margin: 10px;
-    height: calc(100vh - 80px - 150px);
+    min-height: calc(100vh - 80px - 150px);
 }
 
 .time-slot-label {

@@ -213,15 +213,6 @@ INSERT INTO turmas ( nm_turma, ic_serie, qt_alunos, cd_sala, cursos_cd_curso) VA
 ('SO', '3', 30, 48, 19);  -- Técnico em Soldagem, 3º Módulo
 SELECT * FROM turmas;
 
-
-
-INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao) VALUES 
-('EVT001', '2025-12-25', 'Palestra USP', '10:00', '10:50', 'Palestra', 'Palestra sobre ex-alunos da ETEC que passaram na USP', 'Aprovado', '1001', '2025-11-16'),
-('EVT002', '2025-10-10', 'Visita à Fábrica', '09:00', '12:00', 'Visita tecnica', 'Visita guiada à indústria de automação', 'Solicitado', '1001', '2025-08-24'),
-('EVT003', '2025-09-23', 'Palestra de Teste', '08:50', '09:40', 'Palestra', 'Planejamento do próximo semestre', 'Aprovado', '0002', '2025-08-24');
-SELECT * FROM eventos;
-
-
 INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES 
 ('1001', 1), 
 ('1001', 2), 
@@ -233,13 +224,3 @@ INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES
 ('1012', 5), -- Mariana Costa na turma 2N1
 ('1013', 16); -- Rafael Souza na turma 1I1
 SELECT * FROM usuarios_has_turmas;
-
-INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES 
-('EVT001', 1), ('EVT001', 2), 
-('EVT002', 1);
-SELECT * FROM eventos_has_turmas;
-
-INSERT INTO resolucao_eventos_usuarios (eventos_cd_evento, usuarios_cd_usuario, status_resolucao ) VALUES 
-('EVT001', '0002', 'Aprovado'),
-('EVT002', '0003', 'Aprovado');
-SELECT * FROM resolucao_eventos_usuarios;
