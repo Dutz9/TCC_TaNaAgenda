@@ -55,6 +55,36 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCharCounter(); // Chama uma vez ao carregar a página
     }
 
+    // --- Lógica para a Hora de Início e Hora de Fim ---
+    const horarioInicioElement = document.getElementById('horario_inicio');
+    const horarioFimElement = document.getElementById('horario_fim');
+
+    // Função para desabilitar opções de hora de fim menores ou iguais à hora de início
+    function ajustarHorarioFim() {
+        const horaInicio = horarioInicioElement.value;
+        const options = horarioFimElement.options;
+
+        // Converte hora de início para minutos
+        const [hInicio, mInicio] = horaInicio.split(":").map(Number);
+        const minutosInicio = hInicio * 60 + mInicio;
+
+        // Atualiza as opções da hora de fim
+        for (let i = 0; i < options.length; i++) {
+            const option = options[i];
+            const [h, m] = option.value.split(":").map(Number);
+            const minutosOption = h * 60 + m;
+
+            // Desabilita as opções de hora de fim menores ou iguais à hora de início
+            option.disabled = minutosOption <= minutosInicio;
+        }
+    }
+
+    // Se o elemento da hora de início existir, adicionar o evento
+    if (horarioInicioElement) {
+        horarioInicioElement.addEventListener('change', ajustarHorarioFim);
+        ajustarHorarioFim(); // Chama uma vez ao carregar a página para garantir que as opções da hora de fim estão corretas
+    }
+    
     // REMOVENDO a lógica antiga de display automático de professores
     // Não precisamos mais do `relacaoTurmaProfessor` nem do `displayProfessores`
     // já que a seleção é manual agora.
