@@ -76,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Lógica para a Hora de Início e Hora de Fim ---
     const horarioInicioElement = document.getElementById('horario_inicio');
     const horarioFimElement = document.getElementById('horario_fim');
+    const errorMessageFim = document.getElementById('error-message-fim'); // Novo span para o erro do horário de fim
 
     // Função para desabilitar opções de hora de fim menores ou iguais à hora de início
     function ajustarHorarioFim() {
@@ -102,7 +103,29 @@ document.addEventListener('DOMContentLoaded', function() {
         horarioInicioElement.addEventListener('change', ajustarHorarioFim);
         ajustarHorarioFim(); // Chama uma vez ao carregar a página para garantir que as opções da hora de fim estão corretas
     }
-    
+
+    // --- Lógica para a validação do horário de fim ---
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function (e) {
+        const horarioInicio = horarioInicioElement.value;
+        const horarioFim = horarioFimElement.value;
+        
+        // Validar se o horário de fim é posterior ao horário de início
+        if (horarioInicio && horarioFim) {
+            const [hInicio, mInicio] = horarioInicio.split(":").map(Number);
+            const [hFim, mFim] = horarioFim.split(":").map(Number);
+            
+            const minutosInicio = hInicio * 60 + mInicio;
+            const minutosFim = hFim * 60 + mFim;
+
+            if (minutosFim <= minutosInicio) {
+                e.preventDefault(); // Impede o envio do formulário
+                errorMessageFim.textContent = 'O horário de encerramento não pode ser anterior ao horário de início.';
+                errorMessageFim.style.color = 'red'; // Exibe a mensagem no lugar correto
+            }
+        }
+    });
+
     // REMOVENDO a lógica antiga de display automático de professores
     // Não precisamos mais do `relacaoTurmaProfessor` nem do `displayProfessores`
     // já que a seleção é manual agora.

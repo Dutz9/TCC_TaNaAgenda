@@ -144,43 +144,45 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'tipo-' + eventType.toLowerCase().replace(/ /g, '-');
     }
     
-    // Resumo de hoje
-    const todaySummaryDiv = document.querySelector(".resumo-geral-lado-direito:nth-of-type(1)");
-    todaySummaryDiv.querySelectorAll(".area-escrita-resumo-geral").forEach(el => el.remove());
-    
-    if(todayEvents.length > 0){
-        todayEvents.forEach(evt => {
-            const p = document.createElement('div');
-            // Adicione a classe 'event-summary' e a classe de tipo de evento
-            p.className = 'area-escrita-resumo-geral event-summary ' + getEventTypeClass(evt.tipo_evento);
-            p.innerHTML = `<p>${evt.nm_evento}</p><p>${evt.horario_inicio.substr(0, 5)}</p>`;
-            todaySummaryDiv.appendChild(p);
-        });
-    } else {
-         const p = document.createElement('div');
-         p.className = 'area-escrita-resumo-geral';
-         p.innerHTML = `<p>Nenhum evento hoje.</p>`;
-         todaySummaryDiv.appendChild(p);
-    }
-    
-    // Resumo de amanhã
-    const tomorrowSummaryDiv = document.querySelector(".resumo-geral-lado-direito:nth-of-type(2)");
-    tomorrowSummaryDiv.querySelectorAll(".area-escrita-resumo-geral").forEach(el => el.remove());
-    
-    if(tomorrowEvents.length > 0){
-        tomorrowEvents.forEach(evt => {
-            const p = document.createElement('div');
-            // Adicione a classe 'event-summary' e a classe de tipo de evento
-            p.className = 'area-escrita-resumo-geral event-summary ' + getEventTypeClass(evt.tipo_evento);
-            p.innerHTML = `<p>${evt.nm_evento}</p><p>${evt.horario_inicio.substr(0, 5)}</p>`;
-            tomorrowSummaryDiv.appendChild(p);
-        });
-    } else {
-         const p = document.createElement('div');
-         p.className = 'area-escrita-resumo-geral';
-         p.innerHTML = `<p>Nenhum evento amanhã.</p>`;
-         tomorrowSummaryDiv.appendChild(p);
-    }
+  // Resumo de hoje
+const todaySummaryDiv = document.querySelector(".resumo-geral-lado-direito:nth-of-type(1)");
+const todayScrollContainer = todaySummaryDiv.querySelector(".container-scroll-eventos");
+todayScrollContainer.innerHTML = '';
+
+if(todayEvents.length > 0){
+    todayEvents.forEach(evt => {
+        const p = document.createElement('div');
+        // Adicione a classe 'event-summary' e a classe de tipo de evento
+        p.className = 'area-escrita-resumo-geral event-summary ' + getEventTypeClass(evt.tipo_evento);
+        p.innerHTML = `<p>${evt.nm_evento}</p><p>${evt.horario_inicio.substr(0, 5)}</p>`;
+        todayScrollContainer.appendChild(p);
+    });
+} else {
+     const p = document.createElement('div');
+     p.className = 'area-escrita-resumo-geral';
+     p.innerHTML = `<p>Nenhum evento hoje.</p>`;
+     todayScrollContainer.appendChild(p);
+}
+
+// Resumo de amanhã
+const tomorrowSummaryDiv = document.querySelector(".resumo-geral-lado-direito:nth-of-type(2)");
+const tomorrowScrollContainer = tomorrowSummaryDiv.querySelector(".container-scroll-eventos");
+tomorrowScrollContainer.innerHTML = '';
+
+if(tomorrowEvents.length > 0){
+    tomorrowEvents.forEach(evt => {
+        const p = document.createElement('div');
+        // Adicione a classe 'event-summary' e a classe de tipo de evento
+        p.className = 'area-escrita-resumo-geral event-summary ' + getEventTypeClass(evt.tipo_evento);
+        p.innerHTML = `<p>${evt.nm_evento}</p><p>${evt.horario_inicio.substr(0, 5)}</p>`;
+        tomorrowScrollContainer.appendChild(p);
+    });
+} else {
+     const p = document.createElement('div');
+     p.className = 'area-escrita-resumo-geral';
+     p.innerHTML = `<p>Nenhum evento amanhã.</p>`;
+     tomorrowScrollContainer.appendChild(p);
+}
     }
 
     // Inicializa o painel direito com a data atual.

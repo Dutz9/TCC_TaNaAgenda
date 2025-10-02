@@ -188,10 +188,12 @@ foreach ($lista_eventos as $evento) {
 
         <section class="resumo-geral-lado-direito">
             <h3>Resumo geral de hoje:</h3>
+            <div class="container-scroll-eventos"></div>
         </section>
 
         <section class="resumo-geral-lado-direito">
             <h3>Resumo geral de amanhã:</h3>
+            <div class="container-scroll-eventos"></div>
         </section>
     </section>
 

@@ -170,8 +170,9 @@ $lista_professores = $usuarioController->listarTodosProfessores();
                 </div>
                 <div class="linha-form">
                     <div class="campo">
-                        <label for="horario_inicio">Hora de Início</label>
+                        <label for="horario_inicio">Horário de Início</label>
                         <select id="horario_inicio" name="horario_inicio" required>
+                        <option value="" disabled selected>Selecione uma opção</option>
                             <option>07:10</option>
                             <option>08:00</option>
                             <option>08:50</option>
@@ -192,12 +193,12 @@ $lista_professores = $usuarioController->listarTodosProfessores();
                             <option>21:20</option>
                             <option>22:10</option>
 
-                            copiar e colar esses horarios no criar evento coord
                         </select>
                     </div>
                     <div class="campo">
-                        <label for="horario_fim">Hora de Fim</label>
+                        <label for="horario_fim">Horário de Encerramento</label>
                         <select id="horario_fim" name="horario_fim" required>
+                        <option value="" disabled selected>Selecione uma opção</option>
                             <option>08:00</option>
                             <option>08:50</option>
                             <option>09:40</option>
@@ -217,23 +218,16 @@ $lista_professores = $usuarioController->listarTodosProfessores();
                             <option>22:10</option>
                             <option>23:00</option>
                         </select>
+                        <span id="error-message-fim" style="color: red;"></span> <!-- Novo span de erro para horário fim -->
                     </div>
                 </div>
                 <div class="linha-form">
                     <div class="campo">
                         <label for="data">Data do Evento</label>
                         <input type="date" id="data" name="data" required>
+                        <span id="error-message"></span>
                     </div>
-                    <div class="campo">
-                            <label for="selecao-professores">Professores a Notificar</label>
-                            <select id="selecao-professores" name="professores_envolvidos[]" multiple="multiple">
-                                <?php foreach ($lista_professores as $professor): ?>
-                                    <option value="<?php echo $professor['cd_usuario']; ?>"><?php echo htmlspecialchars($professor['nm_usuario']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
-                </div>
-                <div class="linha-form">
+
                     <div class="campo">
                         <label for="tipo">Tipo do Evento</label>
                         <select id="tipo" name="tipo" required>
@@ -246,9 +240,20 @@ $lista_professores = $usuarioController->listarTodosProfessores();
                             <option value="Outro">Outro</option>
                         </select>
                     </div>
+                   
+                </div>
+                <div class="linha-form">
+                <div class="campo">
+                            <label for="selecao-professores">Professores a Notificar</label>
+                            <select id="selecao-professores" name="professores_envolvidos[]" multiple="multiple">
+                                <?php foreach ($lista_professores as $professor): ?>
+                                    <option value="<?php echo $professor['cd_usuario']; ?>"><?php echo htmlspecialchars($professor['nm_usuario']); ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                     <div class="campo">
                         <label for="descricao">Descrição</label>
-                        <input type="text" id="descricao" name="descricao" placeholder="Descrição do evento" required>
+                        <textarea id="descricao" name="descricao" placeholder="Descreva brevemente o evento..." required></textarea>
                     </div>
                 </div>
                 <div class="botoes">

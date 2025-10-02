@@ -198,7 +198,8 @@ body {
 
 .area-lado-direito {
     width: 250px;
-    height: 100vh;
+    height: calc(100vh - 80px);
+    margin-top: 80px;
     background-color: #0d102b;
     top: 0;
     position: absolute;
@@ -207,7 +208,6 @@ body {
     flex-direction: column;
     color: white;
     font-size: 18px;
-    z-index: -1;
 }
 
 .calendario-lado-direito {
@@ -219,6 +219,7 @@ body {
     align-self: center;
     flex-direction: column;
     padding-bottom: 5px;
+    margin-top: 0px;
 }
 
 .header-calendario-lado-direito {
@@ -316,7 +317,23 @@ body {
     display: flex;
     align-self: center;
     flex-direction: column;
-    padding: 15px;
+    padding: 15px 15px 15px 15px;
+    max-height: 27.5vh;
+}
+
+.container-scroll-eventos {
+    overflow-y: auto;
+    max-height: 27.5vh; /* Limita só a área de eventos */
+    padding-right: 5px;
+}
+
+/* Opcional: para esconder a barra de rolagem no Chrome */
+.container-scroll-eventos::-webkit-scrollbar {
+    width: 6px;
+}
+.container-scroll-eventos::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
 }
 
 .resumo-geral-lado-direito > h3 {
