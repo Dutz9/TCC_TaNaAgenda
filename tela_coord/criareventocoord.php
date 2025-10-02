@@ -136,8 +136,9 @@ $lista_professores = $usuarioController->listarTodosProfessores();
                     </div>
                     <div class="linha-form">
                         <div class="campo">
-                            <label for="horario_inicio">Hora de Início</label>
+                            <label for="horario_inicio">Horário de Início</label>
                             <select id="horario_inicio" name="horario_inicio" required>
+                            <option value="" disabled selected>Selecione uma opção</option>
                             <option>07:10</option>
                             <option>08:00</option>
                             <option>08:50</option>
@@ -160,8 +161,9 @@ $lista_professores = $usuarioController->listarTodosProfessores();
                             </select>
                         </div>
                         <div class="campo">
-                            <label for="horario_fim">Hora de Fim</label>
+                            <label for="horario_fim">Horário de Encerramento</label>
                             <select id="horario_fim" name="horario_fim" required>
+                            <option value="" disabled selected>Selecione uma opção</option>
                             <option>08:00</option>
                             <option>08:50</option>
                             <option>09:40</option>
@@ -187,6 +189,7 @@ $lista_professores = $usuarioController->listarTodosProfessores();
                         <div class="campo">
                             <label for="data">Data do Evento</label>
                             <input type="date" id="data" name="data" required>
+                            <span id="error-message"></span>
                         </div>
                          <div class="campo">
                             <label for="tipo">Tipo do Evento</label>

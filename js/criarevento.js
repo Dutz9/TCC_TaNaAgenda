@@ -29,6 +29,24 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    const inputData = document.getElementById('data');
+    const errorMessage = document.getElementById('error-message');
+    
+    // Define a data mínima para hoje
+    inputData.setAttribute('min', new Date().toISOString().split('T')[0]);
+    
+    inputData.addEventListener('input', () => {
+      const selectedDateStr = inputData.value; // string no formato 'YYYY-MM-DD'
+      const todayStr = new Date().toISOString().split('T')[0];
+    
+      if (selectedDateStr < todayStr) {
+        inputData.setCustomValidity('A data selecionada não pode ser anterior à data de hoje.');
+      } else {
+        inputData.setCustomValidity('');
+        errorMessage.textContent = '';
+      }
+    });
+
     // Lógica do contador de caracteres (já existente)
     const inputTitulo = document.getElementById('titulo');
     const tituloContador = document.getElementById('titulo-contador');
