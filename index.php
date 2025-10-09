@@ -198,29 +198,16 @@ foreach ($lista_eventos as $evento) {
     </section>
 
     <div id="modal-overlay" class="modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <h3>Nome do Evento</h3>
-            <p>21/01/2025</p>
-            <p style="font-weight: 600;">Turmas:</p>
-            <p> 1I1 - 2I1 - 3I1</p>
-            <p style="font-weight: 600;">Hora de Inicio e Fim:</p>
-            <p>07:10 - 7:50</p>
-            <p style="font-weight: 600;">Descrição do evento:</p>
-            <p>Esta palestra é um convite para os alunos do Ensino Médio explorarem o universo do mercado de trabalho digital.
-                Durante o encontro, os estudantes conhecerão as principais tendências profissionais do mundo digital, como marketing digital,
-                 programação, design, criação de conteúdo, inteligência artificial e outras áreas emergentes. Também serão abordadas as habilidades
-                  mais valorizadas no cenário atual, incluindo pensamento crítico, criatividade, resolução de problemas e competências digitais.
-            </p>
+            <div class="modal-content">
+                <h3>Carregando...</h3>
+            </div>
         </div>
-    </div>
 
     <!-- Novo modal para eventos do dia selecionado no mini calendário -->
     <div id="day-modal-overlay" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <h3>Eventos do Dia <span id="selected-day"></span></h3>
-            <p>Evento estático 1: Palestra às 07:10</p>
-            <p>Evento estático 2: Visita Técnica às 08:00</p>
-            <p>Evento estático 3: Oficina às 10:00</p>
+            <div><p>Carregando eventos...</p></div>
             <!-- Aqui você pode adicionar mais dinamicamente depois -->
         </div>
     </div>
