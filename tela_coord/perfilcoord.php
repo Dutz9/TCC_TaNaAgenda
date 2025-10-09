@@ -67,7 +67,7 @@ require_once '../api/verifica_sessao.php';
                         Nome Coordenador
                     </h3>
                     <p>
-                        Coordenador EM
+                    <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?>
                     </p>
                 </div>
             </div>
@@ -90,23 +90,19 @@ require_once '../api/verifica_sessao.php';
                 <div class="informacoes-pessoais">
                     <div class="infos" id="nome">
                         <label for="nome">Nome Completo:</label>
-                        <input type="text" id="nome" placeholder="Nome do Coordenador" readonly>
+                        <input type="text" id="nome" placeholder=" <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?>" readonly>
                     </div>
                     <div class="infos"  id="email">
                         <label for="email">E-mail:</label>
-                        <input type="email" id="email" placeholder="coordenador@gmail.com">
+                        <input type="email" id="email" placeholder=" <?php echo htmlspecialchars($usuario_logado['nm_email']); ?>">
                     </div>
                     <div  class="infos" id="telefone">
                         <label for="telefone">Telefone:</label>
-                        <input type="tel" id="telefone" placeholder="(13)4002-8922">
-                    </div>
-                    <div class="infos"  id="senha">
-                        <label for="senha">Senha:</label>
-                        <input type="password" id="senha" placeholder="********">
+                        <input type="tel" id="telefone" placeholder="<?php echo htmlspecialchars($usuario_logado['telefone']); ?>">
                     </div>
                     <div class="infos"  id="rm">
                         <label for="rm">RM:</label>
-                        <input type="text" id="RM" placeholder="39415" readonly>
+                        <input type="text" id="RM" placeholder=" <?php echo htmlspecialchars($usuario_logado['cd_usuario']); ?>" readonly>
                     </div>
                     <div class="infos" id="Salvar">
                         <button class="btn-salvar">Salvar</button>
