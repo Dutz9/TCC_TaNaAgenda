@@ -122,15 +122,8 @@ foreach ($relacao_prof_turma_raw as $rel) {
                                 <option value="Outro">Outro</option>
                             </select>
                         </div>
+
                     <div class="campo">
-                     <label for="titulo">Título do Evento</label>
-                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Palestra USP" maxlength="10" required>
-                        <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
-                    </div>
-                        
-                    </div>
-                    <div class="linha-form">
-                        <div class="campo">
                         <label for="horario_inicio">Horário de Início</label>
                             <select id="horario_inicio" name="horario_inicio" required>
                             <option value="" disabled selected>Selecione uma opção</option>
@@ -155,6 +148,13 @@ foreach ($relacao_prof_turma_raw as $rel) {
                             <option>22:10</option>
                             </select>
                         </div>
+                    </div>
+                    <div class="linha-form">
+                    <div class="campo">
+                     <label for="titulo">Título do Evento</label>
+                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Visita USP" maxlength="10" required>
+                        <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
+                    </div>
                         <div class="campo">
                         <label for="horario_fim">Horário de Encerramento</label>
                             <select id="horario_fim" name="horario_fim" required>

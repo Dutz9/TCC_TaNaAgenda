@@ -98,7 +98,7 @@ require_once '../api/verifica_sessao.php';
                     </div>
                     <div  class="infos" id="telefone">
                         <label for="telefone">Telefone:</label>
-                        <input type="tel" id="telefone" placeholder="<?php echo htmlspecialchars($usuario_logado['telefone']); ?>">
+                        <input type="tel" id="telefone" placeholder="(13)4002-8922">
                     </div>
                     <div class="infos"  id="rm">
                         <label for="rm">RM:</label>

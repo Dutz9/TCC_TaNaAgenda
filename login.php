@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <input type="text" name="email" id="email" placeholder="Digite seu e-mail ou RM" required>
             
             <h2>Senha:</h2>
-            <input type="password" name="senha" placeholder="SENHA" required>
+            <input type="password" name="senha" placeholder="Senha" required>
             
             <div class="entrar">
                 <button type="submit" class="botao-entrar">Entrar</button>

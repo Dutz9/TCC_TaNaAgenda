@@ -129,25 +129,22 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <?php endif; ?>
 
                 <div class="linha-form">
+
                 <div class="campo">
-                     <label for="titulo">Título do Evento</label>
-                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Palestra USP" maxlength="10" required>
-                        <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
-                    </div>
-                    <div class="campo">
-                        <label for="selecao-turmas">Turmas Envolvidas</label>
-                        <select id="selecao-turmas" name="turmas[]" multiple="multiple" required>
-                            <?php foreach ($lista_turmas as $turma): ?>
-                                <option value="<?php echo $turma['cd_turma']; ?>">
-                                    <?php echo htmlspecialchars($turma['nm_turma']); ?>
-                                </option>
-                            <?php endforeach; ?>
+                        <label for="tipo">Tipo do Evento</label>
+                        <select id="tipo" name="tipo" required>
+                            <option value="Palestra">Palestra</option>
+                            <option value="Visita Técnica">Visita Técnica</option>
+                            <option value="Reunião">Reunião</option>
+                            <option value="Prova">Prova</option>
+                            <option value="Conselho de Classe">Conselho de Classe</option>
+                            <option value="Evento Esportivo">Evento Esportivo</option>
+                            <option value="Outro">Outro</option>
                         </select>
                     </div>
-                </div>
-                <div class="linha-form">
+
                     <div class="campo">
-                    <label for="horario_inicio">Horário de Início</label>
+                        <label for="horario_inicio">Horário de Início</label>
                         <select id="horario_inicio" name="horario_inicio" required>
                         <option value="" disabled selected>Selecione uma opção</option>
                             <option>07:10</option>
@@ -171,6 +168,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <option>22:10</option>
                         </select>
                     </div>
+
+
+                    
+                </div>
+                <div class="linha-form">
+
+                <div class="campo">
+                     <label for="titulo">Título do Evento</label>
+                        <input type="text" id="titulo" name="titulo" placeholder="Ex: Visita USP" maxlength="10" required>
+                        <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
+                    </div>
+
                     <div class="campo">
                     <label for="horario_fim">Horário de Encerramento</label>
                         <select id="horario_fim" name="horario_fim" required>
@@ -203,26 +212,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <input type="date" id="data" name="data" required>
                         <span id="error-message"></span>
                     </div>
+                    
+                <div class="campo">
+                        <label for="selecao-turmas">Turmas Envolvidas</label>
+                        <select id="selecao-turmas" name="turmas[]" multiple="multiple" required>
+                            <?php foreach ($lista_turmas as $turma): ?>
+                                <option value="<?php echo $turma['cd_turma']; ?>">
+                                    <?php echo htmlspecialchars($turma['nm_turma']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+                <div class="linha-form">
+
                     <div class="campo">
                         <label>Professores a Notificar (automático)</label>
                         <div id="display-professores" class="display-box">
                             <p>Selecione uma ou mais turmas...</p>
                         </div>
                     </div>
-                </div>
-                <div class="linha-form">
-                    <div class="campo">
-                        <label for="tipo">Tipo do Evento</label>
-                        <select id="tipo" name="tipo" required>
-                            <option value="Palestra">Palestra</option>
-                            <option value="Visita Técnica">Visita Técnica</option>
-                            <option value="Reunião">Reunião</option>
-                            <option value="Prova">Prova</option>
-                            <option value="Conselho de Classe">Conselho de Classe</option>
-                            <option value="Evento Esportivo">Evento Esportivo</option>
-                            <option value="Outro">Outro</option>
-                        </select>
-                    </div>
+                    
                     <div class="campo">
                         <label for="descricao">Descrição</label>
                         <textarea id="descricao" name="descricao" placeholder="Descreva brevemente o evento..." required></textarea>
