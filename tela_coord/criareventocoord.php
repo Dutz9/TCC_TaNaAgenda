@@ -111,18 +111,23 @@ foreach ($relacao_prof_turma_raw as $rel) {
 
                     <div class="linha-form">
                     <div class="campo">
+                            <label for="tipo">Tipo do Evento</label>
+                            <select id="tipo" name="tipo" required>
+                                <option value="Palestra">Palestra</option>
+                                <option value="Visita Técnica">Visita Técnica</option>
+                                <option value="Reunião">Reunião</option>
+                                <option value="Prova">Prova</option>
+                                <option value="Conselho de Classe">Conselho de Classe</option>
+                                <option value="Evento Esportivo">Evento Esportivo</option>
+                                <option value="Outro">Outro</option>
+                            </select>
+                        </div>
+                    <div class="campo">
                      <label for="titulo">Título do Evento</label>
                         <input type="text" id="titulo" name="titulo" placeholder="Ex: Palestra USP" maxlength="10" required>
                         <small id="titulo-contador" style="color: #888; font-size: 0.8em; margin-top: 5px; display: block;"></small>
                     </div>
-                        <div class="campo">
-                             <label for="selecao-turmas">Turmas Envolvidas</label>
-                            <select id="selecao-turmas" name="turmas[]" multiple="multiple" required>
-                                <?php foreach ($lista_turmas as $turma): ?>
-                                    <option value="<?php echo $turma['cd_turma']; ?>"><?php echo htmlspecialchars($turma['nm_turma']); ?></option>
-                                <?php endforeach; ?>
-                            </select>
-                        </div>
+                        
                     </div>
                     <div class="linha-form">
                         <div class="campo">
@@ -182,18 +187,15 @@ foreach ($relacao_prof_turma_raw as $rel) {
                             <input type="date" id="data" name="data" required>
                             <span id="error-message"></span>
                         </div>
-                         <div class="campo">
-                            <label for="tipo">Tipo do Evento</label>
-                            <select id="tipo" name="tipo" required>
-                                <option value="Palestra">Palestra</option>
-                                <option value="Visita Técnica">Visita Técnica</option>
-                                <option value="Reunião">Reunião</option>
-                                <option value="Prova">Prova</option>
-                                <option value="Conselho de Classe">Conselho de Classe</option>
-                                <option value="Evento Esportivo">Evento Esportivo</option>
-                                <option value="Outro">Outro</option>
+                        <div class="campo">
+                             <label for="selecao-turmas">Turmas Envolvidas</label>
+                            <select id="selecao-turmas" name="turmas[]" multiple="multiple" required>
+                                <?php foreach ($lista_turmas as $turma): ?>
+                                    <option value="<?php echo $turma['cd_turma']; ?>"><?php echo htmlspecialchars($turma['nm_turma']); ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
+                         
                     </div>
                     <div class="linha-form">
                          <div class="campo">
