@@ -117,7 +117,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="esqueciMinhaSenha.php">Esqueci minha senha</a>
         </h3>
     </div>
-
-
 </body>
 </html>

@@ -96,16 +96,6 @@ CREATE TABLE resolucao_eventos_usuarios (
     FOREIGN KEY (usuarios_cd_usuario) REFERENCES usuarios(cd_usuario)
 );
 
--- Nova tabela para associar eventos a professores específicos (selecionados manualmente)
-DROP TABLE IF EXISTS eventos_has_professores;
-CREATE TABLE eventos_has_professores (
-    eventos_cd_evento VARCHAR(25) NOT NULL,
-    usuarios_cd_usuario VARCHAR(10) NOT NULL,
-    PRIMARY KEY (eventos_cd_evento, usuarios_cd_usuario),
-    FOREIGN KEY (eventos_cd_evento) REFERENCES eventos(cd_evento),
-    FOREIGN KEY (usuarios_cd_usuario) REFERENCES usuarios(cd_usuario)
-);
-
 INSERT INTO tipo_usuario (ic_usuario) VALUES 
 ('Professor'),
 ('Coordenador'),
