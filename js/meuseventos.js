@@ -1,6 +1,6 @@
 /**
  * Mostra uma barra de feedback flutuante no topo da tela.
- * Esta função fica fora do DOMContentLoaded para ser globalmente acessível.
+ * Fica fora do DOMContentLoaded para ser acessível pelo PHP.
  * @param {string} message - A mensagem a ser exibida.
  * @param {string} type - 'sucesso' ou 'erro'.
  */
@@ -21,8 +21,8 @@ function showToast(message, type = 'sucesso') {
 // --- LÓGICA PRINCIPAL DA PÁGINA ---
 document.addEventListener('DOMContentLoaded', () => {
     // Garante que as 'pontes' de dados do PHP existem
-    if (typeof eventosDaPagina === 'undefined' || typeof nomeUsuarioLogado === 'undefined') {
-        console.error("Variáveis de dados ('eventosDaPagina' ou 'nomeUsuarioLogado') não foram encontradas.");
+    if (typeof eventosDaPagina === 'undefined' || typeof usuario_logado === 'undefined') {
+        console.error("Variáveis de dados ('eventosDaPagina' ou 'usuario_logado') não foram encontradas.");
         return;
     }
 
@@ -36,25 +36,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalLeft = modal.querySelector('.modal-left');
     const modalRight = modal.querySelector('.modal-right');
 
-    // --- "ESCUTADOR" DE CLIQUES PRINCIPAL ---
+    // --- "ESCUTADORES" DE CLIQUES ---
+    
+    // 1. Escutador nos CARDS para abrir o modal de detalhes
     container.addEventListener('click', (e) => {
-        const botaoClicado = e.target.closest('button');
+        const botaoClicado = e.target.closest('button.detalhes-btn');
         if (!botaoClicado) return;
         
         const eventoId = botaoClicado.dataset.id;
         if (!eventoId) return;
 
         const evento = eventosDaPagina.find(ev => ev.cd_evento === eventoId);
-        if (!evento) return;
-
-        if (botaoClicado.classList.contains('detalhes-btn')) {
+        if (evento) {
             abrirModalDetalhes(evento);
-        } else if (botaoClicado.classList.contains('btn-aprovar')) {
-            enviarResposta(eventoId, 'Aprovado', botaoClicado);
-        } else if (botaoClicado.classList.contains('btn-recusar')) {
-            enviarResposta(eventoId, 'Recusado', botaoClicado);
         }
     });
+
+    // 2. Escutador DENTRO DO MODAL para os botões de Aprovar/Recusar e para fechar
+    modal.addEventListener('click', (e) => {
+        // Se o clique foi no fundo do modal, fecha o modal
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            return;
+        }
+
+        const botaoClicado = e.target.closest('button');
+        // Se o clique foi em um botão de ação
+        if (botaoClicado && (botaoClicado.classList.contains('btn-aprovar') || botaoClicado.classList.contains('btn-recusar'))) {
+            const eventoId = botaoClicado.dataset.id;
+            const decisao = botaoClicado.classList.contains('btn-aprovar') ? 'Aprovado' : 'Recusado';
+            enviarResposta(eventoId, decisao, botaoClicado);
+        }
+    });
+
 
     // --- FUNÇÕES ---
 
@@ -62,8 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
      * Envia a resposta (Aprovado/Recusado) do professor para a API.
      */
     async function enviarResposta(eventoId, resposta, botao) {
-        const containerRespostas = botao.closest('.opcoes-resposta');
-        containerRespostas.innerHTML = '<p>Processando...</p>';
+        const containerBotoes = botao.parentElement;
+        containerBotoes.innerHTML = '<p>Processando...</p>';
 
         const formData = new FormData();
         formData.append('cd_evento', eventoId);
@@ -82,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (indiceEvento > -1) {
                     eventosDaPagina[indiceEvento].minha_resposta = resposta;
                     let respostas = JSON.parse(eventosDaPagina[indiceEvento].respostas_professores || '[]');
-                    let minhaRespostaNaLista = respostas.find(r => r.nome === nomeUsuarioLogado);
+                    let minhaRespostaNaLista = respostas.find(r => r.nome === usuario_logado.nm_usuario);
                     if (minhaRespostaNaLista) {
                         minhaRespostaNaLista.status = resposta;
                     }
@@ -90,29 +104,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 // Atualiza a interface do card
-                const statusTexto = `Sua resposta: ${resposta}`;
-                const statusClasse = resposta === 'Aprovado' ? 'status-aprovado' : 'status-recusado';
-                containerRespostas.innerHTML = `<p class="${statusClasse}">${statusTexto}</p>`;
+                const card = document.querySelector(`.notificacao .detalhes-btn[data-id="${eventoId}"]`).closest('.notificacao');
+                const opcoesRespostaDiv = card.querySelector('.opcoes-resposta');
+                if (opcoesRespostaDiv) {
+                    const statusTexto = `Sua resposta: ${resposta}`;
+                    const statusClasse = resposta === 'Aprovado' ? 'status-aprovado' : 'status-recusado';
+                    opcoesRespostaDiv.innerHTML = `<p class="${statusClasse}">${statusTexto}</p>`;
+                }
+                
+                // Fecha o modal após a ação
+                modal.style.display = 'none';
 
             } else {
                 alert('Erro: ' + (result.mensagem || 'Não foi possível registrar a resposta.'));
-                containerRespostas.innerHTML = `<button class="btn-recusar" data-id="${eventoId}">Recusar</button><button class="btn-aprovar" data-id="${eventoId}">Aprovar</button>`;
+                containerBotoes.innerHTML = `<button class="btn-recusar" data-id="${eventoId}">Recusar</button><button class="btn-aprovar" data-id="${eventoId}">Aprovar</button>`;
             }
         } catch (error) {
             alert('Ocorreu um erro de comunicação.');
             console.error('Erro no fetch:', error);
-            containerRespostas.innerHTML = `<button class="btn-recusar" data-id="${eventoId}">Recusar</button><button class="btn-aprovar" data-id="${eventoId}">Aprovar</button>`;
+            containerBotoes.innerHTML = `<button class="btn-recusar" data-id="${eventoId}">Recusar</button><button class="btn-aprovar" data-id="${eventoId}">Aprovar</button>`;
         }
     }
     
-    // Função para formatar data (DD/MM/YYYY)
     function formatarData(dateString) {
         const [ano, mes, dia] = dateString.split('-');
         return `${dia}/${mes}/${ano}`;
     }
 
     /**
-     * Abre e preenche o modal com os detalhes do evento.
+     * Abre e preenche o modal com os detalhes do evento e os botões de ação.
      */
     function abrirModalDetalhes(evento) {
         let respostas = [];
@@ -139,11 +159,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         modalLeft.innerHTML = `<div class="coordinator-info"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg><div><h3>${evento.nm_solicitante}</h3><p>${evento.tipo_solicitante}</p></div></div><div class="responses-section"><h4>${tituloRespostas}</h4>${respostasHtml}</div>`;
-        modalRight.innerHTML = `<h3>Detalhes do Evento</h3><div class="form-group"><label>Título:</label><input type="text" readonly value="${evento.nm_evento}"></div><div class="form-row"><div class="form-group"><label>Horário:</label><input type="text" readonly value="${evento.horario_inicio.substr(0, 5)} - ${evento.horario_fim.substr(0, 5)}"></div><div class="form-group"><label>Data:</label><input type="text" readonly value="${formatarData(evento.dt_evento)}"></div></div><div class="form-group"><label>Turmas:</label><input type="text" readonly value="${evento.turmas_envolvidas || 'N/A'}"></div><label>Descrição:</label><textarea readonly>${evento.ds_descricao}</textarea>`;
+        
+        let botoesHtml = '';
+        if (evento.status === 'Solicitado' && evento.cd_usuario_solicitante !== usuario_logado.cd_usuario && evento.minha_resposta === null) {
+            botoesHtml = `<div class="modal-buttons"><button class="btn-recusar" data-id="${evento.cd_evento}">Recusar</button><button class="btn-aprovar" data-id="${evento.cd_evento}">Aprovar</button></div>`;
+        }
+
+        modalRight.innerHTML = `<h3>Detalhes do Evento</h3><div class="form-group"><label>Título:</label><input type="text" readonly value="${evento.nm_evento}"></div><div class="form-row"><div class="form-group"><label>Horário:</label><input type="text" readonly value="${evento.horario_inicio.substr(0, 5)} - ${evento.horario_fim.substr(0, 5)}"></div><div class="form-group"><label>Data:</label><input type="text" readonly value="${formatarData(evento.dt_evento)}"></div></div><div class="form-group"><label>Turmas:</label><input type="text" readonly value="${evento.turmas_envolvidas || 'N/A'}"></div><label>Descrição:</label><textarea readonly>${evento.ds_descricao}</textarea>${botoesHtml}`;
+        
         modal.style.display = 'flex';
     }
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.style.display = 'none';
-    });
 });

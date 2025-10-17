@@ -17,7 +17,7 @@ if (isset($_SESSION['mensagem_sucesso'])) {
 <script>
     // Ponte de dados do PHP para o JavaScript
     const eventosDaPagina = <?php echo json_encode($lista_eventos); ?>;
-    const nomeUsuarioLogado = "<?php echo addslashes($usuario_logado['nm_usuario']); ?>";
+    const usuario_logado = <?php echo json_encode($usuario_logado); ?>;
 </script>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -30,7 +30,6 @@ if (isset($_SESSION['mensagem_sucesso'])) {
     <link rel="stylesheet" href="../css/meuseventos.css">
 </head>
 <body>
-    <div id="toast-notification" class="feedback-bar"></div>
     <script src="../js/favicon.js"></script>
     <header class="header">
         <a href="perfil.php">
@@ -51,10 +50,12 @@ if (isset($_SESSION['mensagem_sucesso'])) {
         </section>
 
         <section class="area-notificacoes">
+            <div id="toast-notification" class="feedback-bar"></div>
+            
             <h2>Eventos</h2>
             <div class="notificacao-container">
                 <a href="criarevento.php" class="criar-btn"> 
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0-13.3-10.7-24-24-24s-24-10.7-24-24z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
                 </a>
 
                 <?php if (empty($lista_eventos)): ?>
@@ -63,38 +64,21 @@ if (isset($_SESSION['mensagem_sucesso'])) {
                     <?php foreach ($lista_eventos as $evento): 
                         $dt_solicitacao = (new DateTime($evento['dt_solicitacao']))->format('d/m/Y');
                         $dt_evento = (new DateTime($evento['dt_evento']))->format('d/m/Y');
-                        
-                        $cor_status = '';
-                        switch ($evento['status']) {
-                            case 'Aprovado': $cor_status = 'status-aprovado'; break;
-                            case 'Recusado': $cor_status = 'status-recusado'; break;
-                            default: $cor_status = 'status-solicitado'; break;
-                        }
+                        $cor_status = 'status-' . strtolower($evento['status']);
                     ?>
                         <div class="notificacao">
                             <h3><?php echo htmlspecialchars($evento['nm_evento']); ?></h3>
                             <p class="<?php echo $cor_status; ?>"><b>Status:</b> <?php echo $evento['status']; ?></p>
-                            
-                            <?php if ($evento['cd_usuario_solicitante'] == $cd_usuario_logado): ?>
-                                <p><b>Solicitado por:</b> Você</p>
-                            <?php else: ?>
-                                <p><b>Solicitado por:</b> <?php echo htmlspecialchars($evento['nm_solicitante']); ?></p>
-                            <?php endif; ?>
-
+                            <p><b>Solicitado por:</b> <?php echo ($evento['cd_usuario_solicitante'] == $cd_usuario_logado) ? 'Você' : htmlspecialchars($evento['nm_solicitante']); ?></p>
                             <p><b>Data de Solicitação:</b> <?php echo $dt_solicitacao; ?></p>
                             <p><b>Data do Evento:</b> <?php echo $dt_evento; ?></p>
                             <p><b>Turmas:</b> <?php echo htmlspecialchars($evento['turmas_envolvidas'] ?? 'N/A'); ?></p>
                             
                             <div class="botoes-acao">
                                 <button class="detalhes-btn" data-id="<?php echo $evento['cd_evento']; ?>">Mais Detalhes</button>
+                                
                                 <div class="opcoes-resposta">
-                                    <?php 
-                                    if ($evento['status'] == 'Solicitado' && $evento['cd_usuario_solicitante'] != $cd_usuario_logado && $evento['minha_resposta'] === null): 
-                                    ?>
-                                        <button class="btn-recusar" data-id="<?php echo $evento['cd_evento']; ?>">Recusar</button>
-                                        <button class="btn-aprovar" data-id="<?php echo $evento['cd_evento']; ?>">Aprovar</button>
-                                    <?php 
-                                    elseif ($evento['cd_usuario_solicitante'] != $cd_usuario_logado && $evento['minha_resposta'] !== null): 
+                                    <?php if ($evento['cd_usuario_solicitante'] != $cd_usuario_logado && $evento['minha_resposta'] !== null): 
                                         $cor_minha_resposta = ($evento['minha_resposta'] == 'Aprovado') ? 'status-aprovado' : 'status-recusado';
                                     ?>
                                         <p class="<?php echo $cor_minha_resposta; ?>">Sua resposta: <?php echo $evento['minha_resposta']; ?></p>
@@ -119,7 +103,9 @@ if (isset($_SESSION['mensagem_sucesso'])) {
 
     <?php if (isset($mensagem_toast)): ?>
     <script>
-        showToast("<?php echo addslashes($mensagem_toast); ?>", 'sucesso');
+        setTimeout(() => {
+            showToast("<?php echo addslashes($mensagem_toast); ?>", 'sucesso');
+        }, 100);
     </script>
     <?php endif; ?>
 </body>

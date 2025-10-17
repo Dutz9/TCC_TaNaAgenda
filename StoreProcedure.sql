@@ -337,35 +337,29 @@ BEGIN
         e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
         solicitante.nm_usuario AS nm_solicitante,
         solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
-        
-        (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') 
-         FROM eventos_has_turmas eht_inner
-         JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
-         WHERE eht_inner.eventos_cd_evento = e.cd_evento
-        ) AS turmas_envolvidas,
-        
-        -- Lógica condicional para as respostas
+        (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
         CASE 
             WHEN solicitante.tipo_usuario_ic_usuario = 'Professor' THEN
                 (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', IFNULL(reu.status_resolucao, 'Pendente'))), ']')
                  FROM usuarios_has_turmas uht
                  JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
                  LEFT JOIN resolucao_eventos_usuarios reu ON reu.usuarios_cd_usuario = u.cd_usuario AND reu.eventos_cd_evento = e.cd_evento
-                 WHERE uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) AND u.tipo_usuario_ic_usuario = 'Professor')
-            ELSE -- Se o criador for Coordenador, apenas lista os professores envolvidos
+                 WHERE uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
+                   AND u.tipo_usuario_ic_usuario = 'Professor'
+                   -- A CORREÇÃO ESTÁ AQUI: Exclui o próprio solicitante da lista de respostas
+                   AND u.cd_usuario != e.cd_usuario_solicitante)
+            ELSE 
                 (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario)), ']')
                  FROM usuarios_has_turmas uht
                  JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
                  WHERE uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) AND u.tipo_usuario_ic_usuario = 'Professor')
         END AS respostas_professores
-        
     FROM eventos e
     JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
     WHERE 
-        -- Regra de exibição corrigida:
-        e.status = 'Solicitado' -- Mostra todos os eventos pendentes de professores
-        OR e.cd_usuario_solicitante = pCdUsuario -- Mostra todos os eventos que eu (coordenador) criei
-        OR e.cd_usuario_aprovador = pCdUsuario -- Mostra todos os eventos que eu (coordenador) já julguei
+        e.status = 'Solicitado'
+        OR e.cd_usuario_solicitante = pCdUsuario
+        OR e.cd_usuario_aprovador = pCdUsuario
     GROUP BY e.cd_evento
     ORDER BY FIELD(e.status, 'Solicitado', 'Aprovado', 'Recusado'), dt_solicitacao DESC;
 END$$
