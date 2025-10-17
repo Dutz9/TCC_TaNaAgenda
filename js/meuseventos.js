@@ -1,7 +1,28 @@
+/**
+ * Mostra uma barra de feedback flutuante no topo da tela.
+ * Esta função fica fora do DOMContentLoaded para ser globalmente acessível.
+ * @param {string} message - A mensagem a ser exibida.
+ * @param {string} type - 'sucesso' ou 'erro'.
+ */
+function showToast(message, type = 'sucesso') {
+    const bar = document.getElementById('toast-notification');
+    if (!bar) return;
+
+    bar.textContent = message;
+    bar.className = `feedback-bar ${type} show`;
+
+    // Esconde a barra após 3.5 segundos
+    setTimeout(() => {
+        bar.classList.remove('show');
+    }, 3500);
+}
+
+
+// --- LÓGICA PRINCIPAL DA PÁGINA ---
 document.addEventListener('DOMContentLoaded', () => {
     // Garante que as 'pontes' de dados do PHP existem
     if (typeof eventosDaPagina === 'undefined' || typeof nomeUsuarioLogado === 'undefined') {
-        console.error("Variáveis de dados ('eventosDaPagina' ou 'nomeUsuarioLogado') não foram encontradas. Verifique o script PHP.");
+        console.error("Variáveis de dados ('eventosDaPagina' ou 'nomeUsuarioLogado') não foram encontradas.");
         return;
     }
 
@@ -56,23 +77,18 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok && result.status === 'sucesso') {
-                // --- SINCRONIZAÇÃO DA MEMÓRIA INTERNA (A CORREÇÃO) ---
+                // SINCRONIZAÇÃO DA MEMÓRIA INTERNA
                 const indiceEvento = eventosDaPagina.findIndex(ev => ev.cd_evento === eventoId);
                 if (indiceEvento > -1) {
-                    // 1. Atualiza a 'minha_resposta' para a lógica de recarregar a página.
                     eventosDaPagina[indiceEvento].minha_resposta = resposta;
-
-                    // 2. Atualiza a lista de respostas que o pop-up usa.
                     let respostas = JSON.parse(eventosDaPagina[indiceEvento].respostas_professores || '[]');
                     let minhaRespostaNaLista = respostas.find(r => r.nome === nomeUsuarioLogado);
                     if (minhaRespostaNaLista) {
-                        minhaRespostaNaLista.status = resposta; // Atualiza o status
+                        minhaRespostaNaLista.status = resposta;
                     }
-                    // Converte a lista de volta para uma string JSON e salva na memória
                     eventosDaPagina[indiceEvento].respostas_professores = JSON.stringify(respostas);
                 }
-                // --- FIM DA SINCRONIZAÇÃO ---
-
+                
                 // Atualiza a interface do card
                 const statusTexto = `Sua resposta: ${resposta}`;
                 const statusClasse = resposta === 'Aprovado' ? 'status-aprovado' : 'status-recusado';
@@ -99,8 +115,6 @@ document.addEventListener('DOMContentLoaded', () => {
      * Abre e preenche o modal com os detalhes do evento.
      */
     function abrirModalDetalhes(evento) {
-        // (A função abrirModalDetalhes continua a mesma da mensagem anterior, pois ela já lê
-        // os dados de 'respostas_professores' que agora estamos atualizando corretamente)
         let respostas = [];
         if (evento.respostas_professores) {
             try {
@@ -114,7 +128,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (respostas.length > 0) {
              respostas.forEach(r => {
                 let statusHtml = '';
-                // Mostra o status apenas se o solicitante for um Professor
                 if(evento.tipo_solicitante === 'Professor') {
                     let statusClass = r.status === 'Aprovado' ? 'aprovado' : (r.status === 'Recusado' ? 'recusado' : 'sem-resposta');
                     statusHtml = `<span class="${statusClass}">${r.status}</span>`;
