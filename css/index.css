@@ -167,6 +167,7 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    width: 100%;
 }
 
 .event.azul {
@@ -424,11 +425,13 @@ body {
     border-radius: 10px;
     padding: 20px;
     width: 90%;
-    max-width: 400px;
-    text-align: start;
-    max-height: 80vh; /* Altura máxima de 80% da tela */
-    overflow-y: auto; /* Adiciona scroll se o conteúdo for maior */
-    display: block; /* Garante que as regras de altura funcionem */
+    max-width: 500px; /* Max-width para o modal da agenda */
+    text-align: left;
+
+    /* --- A CORREÇÃO --- */
+    display: block; /* Remove o 'flex' que estava causando o bug */
+    max-height: 85vh; /* Altura máxima de 85% da tela */
+    overflow-y: auto; /* Adiciona scroll SÓ SE necessário */
 }
 
 .modal-content h3 {
