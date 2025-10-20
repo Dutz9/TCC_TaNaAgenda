@@ -16,13 +16,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- FUNÇÕES AUXILIARES ---
 
     /**
+     * Formata uma data local para 'YYYY-MM-DD' sem bugs de fuso horário.
+     * @param {Date} dateObject - O objeto de data.
+     * @returns {string} - A data formatada.
+     */
+    function formatarDataParaFiltro(dateObject) {
+        const dia = String(dateObject.getDate()).padStart(2, '0');
+        const mes = String(dateObject.getMonth() + 1).padStart(2, '0'); // +1 pois meses começam em 0
+        const ano = dateObject.getFullYear();
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    /**
      * Pega uma data e retorna todos os eventos daquele dia.
      * @param {Date} dateObject - O objeto de data do dia desejado.
      * @returns {Array} - Um array de eventos para aquele dia.
      */
     function getEventsForDate(dateObject) {
-        // Formata a data para 'YYYY-MM-DD' para comparar com os dados do banco.
-        const targetDate = dateObject.toISOString().split('T')[0];
+        // Usa a nova função local, à prova de fuso horário
+        const targetDate = formatarDataParaFiltro(dateObject); // <-- CORRIGIDO
         return eventosDoBanco.filter(event => event.dt_evento === targetDate);
     }
     

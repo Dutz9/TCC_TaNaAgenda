@@ -16,8 +16,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const miniCalHeaderYear = document.querySelector('.header-calendario-lado-direito h3:nth-child(2)');
 
     // --- FUNÇÕES AUXILIARES ---
+
+     /**
+     * Formata uma data local para 'YYYY-MM-DD' sem bugs de fuso horário.
+     * @param {Date} dateObject - O objeto de data.
+     * @returns {string} - A data formatada.
+     */
+    function formatarDataParaFiltro(dateObject) {
+        const dia = String(dateObject.getDate()).padStart(2, '0');
+        const mes = String(dateObject.getMonth() + 1).padStart(2, '0'); // +1 pois meses começam em 0
+        const ano = dateObject.getFullYear();
+        return `${ano}-${mes}-${dia}`;
+    }
+
     const getEventsForDate = (dateObject) => {
-        const targetDate = dateObject.toISOString().split('T')[0];
+        const targetDate = formatarDataParaFiltro(dateObject); // <-- CORRIGIDO
         return eventosDoBanco.filter(event => event.dt_evento === targetDate);
     };
     
