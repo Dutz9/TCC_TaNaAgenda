@@ -1,52 +1,70 @@
 <?php
-// =================================================================
-// BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX)
-// =================================================================
+    // =================================================================
+    // BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX)
+    // =================================================================
 
-// 1. CONFIGURAÇÃO (SEM VERIFICAÇÃO DE SESSÃO)
-require_once 'config_local.php';
+    // 1. CONFIGURAÇÃO (SEM VERIFICAÇÃO DE SESSÃO)
+    require_once 'config_local.php';
 
-// 2. CONFIGURAÇÃO DE DATAS
-date_default_timezone_set('America/Sao_Paulo');
-$hoje = new DateTime();
-$dia_da_semana_hoje = (int)$hoje->format('N');
-$inicio_semana = clone $hoje;
-$inicio_semana->modify('-' . ($dia_da_semana_hoje - 1) . ' days');
-$dias_desta_semana = [];
-for ($i = 0; $i < 6; $i++) {
-    $dia_atual = clone $inicio_semana;
-    $dia_atual->modify("+$i days");
-    $dias_desta_semana[] = $dia_atual;
-}
-$meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-$dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-$mes_atual_num = (int)$hoje->format('n') - 1;
-$mes_ano_atual = $meses_pt[$mes_atual_num] . ' ' . $hoje->format('Y');
-
-// 3. LÓGICA DE EVENTOS (COM FILTRO DE DATA)
-$data_inicio_semana = $dias_desta_semana[0]->format('Y-m-d');
-$data_fim_semana = $dias_desta_semana[5]->format('Y-m-d');
-$eventoController = new EventoController();
-$lista_eventos = $eventoController->listarAprovados($data_inicio_semana, $data_fim_semana);
-
-// 4. PROCESSAMENTO PARA O GRID
-$calendario_grid = [];
-$horarios_semana = [
-    "07:10", "08:00", "08:50", "10:00", "10:50", "11:40",
-    "13:30", "14:20", "15:10", "16:20", "17:10", "18:00",
-    "18:30", "19:20", "20:10", "21:20", "22:10"
-];
-foreach ($horarios_semana as $horario) {
-    for ($i = 1; $i <= 6; $i++) { $calendario_grid[$horario][$i] = []; }
-}
-foreach ($lista_eventos as $evento) {
-    $dia_da_semana_num = (int)(new DateTime($evento['dt_evento']))->format('N');
-    $horario_inicio = substr($evento['horario_inicio'], 0, 5);
-    if (isset($calendario_grid[$horario_inicio][$dia_da_semana_num])) {
-        $calendario_grid[$horario_inicio][$dia_da_semana_num][] = $evento;
+    // 2. CONFIGURAÇÃO DE DATAS
+    date_default_timezone_set('America/Sao_Paulo');
+    $hoje = new DateTime();
+    $dia_da_semana_hoje = (int)$hoje->format('N');
+    $inicio_semana = clone $hoje;
+    $inicio_semana->modify('-' . ($dia_da_semana_hoje - 1) . ' days');
+    $dias_desta_semana = [];
+    for ($i = 0; $i < 6; $i++) {
+        $dia_atual = clone $inicio_semana;
+        $dia_atual->modify("+$i days");
+        $dias_desta_semana[] = $dia_atual;
     }
-}
+    $meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    $dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+    $mes_atual_num = (int)$hoje->format('n') - 1;
+    $mes_ano_atual = $meses_pt[$mes_atual_num] . ' ' . $hoje->format('Y');
+
+    // 3. LÓGICA DE EVENTOS (FILTRO DE MÊS INTEIRO)
+    // Calcula o primeiro e o último dia do mês atual
+    $data_inicio_mes = $hoje->format('Y-m-01');
+    $data_fim_mes = $hoje->format('Y-m-t'); // 't' é o último dia do mês
+
+    $eventoController = new EventoController();
+    // Passa as datas do MÊS para o método, filtrando os resultados
+    $lista_eventos = $eventoController->listarAprovados($data_inicio_mes, $data_fim_mes);
+
+    // 4. PROCESSAMENTO PARA O GRID (VERSÃO CORRIGIDA)
+    $calendario_grid = [];
+    $horarios_semana = [
+        "07:10", "08:00", "08:50", "10:00", "10:50", "11:40",
+        "13:30", "14:20", "15:10", "16:20", "17:10", "18:00",
+        "18:30", "19:20", "20:10", "21:20", "22:10"
+    ];
+
+    // Cria chaves para cada dia da semana no formato 'Y-m-d'
+    $dias_para_grid = [];
+    foreach ($dias_desta_semana as $dia) {
+        $dias_para_grid[] = $dia->format('Y-m-d');
+    }
+
+    // Inicia a matriz do calendário vazia
+    foreach ($horarios_semana as $horario) {
+        foreach ($dias_para_grid as $data_chave) {
+            $calendario_grid[$horario][$data_chave] = [];
+        }
+    }
+
+    // Preenche a matriz com os eventos
+    foreach ($lista_eventos as $evento) {
+        $data_evento_chave = $evento['dt_evento']; // Já está no formato 'Y-m-d'
+        $horario_inicio = substr($evento['horario_inicio'], 0, 5);
+
+        // Verifica se o evento pertence a um horário e data da nossa grade
+        if (isset($calendario_grid[$horario_inicio][$data_evento_chave])) {
+            $calendario_grid[$horario_inicio][$data_evento_chave][] = $evento;
+        }
+    }
 ?>
+
 <script>
     const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
 </script>
@@ -97,10 +115,13 @@ foreach ($lista_eventos as $evento) {
                 <div class="calendario-grid">
                     <?php foreach ($horarios_semana as $horario): ?>
                         <div class="time-slot-label"><?php echo $horario; ?></div>
-                        <?php for ($dia_num = 1; $dia_num <= 6; $dia_num++): ?>
+                        <?php foreach ($dias_desta_semana as $dia):
+                            $data_chave_atual = $dia->format('Y-m-d');
+                        ?>
                             <div class="time-slot">
-                                <?php if (!empty($calendario_grid[$horario][$dia_num])):
-                                    foreach ($calendario_grid[$horario][$dia_num] as $evento):
+                                <?php
+                                if (!empty($calendario_grid[$horario][$data_chave_atual])):
+                                    foreach ($calendario_grid[$horario][$data_chave_atual] as $evento):
                                         $tipo_classe = 'tipo-' . str_replace(' ', '-', strtolower($evento['tipo_evento']));
                                 ?>
                                     <div class="event <?php echo $tipo_classe; ?>"
@@ -115,7 +136,7 @@ foreach ($lista_eventos as $evento) {
                                     </div>
                                 <?php endforeach; endif; ?>
                             </div>
-                        <?php endfor; ?>
+                        <?php endforeach; ?>
                     <?php endforeach; ?>
                 </div>
             </div>

@@ -58,7 +58,21 @@
 }
 
 .notificacao h3 {
-font-size: medium;
+    font-size: medium;
+
+    /* A MÁGICA DO TRUNCAMENTO (Versão Robusta) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 linhas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    /* Força o h3 a não ser maior que o card */
+    width: 100%; 
+    max-width: 100%;
+
+    /* Altura mínima para garantir 2 linhas (ajuste se necessário) */
+    min-height: 2.4em; 
 }
  
 .notificacao p {
@@ -196,6 +210,8 @@ font-size: medium;
     display: flex;
     gap: 20px;
     margin-left: 200px;
+    max-height: 80vh; /* Altura máxima de 80% da tela */
+    overflow-y: auto; /* Adiciona scroll se o conteúdo for maior */
 }
  
 .modal-left {
@@ -698,4 +714,72 @@ font-size: medium;
 .notificacao .status-recusado {
     color: #FF0000; /* Vermelho */
     font-weight: bold;
+}
+
+/* --- ESTILO DA BARRA DE FEEDBACK (TOAST) --- */
+.feedback-bar {
+    position: fixed;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 15px 25px;
+    border-radius: 8px;
+    color: white;
+    font-weight: bold;
+    z-index: 2000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: top 0.5s ease-in-out;
+}
+
+.feedback-bar.show {
+    top: 90px;
+}
+
+.feedback-bar.sucesso {
+    background-color: #28a745; /* Verde */
+}
+
+.feedback-bar.erro {
+    background-color: #dc3545; /* Vermelho */
+}
+
+/* --- ESTILO DOS BOTÕES DE AÇÃO DENTRO DO MODAL --- */
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+ 
+.modal-buttons .btn-recusar,
+.modal-buttons .recusar {
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+ 
+.modal-buttons .btn-recusar:hover,
+.modal-buttons .recusar:hover {
+    background-color: #cc0000;
+}
+ 
+.modal-buttons .btn-aprovar,
+.modal-buttons .aprovar {
+    background-color: #00cc00;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+ 
+.modal-buttons .btn-aprovar:hover,
+.modal-buttons .aprovar:hover {
+    background-color: #009900;
 }

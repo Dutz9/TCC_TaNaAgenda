@@ -1,58 +1,77 @@
 <?php 
-require_once '../api/config.php'; 
-require_once '../api/verifica_sessao.php'; 
+    require_once '../api/config.php'; 
+    require_once '../api/verifica_sessao.php'; 
 
-// --- CARREGAMENTO DE DADOS PARA O FORMULÁRIO ---
-$turmaController = new TurmaController();
-$lista_turmas = $turmaController->listar();
+    // --- CARREGAMENTO DE DADOS PARA O FORMULÁRIO ---
+    $turmaController = new TurmaController();
+    $lista_turmas = $turmaController->listar();
 
-$usuarioController = new UsuarioController();
-$relacao_prof_turma_raw = $usuarioController->listarRelacaoProfessorTurma();
+    $usuarioController = new UsuarioController();
+    $relacao_prof_turma_raw = $usuarioController->listarRelacaoProfessorTurma();
 
-$relacao_turma_prof = [];
-foreach ($relacao_prof_turma_raw as $rel) {
-    $turma_id = $rel['turmas_cd_turma'];
-    if (!isset($relacao_turma_prof[$turma_id])) {
-        $relacao_turma_prof[$turma_id] = [];
+    $relacao_turma_prof = [];
+    foreach ($relacao_prof_turma_raw as $rel) {
+        $turma_id = $rel['turmas_cd_turma'];
+        if (!isset($relacao_turma_prof[$turma_id])) {
+            $relacao_turma_prof[$turma_id] = [];
+        }
+        $relacao_turma_prof[$turma_id][] = ['id' => $rel['cd_usuario'], 'nome' => $rel['nm_usuario']];
     }
-    $relacao_turma_prof[$turma_id][] = ['id' => $rel['cd_usuario'], 'nome' => $rel['nm_usuario']];
-}
 
-// --- PROCESSAMENTO DO FORMULÁRIO (se for enviado) ---
-$mensagem = '';
-$tipo_mensagem = '';
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    try {
-        $eventoController = new EventoController();
-        $titulo = trim($_POST['titulo']);
+    // --- PROCESSAMENTO DO FORMULÁRIO (se for enviado) ---
+    $mensagem = '';
+    $tipo_mensagem = '';
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        try {
+            // Validação do Título (que já tínhamos)
+            $titulo = trim($_POST['titulo']);
+            if (empty($titulo)) { throw new Exception("O título do evento não pode ser vazio."); }
+            if (strlen($titulo) > 45) { throw new Exception("O título é muito longo (máx 45 caracteres)."); }
 
-        if (empty($titulo)) { throw new Exception("O título do evento não pode ser vazio."); }
-        if (strlen($titulo) > 45) { throw new Exception("O título do evento é muito longo (máx 45 caracteres)."); }
+            $dadosEvento = [
+                'cd_evento' => uniqid('EVT_'),
+                'nm_evento' => $titulo,
+                'dt_evento' => $_POST['data'],
+                'horario_inicio' => $_POST['horario_inicio'],
+                'horario_fim' => $_POST['horario_fim'],
+                'tipo_evento' => $_POST['tipo'],
+                'ds_descricao' => $_POST['descricao'],
+                'turmas' => $_POST['turmas'] ?? [],
+                'cd_usuario_solicitante' => $usuario_logado['cd_usuario']
+            ];
 
-        $dadosEvento = [
-            'cd_evento' => uniqid('EVT_'),
-            'nm_evento' => $titulo,
-            'dt_evento' => $_POST['data'],
-            'horario_inicio' => $_POST['horario_inicio'],
-            'horario_fim' => $_POST['horario_fim'],
-            'tipo_evento' => $_POST['tipo'],
-            'ds_descricao' => $_POST['descricao'],
-            'turmas' => $_POST['turmas'] ?? [],
-            'cd_usuario_solicitante' => $usuario_logado['cd_usuario']
-        ];
-        $eventoController->criar($dadosEvento);
-        
-        // PADRÃO Post-Redirect-Get: Salva a mensagem na sessão e redireciona
-        $_SESSION['mensagem_sucesso'] = "Evento solicitado com sucesso!";
-        header('Location: meuseventos.php');
-        exit();
+            // Lógica de Chamada Específica (a única parte diferente entre os dois arquivos)
+            $eventoController = new EventoController();
+            if ($usuario_logado['tipo_usuario_ic_usuario'] === 'Coordenador') {
+                $eventoController->criarAprovado($dadosEvento);
+                $_SESSION['mensagem_sucesso'] = "Evento criado e publicado com sucesso!";
+                header('Location: eventoscoord.php');
+                exit();
+            } else {
+                $eventoController->criar($dadosEvento);
+                $_SESSION['mensagem_sucesso'] = "Evento solicitado com sucesso!";
+                header('Location: meuseventos.php');
+                exit();
+            }
 
-    } catch (Exception $e) {
-        // Se der erro, a página NÃO redireciona e mostra o erro
-        $mensagem = "Erro ao criar evento: " . $e->getMessage();
-        $tipo_mensagem = 'erro';
+        } catch (PDOException $e) {
+            // --- TRATAMENTO DE ERRO AMIGÁVEL ---
+            // Pega o código de erro do MySQL
+            $codigoErro = $e->getCode();
+            
+            if ($codigoErro == '22001') { // '22001' é o código para "Data truncated"
+                $mensagem = "Erro: Os dados inseridos são longos demais. Verifique o título ou a descrição.";
+            } else {
+                $mensagem = "Erro de banco de dados: " . $e->getMessage();
+            }
+            $tipo_mensagem = 'erro';
+            
+        } catch (Exception $e) {
+            // Pega outros erros (como o de título vazio)
+            $mensagem = "Erro: " . $e->getMessage();
+            $tipo_mensagem = 'erro';
+        }
     }
-}
 ?>
 <script>
     // Ponte de dados do PHP para o JavaScript

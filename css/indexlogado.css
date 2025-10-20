@@ -169,6 +169,9 @@
     color: white;
     font-size: 14px;
     cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .event.azul {
@@ -361,6 +364,19 @@
     height: auto; /* PERMITE QUE A ALTURA SE AJUSTE AO CONTEÚDO */
 }
 
+/* Ajuste para truncar o texto do nome do evento no resumo */
+.area-escrita-resumo-geral p:first-child {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 120px; /* Define um limite de largura para o texto */
+}
+
+/* Garante que o horário não seja "esmagado" */
+.area-escrita-resumo-geral p:last-child {
+    flex-shrink: 0;
+}
+
 /* Cores das bordas para tipos específicos de evento */
 .area-escrita-resumo-geral.event-summary.tipo-palestra {
     border-color: #4291D8; /* Azul (usando sua cor padrão do cabeçalho) */
@@ -416,6 +432,9 @@
     width: 90%;
     max-width: 400px;
     text-align: start;
+    max-height: 80vh; /* Altura máxima de 80% da tela */
+    overflow-y: auto; /* Adiciona scroll se o conteúdo for maior */
+    display: block; /* Garante que as regras de altura funcionem */
 }
 
 .modal-content h3 {

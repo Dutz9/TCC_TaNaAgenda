@@ -119,27 +119,20 @@ END$$
 
 -- Procedure para criar evento (nova: salva com status 'Solicitado')
 -- Procedure para criar evento (VERSÃO CORRIGIDA SEM CARACTERES INVÁLIDOS)
-DROP PROCEDURE IF EXISTS criarEvento$$
-CREATE PROCEDURE criarEvento(
+DROP PROCEDURE IF EXISTS `criarEvento`$$
+CREATE PROCEDURE `criarEvento`(
     IN pCdEvento VARCHAR(45),
     IN pDtEvento DATE,
     IN pNmEvento VARCHAR(45),
     IN pHorarioInicio VARCHAR(45),
     IN pHorarioFim VARCHAR(45),
     IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
-    IN pDsDescricao VARCHAR(200),
+    IN pDsDescricao TEXT, -- Mudança de VARCHAR(200) para TEXT
     IN pCdUsuarioSolicitante VARCHAR(45)
 )
 BEGIN
-    DECLARE qtd INT DEFAULT 0;
-    
-    SELECT COUNT(*) INTO qtd FROM eventos WHERE cd_evento = pCdEvento;
-    IF (qtd > 0) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Código de evento já existe';
-    ELSE
-        INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao)
-        VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Solicitado', pCdUsuarioSolicitante, CURDATE());
-    END IF;
+    INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao)
+    VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Solicitado', pCdUsuarioSolicitante, CURDATE());
 END$$
 
 -- Procedure para aprovar evento (nova: atualiza status para coord)
@@ -234,6 +227,7 @@ BEGIN
     SELECT cd_turma, nm_turma FROM turmas ORDER BY nm_turma;
 END$$
 
+DROP PROCEDURE IF EXISTS `criarEventoAprovado`$$
 CREATE PROCEDURE `criarEventoAprovado`(
     IN pCdEvento VARCHAR(45),
     IN pDtEvento DATE,
@@ -241,11 +235,10 @@ CREATE PROCEDURE `criarEventoAprovado`(
     IN pHorarioInicio VARCHAR(45),
     IN pHorarioFim VARCHAR(45),
     IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
-    IN pDsDescricao VARCHAR(200),
+    IN pDsDescricao TEXT, -- Mudança de VARCHAR(200) para TEXT
     IN pCdUsuarioSolicitante VARCHAR(45)
 )
 BEGIN
-    -- A única diferença é que o status é 'Aprovado' diretamente.
     INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao)
     VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Aprovado', pCdUsuarioSolicitante, CURDATE());
 END$$

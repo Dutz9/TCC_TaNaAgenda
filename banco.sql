@@ -43,8 +43,6 @@ CREATE TABLE turmas (
     FOREIGN KEY (cursos_cd_curso) REFERENCES cursos(cd_curso)
 ) ;
 
-
-DROP TABLE IF EXISTS eventos;
 DROP TABLE IF EXISTS eventos;
 CREATE TABLE eventos (
     cd_evento VARCHAR(25) NOT NULL,
@@ -53,7 +51,7 @@ CREATE TABLE eventos (
     horario_inicio VARCHAR(10) NOT NULL,
     horario_fim VARCHAR(10) NOT NULL,
     tipo_evento ENUM('Palestra', 'Visita tecnica', 'Reuniao', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro') NOT NULL,
-    ds_descricao VARCHAR(200),
+    ds_descricao TEXT,
     status ENUM('Solicitado', 'Aprovado', 'Recusado') NOT NULL DEFAULT 'Solicitado',
     cd_usuario_solicitante VARCHAR(10) NOT NULL,
     dt_solicitacao DATE NOT NULL,

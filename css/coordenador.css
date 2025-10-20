@@ -37,7 +37,21 @@
  
 .notificacao h3 {
     font-size: medium;
-    }
+
+    /* A MÁGICA DO TRUNCAMENTO (Versão Robusta) */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita a 2 linhas */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    /* Força o h3 a não ser maior que o card */
+    width: 100%; 
+    max-width: 100%;
+
+    /* Altura mínima para garantir 2 linhas (ajuste se necessário) */
+    min-height: 2.4em; 
+}
      
     .notificacao p {
         color: rgb(44, 44, 44);

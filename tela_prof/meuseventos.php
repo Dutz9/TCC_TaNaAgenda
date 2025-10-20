@@ -103,6 +103,7 @@ if (isset($_SESSION['mensagem_sucesso'])) {
 
     <?php if (isset($mensagem_toast)): ?>
     <script>
+        // Espera um instante para garantir que a função showToast já foi carregada
         setTimeout(() => {
             showToast("<?php echo addslashes($mensagem_toast); ?>", 'sucesso');
         }, 100);
