@@ -164,11 +164,17 @@ BEGIN
 END$$
 
 -- Procedure para registrar aprovação de professor (nova: para fluxo paralelo, via N:N)
-DROP PROCEDURE IF EXISTS registrarAprovacaoProfessor$$
-CREATE PROCEDURE registrarAprovacaoProfessor(
+
+-- 1. Garante que a TABELA aceita 'Pendente' (pode já ter sido feito)
+ALTER TABLE resolucao_eventos_usuarios 
+MODIFY COLUMN status_resolucao ENUM('Aprovado', 'Recusado', 'Pendente') NULL DEFAULT 'Pendente';
+
+-- 2. Atualiza a PROCEDURE para aceitar 'Pendente'
+DROP PROCEDURE IF EXISTS `registrarAprovacaoProfessor`$$
+CREATE PROCEDURE `registrarAprovacaoProfessor`(
     IN pCdEvento VARCHAR(45),
     IN pCdUsuario VARCHAR(45),
-    IN pStatus ENUM('Aprovado', 'Recusado')
+    IN pStatus ENUM('Aprovado', 'Recusado', 'Pendente') -- <-- CORREÇÃO AQUI
 )
 BEGIN
     DECLARE qtd INT DEFAULT 0;

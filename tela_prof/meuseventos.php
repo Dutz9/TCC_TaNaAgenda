@@ -81,10 +81,18 @@ if (isset($_SESSION['mensagem_sucesso'])) {
                                 <button class="detalhes-btn" data-id="<?php echo $evento['cd_evento']; ?>">Mais Detalhes</button>
                                 
                                 <div class="opcoes-resposta">
-                                    <?php if ($evento['cd_usuario_solicitante'] != $cd_usuario_logado && $evento['minha_resposta'] !== null): 
+                                    <?php 
+                                    // CONDIÇÃO CORRIGIDA:
+                                    // Se o evento não for meu E a minha resposta for 'Aprovado' ou 'Recusado'
+                                    if ($evento['cd_usuario_solicitante'] != $cd_usuario_logado && ($evento['minha_resposta'] === 'Aprovado' || $evento['minha_resposta'] === 'Recusado')): 
                                         $cor_minha_resposta = ($evento['minha_resposta'] == 'Aprovado') ? 'status-aprovado' : 'status-recusado';
                                     ?>
                                         <p class="<?php echo $cor_minha_resposta; ?>">Sua resposta: <?php echo $evento['minha_resposta']; ?></p>
+                                    <?php 
+                                    // Se o evento não for meu E a minha resposta for 'Pendente' (ou seja, preciso agir)
+                                    elseif ($evento['status'] == 'Solicitado' && $evento['cd_usuario_solicitante'] != $cd_usuario_logado && $evento['minha_resposta'] === 'Pendente'): 
+                                    ?>
+                                        <p class="status-solicitado"></p>
                                     <?php endif; ?>
                                 </div>
                             </div>
