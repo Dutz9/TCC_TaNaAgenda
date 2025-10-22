@@ -141,13 +141,13 @@ body {
 .time-slot {
     padding: 10px;
     min-height: 60px;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-    align-items: stretch;
-    justify-content: flex-start;
+    display: block;
     border-bottom: 1px solid #AFAFAF;
     border-left: 1px solid #AFAFAF;
+
+    /* --- A CORREÇÃO PRINCIPAL --- */
+    /* Força a célula a cortar qualquer conteúdo que seja muito largo */
+    overflow: hidden;
 }
 
 .calendario-grid > div:nth-child(6n) {
@@ -168,6 +168,12 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     width: 100%;
+    margin-bottom: 5px;
+    min-width: 0; /* Garante que o flex item possa encolher */
+}
+
+.event:last-child {
+    margin-bottom: 0;
 }
 
 .event.azul {

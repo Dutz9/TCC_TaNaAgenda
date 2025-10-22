@@ -24,7 +24,6 @@ class EventoController extends Banco {
 
     public function criar($dadosEvento) {
         try {
-            // Chama a Stored Procedure para criar o evento
             $this->Executar('criarEvento', [
                 'pCdEvento' => $dadosEvento['cd_evento'],
                 'pDtEvento' => $dadosEvento['dt_evento'],
@@ -35,17 +34,30 @@ class EventoController extends Banco {
                 'pDsDescricao' => $dadosEvento['ds_descricao'],
                 'pCdUsuarioSolicitante' => $dadosEvento['cd_usuario_solicitante']
             ]);
-
-            // Após criar o evento, associa as turmas a ele
+    
             $cdEvento = $dadosEvento['cd_evento'];
+            
+            // Associa as turmas
             foreach ($dadosEvento['turmas'] as $cdTurma) {
-                // Agora usando o método correto para SQL direto
                 $this->ExecutarSQL(
                     'INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES (:cd_evento, :cd_turma)',
                     ['cd_evento' => $cdEvento, 'cd_turma' => $cdTurma]
-                ); 
-            }  
-
+                );
+            }
+    
+            // --- NOVA LÓGICA ---
+            // Associa os professores para aprovação (status Pendente)
+            if (!empty($dadosEvento['professores'])) {
+                foreach ($dadosEvento['professores'] as $cdProfessor) {
+                    // Chama a procedure que já tínhamos, mas com o status 'Pendente'
+                    $this->Executar('registrarAprovacaoProfessor', [
+                        'pCdEvento' => $cdEvento,
+                        'pCdUsuario' => $cdProfessor,
+                        'pStatus' => 'Pendente' // Salva como 'Pendente' (graças ao Passo A)
+                    ]);
+                }
+            }
+    
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -54,7 +66,6 @@ class EventoController extends Banco {
     // Adicione esta nova função dentro da classe EventoController
     public function criarAprovado($dadosEvento) {
         try {
-            // Chama a nova Stored Procedure
             $this->Executar('criarEventoAprovado', [
                 'pCdEvento' => $dadosEvento['cd_evento'],
                 'pDtEvento' => $dadosEvento['dt_evento'],
@@ -65,16 +76,19 @@ class EventoController extends Banco {
                 'pDsDescricao' => $dadosEvento['ds_descricao'],
                 'pCdUsuarioSolicitante' => $dadosEvento['cd_usuario_solicitante']
             ]);
-
-            // A lógica para associar as turmas é a mesma
+    
             $cdEvento = $dadosEvento['cd_evento'];
+            
+            // Associa as turmas
             foreach ($dadosEvento['turmas'] as $cdTurma) {
                 $this->ExecutarSQL(
                     'INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES (:cd_evento, :cd_turma)',
                     ['cd_evento' => $cdEvento, 'cd_turma' => $cdTurma]
                 );
             }
-
+            
+            // (O coordenador não precisa pré-popular a lista de aprovação)
+    
         } catch (\Throwable $th) {
             throw $th;
         }

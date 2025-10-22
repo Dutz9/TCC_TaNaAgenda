@@ -134,3 +134,86 @@
     margin-left: 3px;
     color: red;
 }
+
+/* --- ESTILOS DO NOVO MODAL DE CONFIRMAÇÃO --- */
+.confirm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirm-modal-content {
+    background: white;
+    border-radius: 8px;
+    padding: 25px;
+    width: 90%;
+    max-width: 450px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.confirm-modal-content h3 {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.confirm-modal-content p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.confirm-modal-content .confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+/* Reutiliza os estilos dos botões do formulário */
+.confirm-modal-content .confirmation-buttons button {
+    font-weight: bold;
+}
+
+/* --- ESTILOS PARA A LISTA DE PROFESSORES COM O "X" --- */
+.display-box {
+    /* ... (seu estilo existente) ... */
+    /* Garante que o scroll apareça se a lista for longa */
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+.professor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+}
+
+.professor-item p {
+    font-size: 14px;
+    color: #333;
+    margin: 0;
+    font-weight: 500;
+}
+
+.remove-prof-btn {
+    font-size: 20px;
+    font-weight: bold;
+    color: #dc3545; /* Vermelho */
+    cursor: pointer;
+    padding: 0 5px;
+}
+
+.remove-prof-btn:hover {
+    opacity: 0.7;
+}

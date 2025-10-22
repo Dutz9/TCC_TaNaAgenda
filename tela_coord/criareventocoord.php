@@ -27,6 +27,7 @@
                 'tipo_evento' => $_POST['tipo'],
                 'ds_descricao' => $_POST['descricao'],
                 'turmas' => $_POST['turmas'] ?? [],
+                'professores' => $_POST['professores_notificar'] ?? [], // <-- ADICIONE ESTA LINHA
                 'cd_usuario_solicitante' => $usuario_logado['cd_usuario']
             ];
 
@@ -208,6 +209,18 @@
                 </form>
             </section>
         </div>
+
+        <div id="modal-confirm-remove-prof" class="confirm-modal-overlay" style="display: none;">
+            <div class="confirm-modal-content">
+                <h3>Confirmar Ação</h3>
+                <p>Você tem certeza que deseja remover o professor <b id="modal-prof-name"></b> da lista de notificações?</p>
+                <div class="confirmation-buttons">
+                    <button id="btn-confirm-no" class="botao-cancelar">Não, cancelar</button>
+                    <button id="btn-confirm-yes" class="botao-enviar" style="background-color: #dc3545;">Sim, remover</button>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <script src="../js/criarevento.js" defer></script>

@@ -88,7 +88,7 @@ DROP TABLE IF EXISTS resolucao_eventos_usuarios;
 CREATE TABLE resolucao_eventos_usuarios (
     eventos_cd_evento VARCHAR(25) NOT NULL,
     usuarios_cd_usuario VARCHAR(10) NOT NULL,
-    status_resolucao ENUM('Aprovado', 'Recusado') NOT NULL DEFAULT 'Aprovado',
+    status_resolucao ENUM('Aprovado', 'Recusado') NULL DEFAULT 'Pendente',
     PRIMARY KEY (eventos_cd_evento, usuarios_cd_usuario),
     FOREIGN KEY (eventos_cd_evento) REFERENCES eventos(cd_evento),
     FOREIGN KEY (usuarios_cd_usuario) REFERENCES usuarios(cd_usuario)
