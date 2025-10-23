@@ -67,7 +67,7 @@ class EventoController extends Banco {
                 'pDsDescricao' => $dadosEvento['ds_descricao'],
                 'pCdUsuarioSolicitante' => $dadosEvento['cd_usuario_solicitante']
             ]);
-
+    
             $cdEvento = $dadosEvento['cd_evento'];
             
             // 2. Associa as turmas
@@ -77,9 +77,24 @@ class EventoController extends Banco {
                     ['cd_evento' => $cdEvento, 'cd_turma' => $cdTurma]
                 );
             }
-
+    
+            // --- A CORREÇÃO ESTÁ AQUI ---
+            // 3. Associa os professores (que não foram excluídos) ao evento
+            // Mesmo sendo um evento de coordenador, usamos a tabela 'resolucao' para saber quem está "envolvido".
+            if (!empty($dadosEvento['professores'])) {
+                foreach ($dadosEvento['professores'] as $cdProfessor) {
+                    // Salvamos como 'Pendente' para consistência, mesmo que não exija ação.
+                    $this->Executar('registrarAprovacaoProfessor', [
+                        'pCdEvento' => $cdEvento,
+                        'pCdUsuario' => $cdProfessor,
+                        'pStatus' => 'Pendente' 
+                    ]);
+                }
+            }
+            // --- FIM DA CORREÇÃO ---
+    
             $this->commitTransacao(); // <-- SUCESSO: Confirma tudo
-
+    
         } catch (\Throwable $th) {
             $this->rollbackTransacao(); // <-- FALHA: Desfaz tudo
             throw $th;

@@ -210,6 +210,7 @@ BEGIN
     ORDER BY e.dt_solicitacao DESC;
 END$$
 
+-- 2. CORREÇÃO DA LISTAR EVENTOS APROVADOS (PARA A AGENDA)
 DROP PROCEDURE IF EXISTS `listarEventosAprovados`$$
 CREATE PROCEDURE `listarEventosAprovados`(
     IN pDataInicio DATE,
@@ -218,19 +219,35 @@ CREATE PROCEDURE `listarEventosAprovados`(
 BEGIN
     SELECT
         e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim, e.tipo_evento, e.ds_descricao,
-        (SELECT GROUP_CONCAT(t.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht JOIN turmas t ON eht.turmas_cd_turma = t.cd_turma WHERE eht.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
-        (SELECT GROUP_CONCAT(DISTINCT u.nm_usuario SEPARATOR ', ') FROM usuarios_has_turmas uht JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario WHERE uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) AND u.tipo_usuario_ic_usuario = 'Professor') AS professores_envolvidos
+        solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
+        
+        (SELECT GROUP_CONCAT(t.nm_turma SEPARATOR ', ') 
+         FROM eventos_has_turmas eht 
+         JOIN turmas t ON eht.turmas_cd_turma = t.cd_turma 
+         WHERE eht.eventos_cd_evento = e.cd_evento
+        ) AS turmas_envolvidas,
+        
+        -- LÓGICA CORRIGIDA: Agora SEMPRE busca da tabela 'resolucao_eventos_usuarios'
+        (SELECT GROUP_CONCAT(DISTINCT u.nm_usuario SEPARATOR ', ') 
+         FROM resolucao_eventos_usuarios reu
+         JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
+         WHERE reu.eventos_cd_evento = e.cd_evento
+        ) AS professores_envolvidos
+        
     FROM eventos e
+    JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
     WHERE 
         e.status = 'Aprovado'
-        -- A NOVA CONDIÇÃO DE FILTRO DE DATA
         AND e.dt_evento BETWEEN pDataInicio AND pDataFim
     ORDER BY e.dt_evento, e.horario_inicio;
 END$$
 
+DROP PROCEDURE IF EXISTS `listarTurmas`$$
 CREATE PROCEDURE `listarTurmas`()
 BEGIN
-    SELECT cd_turma, nm_turma FROM turmas ORDER BY nm_turma;
+    SELECT cd_turma, nm_turma, qt_alunos -- <-- ADICIONAMOS qt_alunos
+    FROM turmas 
+    ORDER BY nm_turma;
 END$$
 
 DROP PROCEDURE IF EXISTS `criarEventoAprovado`$$
@@ -319,6 +336,7 @@ BEGIN
         u.tipo_usuario_ic_usuario = 'Professor';
 END$$
 
+-- 1. CORREÇÃO DA LISTAR EVENTOS PARA O COORDENADOR
 DROP PROCEDURE IF EXISTS `listarEventosParaCoordenador`$$
 CREATE PROCEDURE `listarEventosParaCoordenador`(IN pCdUsuario VARCHAR(25))
 BEGIN
@@ -328,22 +346,23 @@ BEGIN
         solicitante.nm_usuario AS nm_solicitante,
         solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
         (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
+        
         CASE 
             WHEN solicitante.tipo_usuario_ic_usuario = 'Professor' THEN
-                (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', IFNULL(reu.status_resolucao, 'Pendente'))), ']')
-                 FROM usuarios_has_turmas uht
-                 JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
-                 LEFT JOIN resolucao_eventos_usuarios reu ON reu.usuarios_cd_usuario = u.cd_usuario AND reu.eventos_cd_evento = e.cd_evento
-                 WHERE uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) 
-                   AND u.tipo_usuario_ic_usuario = 'Professor'
-                   -- A CORREÇÃO ESTÁ AQUI:
+                -- Se foi PROFESSOR: Mostra nome e STATUS da lista de convidados
+                (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']')
+                 FROM resolucao_eventos_usuarios reu
+                 JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
+                 WHERE reu.eventos_cd_evento = e.cd_evento
                    AND u.cd_usuario != e.cd_usuario_solicitante)
             ELSE 
+                -- Se foi COORDENADOR: Mostra SÓ O NOME da lista de convidados
                 (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario)), ']')
-                 FROM usuarios_has_turmas uht
-                 JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
-                 WHERE uht.turmas_cd_turma IN (SELECT turmas_cd_turma FROM eventos_has_turmas WHERE eventos_cd_evento = e.cd_evento) AND u.tipo_usuario_ic_usuario = 'Professor')
+                 FROM resolucao_eventos_usuarios reu
+                 JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
+                 WHERE reu.eventos_cd_evento = e.cd_evento)
         END AS respostas_professores
+        
     FROM eventos e
     JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
     WHERE 

@@ -69,7 +69,8 @@
     $lista_turmas = $turmaController->listar();
     $usuarioController = new UsuarioController();
     $relacao_prof_turma_raw = $usuarioController->listarRelacaoProfessorTurma();
-    $relacao_turma_prof = [];
+
+        $relacao_turma_prof = [];
     foreach ($relacao_prof_turma_raw as $rel) {
         $turma_id = $rel['turmas_cd_turma'];
         if (!isset($relacao_turma_prof[$turma_id])) {
@@ -77,11 +78,17 @@
         }
         $relacao_turma_prof[$turma_id][] = ['id' => $rel['cd_usuario'], 'nome' => $rel['nm_usuario']];
     }
+
+    // Cria um mapa simples: { 'id_da_turma': qt_alunos }
+    $mapa_alunos_turma = [];
+    foreach ($lista_turmas as $turma) {
+        $mapa_alunos_turma[$turma['cd_turma']] = $turma['qt_alunos'];
+    }
 ?>
 
 <script>
-    // Ponte de dados do PHP para o JavaScript
     const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
+    const mapaAlunosTurma = <?php echo json_encode($mapa_alunos_turma); ?>;
 </script>
 
 <!DOCTYPE html>
@@ -132,29 +139,42 @@
 
                     <div class="linha-form">
                         <div class="campo">
-                            <label for="titulo">Título do Evento (máx. 45 caracteres)</label>
-                            <input type="text" id="titulo" name="titulo" placeholder="Ex: Reunião Geral" maxlength="45" required>
-                        </div>
-                        <div class="campo">
                             <label for="tipo">Tipo do Evento</label>
                             <select id="tipo" name="tipo" required>
                                 <option value="Palestra">Palestra</option><option value="Visita Técnica">Visita Técnica</option><option value="Reunião">Reunião</option><option value="Prova">Prova</option><option value="Conselho de Classe">Conselho de Classe</option><option value="Evento Esportivo">Evento Esportivo</option><option value="Outro">Outro</option>
                             </select>
                         </div>
+                        <div class="campo">
+                            <label for="titulo">Título do Evento (máx. 45 caracteres)</label>
+                            <input type="text" id="titulo" name="titulo" placeholder="Ex: Reunião Geral" maxlength="45" required>
+                        </div>
                     </div>
 
                     <div class="linha-form">
-                        <div class="campo">
-                            <label for="data">Data do Evento</label>
-                            <input type="date" id="data" name="data" required>
-                        </div>
-                        <div class="campo">
+                    <div class="campo">
                             <label for="selecao-turmas">Turmas Envolvidas</label>
                             <select id="selecao-turmas" name="turmas[]" multiple required>
                                 <?php foreach ($lista_turmas as $turma): ?>
                                     <option value="<?php echo $turma['cd_turma']; ?>"><?php echo htmlspecialchars($turma['nm_turma']); ?></option>
                                 <?php endforeach; ?>
                             </select>
+                        </div>
+                        <div class="campo">
+                            <label for="data">Data do Evento</label>
+                            <input type="date" id="data" name="data" required>
+                        </div>
+
+
+                    </div>
+
+                    <div class="linha-form">
+                        <div class="campo">
+                            <label>Total de Alunos</label>
+                            <input type="text" id="display-total-alunos" value="0" readonly class="display-box-alunos">
+                        </div>
+                        <div class="campo">
+                            <label>Professores Envolvidos</label>
+                            <div id="display-professores" class="display-box"><p>Selecione uma ou mais turmas...</p></div>
                         </div>
                     </div>
 
@@ -192,10 +212,7 @@
                     </div>
 
                     <div class="linha-form">
-                         <div class="campo">
-                            <label>Professores Envolvidos (automático)</label>
-                            <div id="display-professores" class="display-box"><p>Selecione uma ou mais turmas...</p></div>
-                        </div>
+
                         <div class="campo">
                             <label for="descricao">Descrição</label>
                             <textarea id="descricao" name="descricao" placeholder="Descreva brevemente o evento..." required></textarea>

@@ -217,3 +217,15 @@
 .remove-prof-btn:hover {
     opacity: 0.7;
 }
+
+.display-box-alunos {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #eee; /* Um cinza claro para indicar que é 'readonly' */
+    width: 100%; 
+    box-sizing: border-box;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #333;
+}

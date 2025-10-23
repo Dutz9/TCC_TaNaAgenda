@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Garante que a 'ponte' de dados do PHP existe
-    if (typeof relacaoTurmaProfessor === 'undefined') {
-        console.error("A variável 'relacaoTurmaProfessor' não foi encontrada.");
+    // Garante que as 'pontes' de dados do PHP existem
+    if (typeof relacaoTurmaProfessor === 'undefined' || typeof mapaAlunosTurma === 'undefined') {
+        console.error("Variáveis de dados ('relacaoTurmaProfessor' ou 'mapaAlunosTurma') não foram encontradas.");
         return;
     }
 
     // --- Elementos do Formulário ---
     const turmasElement = document.getElementById('selecao-turmas');
     const displayProfessores = document.getElementById('display-professores');
+    const displayTotalAlunos = document.getElementById('display-total-alunos'); // Elemento para o total de alunos
     const form = document.querySelector('.formulario-evento form');
     const inputData = document.getElementById('data');
     const horarioInicioElem = document.getElementById('horario_inicio');
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalConfirmText = document.getElementById('modal-prof-name');
     const btnConfirmYes = document.getElementById('btn-confirm-yes');
     const btnConfirmNo = document.getElementById('btn-confirm-no');
-    let professorParaRemover = null; // Variável para guardar o item a ser removido
+    let professorParaRemover = null;
 
     // --- 1. LÓGICA DO SELETOR DE TURMAS (Choices.js) ---
     if (turmasElement) {
@@ -33,41 +34,50 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // "Escuta" mudanças nas turmas para atualizar a lista de professores
+        // "Escuta" mudanças nas turmas para atualizar a lista de professores E O TOTAL DE ALUNOS
         selectTurmas.passedElement.element.addEventListener('change', function() {
             const turmasSelecionadasIds = Array.from(this.selectedOptions).map(option => option.value);
             const professoresParaExibir = {};
+            let totalAlunos = 0; // Variável para a soma
 
+            // Remove inputs hidden antigos de professores
+            form.querySelectorAll('input[name="professores_notificar[]"]').forEach(input => input.remove());
+            
+            displayProfessores.innerHTML = ''; // Limpa a lista visual de professores
+
+            // Itera sobre as turmas selecionadas
             turmasSelecionadasIds.forEach(turmaId => {
+                // --- Lógica para Professores ---
                 if (relacaoTurmaProfessor[turmaId]) {
                     relacaoTurmaProfessor[turmaId].forEach(prof => {
-                        professoresParaExibir[prof.id] = prof; // Salva o objeto {id, nome}
+                        professoresParaExibir[prof.id] = prof;
                     });
+                }
+                // --- Lógica para Alunos ---
+                if (mapaAlunosTurma[turmaId]) {
+                    totalAlunos += parseInt(mapaAlunosTurma[turmaId], 10);
                 }
             });
             
-            displayProfessores.innerHTML = ''; // Limpa a lista visual
-            // Remove inputs hidden antigos
-            form.querySelectorAll('input[name="professores_notificar[]"]').forEach(input => input.remove());
+            // Atualiza o display de total de alunos
+            displayTotalAlunos.value = totalAlunos;
 
+            // Atualiza a lista visual de professores e cria os inputs hidden
             const professores = Object.values(professoresParaExibir);
-
             if (professores.length > 0) {
                 professores.forEach(prof => {
-                    // Cria o item visual na lista
                     const profItem = document.createElement('div');
                     profItem.className = 'professor-item';
                     profItem.dataset.id = prof.id;
                     profItem.innerHTML = `<p>${prof.nome}</p><span class="remove-prof-btn" data-nome="${prof.nome}" title="Remover professor da lista">&times;</span>`;
                     displayProfessores.appendChild(profItem);
 
-                    // Cria um input escondido para cada professor
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
                     hiddenInput.name = 'professores_notificar[]';
                     hiddenInput.value = prof.id;
                     hiddenInput.id = `hidden-prof-${prof.id}`;
-                    form.appendChild(hiddenInput); // Adiciona o input ao formulário
+                    form.appendChild(hiddenInput);
                 });
             } else {
                 displayProfessores.innerHTML = '<p>Selecione uma ou mais turmas...</p>';
@@ -77,47 +87,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 2. LÓGICA DE REMOÇÃO DE PROFESSOR (COM CONFIRMAÇÃO) ---
     if (displayProfessores) {
-        // "Escutador" de cliques na área dos professores
         displayProfessores.addEventListener('click', (e) => {
-            // Se o clique foi no botão "x"
             if (e.target.classList.contains('remove-prof-btn')) {
-                professorParaRemover = e.target.closest('.professor-item'); // Guarda o elemento a ser removido
-                modalConfirmText.textContent = e.target.dataset.nome; // Coloca o nome do professor no modal
-                modalConfirm.style.display = 'flex'; // Mostra o modal
+                professorParaRemover = e.target.closest('.professor-item');
+                modalConfirmText.textContent = e.target.dataset.nome;
+                modalConfirm.style.display = 'flex';
             }
         });
     }
 
-    // Ação do botão "NÃO" no modal
-    if (btnConfirmNo) {
-        btnConfirmNo.addEventListener('click', () => {
-            modalConfirm.style.display = 'none';
-            professorParaRemover = null; // Limpa a variável
-        });
-    }
+    const fecharModal = () => {
+        modalConfirm.style.display = 'none';
+        professorParaRemover = null;
+    };
+    if (btnConfirmNo) btnConfirmNo.addEventListener('click', fecharModal);
+    if (modalConfirm) modalConfirm.addEventListener('click', (e) => { if (e.target === modalConfirm) fecharModal(); });
 
-    // Ação do botão "SIM" no modal
     if (btnConfirmYes) {
         btnConfirmYes.addEventListener('click', () => {
             if (professorParaRemover) {
                 const profId = professorParaRemover.dataset.id;
-                // Remove o input escondido correspondente
                 document.getElementById(`hidden-prof-${profId}`)?.remove();
-                // Remove o item visual da lista
                 professorParaRemover.remove();
             }
-            modalConfirm.style.display = 'none';
-            professorParaRemover = null;
-        });
-    }
-    
-    // Fecha o modal se clicar fora
-    if(modalConfirm) {
-        modalConfirm.addEventListener('click', (e) => {
-            if(e.target === modalConfirm) {
-                modalConfirm.style.display = 'none';
-                professorParaRemover = null;
-            }
+            fecharModal();
         });
     }
 
@@ -136,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 for (const option of horarioFimElem.options) {
                     if (option.value) option.disabled = true;
                 }
+                horarioFimElem.value = ""; // Limpa a seleção
                 return;
             }
             
@@ -160,6 +154,7 @@ document.addEventListener('DOMContentLoaded', function() {
         contador.style.cssText = 'color: #888; font-size: 0.8em; margin-top: 5px; display: block;';
         inputTitulo.parentNode.appendChild(contador);
         const maxLength = inputTitulo.getAttribute('maxlength');
+        
         const updateCharCounter = () => {
             const currentLength = inputTitulo.value.length;
             const remaining = maxLength - currentLength;
