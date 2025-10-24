@@ -278,48 +278,31 @@ BEGIN
         (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') 
          FROM eventos_has_turmas eht_inner
          JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
-         WHERE eht_inner.eventos_cd_evento = e.cd_evento
-        ) AS turmas_envolvidas,
+         WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
+
+        -- CAMPO ADICIONADO DE VOLTA
+        (SELECT SUM(t_inner.qt_alunos) 
+         FROM eventos_has_turmas eht_inner
+         JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
+         WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
         
-        -- Busca as respostas SOMENTE dos professores que foram selecionados na criação
         (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']')
          FROM resolucao_eventos_usuarios reu
          JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
          WHERE reu.eventos_cd_evento = e.cd_evento
-           AND u.cd_usuario != e.cd_usuario_solicitante
-        ) AS respostas_professores,
+           AND u.cd_usuario != e.cd_usuario_solicitante) AS respostas_professores,
         
-        -- Busca a resposta específica do usuário logado
         (SELECT status_resolucao FROM resolucao_eventos_usuarios 
-         WHERE eventos_cd_evento = e.cd_evento AND usuarios_cd_usuario = pCdUsuario
-        ) AS minha_resposta
+         WHERE eventos_cd_evento = e.cd_evento AND usuarios_cd_usuario = pCdUsuario) AS minha_resposta
         
     FROM eventos e
     JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
     WHERE 
-        -- 1. Ou eu criei o evento
         e.cd_usuario_solicitante = pCdUsuario 
-        
-        -- 2. Ou eu estou na lista de aprovação para este evento
-        OR EXISTS (
-            SELECT 1 FROM resolucao_eventos_usuarios reu_check
-            WHERE reu_check.eventos_cd_evento = e.cd_evento
-              AND reu_check.usuarios_cd_usuario = pCdUsuario
-        )
-        
-        -- 3. Ou o evento é de um Coordenador e eu dou aula para uma das turmas
-        OR (
-            solicitante.tipo_usuario_ic_usuario = 'Coordenador'
-            AND EXISTS (
-                SELECT 1 FROM eventos_has_turmas eht_check
-                JOIN usuarios_has_turmas uht_check ON eht_check.turmas_cd_turma = uht_check.turmas_cd_turma
-                WHERE eht_check.eventos_cd_evento = e.cd_evento
-                  AND uht_check.usuarios_cd_usuario = pCdUsuario
-            )
-        )
+        OR EXISTS (SELECT 1 FROM resolucao_eventos_usuarios reu_check WHERE reu_check.eventos_cd_evento = e.cd_evento AND reu_check.usuarios_cd_usuario = pCdUsuario)
+        OR (solicitante.tipo_usuario_ic_usuario = 'Coordenador' AND EXISTS (SELECT 1 FROM eventos_has_turmas eht_check JOIN usuarios_has_turmas uht_check ON eht_check.turmas_cd_turma = uht_check.turmas_cd_turma WHERE eht_check.eventos_cd_evento = e.cd_evento AND uht_check.usuarios_cd_usuario = pCdUsuario))
     GROUP BY e.cd_evento
     ORDER BY dt_solicitacao DESC;
-
 END$$
 
 CREATE PROCEDURE `listarRelacaoProfessorTurma`()
@@ -336,7 +319,7 @@ BEGIN
         u.tipo_usuario_ic_usuario = 'Professor';
 END$$
 
--- 1. CORREÇÃO DA LISTAR EVENTOS PARA O COORDENADOR
+-- 2. ATUALIZANDO A VISÃO DO COORDENADOR (COM total_alunos)
 DROP PROCEDURE IF EXISTS `listarEventosParaCoordenador`$$
 CREATE PROCEDURE `listarEventosParaCoordenador`(IN pCdUsuario VARCHAR(25))
 BEGIN
@@ -345,21 +328,23 @@ BEGIN
         e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
         solicitante.nm_usuario AS nm_solicitante,
         solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
+        
         (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
+
+        -- CAMPO ADICIONADO DE VOLTA
+        (SELECT SUM(t_inner.qt_alunos) 
+         FROM eventos_has_turmas eht_inner
+         JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
+         WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
         
         CASE 
             WHEN solicitante.tipo_usuario_ic_usuario = 'Professor' THEN
-                -- Se foi PROFESSOR: Mostra nome e STATUS da lista de convidados
                 (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']')
-                 FROM resolucao_eventos_usuarios reu
-                 JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
-                 WHERE reu.eventos_cd_evento = e.cd_evento
-                   AND u.cd_usuario != e.cd_usuario_solicitante)
+                 FROM resolucao_eventos_usuarios reu JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
+                 WHERE reu.eventos_cd_evento = e.cd_evento AND u.cd_usuario != e.cd_usuario_solicitante)
             ELSE 
-                -- Se foi COORDENADOR: Mostra SÓ O NOME da lista de convidados
                 (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario)), ']')
-                 FROM resolucao_eventos_usuarios reu
-                 JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
+                 FROM resolucao_eventos_usuarios reu JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
                  WHERE reu.eventos_cd_evento = e.cd_evento)
         END AS respostas_professores
         

@@ -14,7 +14,6 @@ function showFeedback(message, type = 'sucesso') {
 
 // --- LÓGICA PRINCIPAL DA PÁGINA ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante que as 'pontes' de dados do PHP existem
     if (typeof eventosDaPagina === 'undefined' || typeof usuario_logado === 'undefined') {
         console.error("Variáveis de dados ('eventosDaPagina' ou 'usuario_logado') não foram encontradas.");
         return;
@@ -28,8 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!container || !modal) return;
 
     // --- "ESCUTADORES" DE CLIQUES ---
-
-    // 1. Nos CARDS para abrir o modal
     container.addEventListener('click', (e) => {
         const botao = e.target.closest('button.detalhes-btn');
         if (botao) {
@@ -39,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. DENTRO DO MODAL para ações e para fechar
     modal.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.style.display = 'none';
@@ -70,7 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 showFeedback(`Evento ${decisao.toLowerCase()} com sucesso!`, 'sucesso');
                 modal.style.display = 'none';
 
-                // Atualiza o card na tela
                 const card = document.querySelector(`.notificacao .detalhes-btn[data-id="${eventoId}"]`).closest('.notificacao');
                 if (card) {
                     const pStatus = card.querySelector('p[class*="status-"]');
@@ -82,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.querySelector('.detalhes-btn').textContent = 'Ver Detalhes';
                 }
 
-                // Atualiza a memória interna
                 const indiceEvento = eventosDaPagina.findIndex(ev => ev.cd_evento === eventoId);
                 if (indiceEvento > -1) {
                     eventosDaPagina[indiceEvento].status = decisao;
@@ -96,6 +90,11 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Erro no fetch:', error);
             botoesContainer.innerHTML = `<button class="recusar" data-id="${eventoId}">Recusar Evento</button><button class="aprovar" data-id="${eventoId}">Aprovar Evento</button>`;
         }
+    }
+
+    function formatarData(dateString) {
+        const [ano, mes, dia] = dateString.split('-');
+        return `${dia}/${mes}/${ano}`;
     }
 
     function abrirModalDecisao(evento) {
@@ -134,7 +133,20 @@ document.addEventListener('DOMContentLoaded', () => {
             botoesHtml = `<div class="modal-buttons"><button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button><button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button></div>`;
         }
 
-        modalRight.innerHTML = `<h3>Detalhes do Evento</h3><div class="form-group"><label>Título:</label><input type="text" readonly value="${evento.nm_evento}"></div><div class="form-row"><div class="form-group"><label>Horário:</label><input type="text" readonly value="${evento.horario_inicio.substr(0, 5)} - ${evento.horario_fim.substr(0, 5)}"></div><div class="form-group"><label>Data:</label><input type="text" readonly value="${new Date(evento.dt_evento + 'T00:00:00').toLocaleDateString('pt-BR')}"></div></div><div class="form-group"><label>Turmas:</label><input type="text" readonly value="${evento.turmas_envolvidas || 'N/A'}"></div><label>Descrição:</label><textarea readonly>${evento.ds_descricao}</textarea>${botoesHtml}`;
+        modalRight.innerHTML = `
+            <h3>Detalhes do Evento</h3>
+            <div class="form-group"><label>Título:</label><input type="text" readonly value="${evento.nm_evento}"></div>
+            <div class="form-row">
+                <div class="form-group"><label>Horário:</label><input type="text" readonly value="${evento.horario_inicio.substr(0, 5)} - ${evento.horario_fim.substr(0, 5)}"></div>
+                <div class="form-group"><label>Data:</label><input type="text" readonly value="${new Date(evento.dt_evento + 'T00:00:00').toLocaleDateString('pt-BR')}"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Turmas:</label><input type="text" readonly value="${evento.turmas_envolvidas || 'N/A'}"></div>
+                <div class="form-group"><label>Total de Alunos:</label><input type="text" readonly value="${evento.total_alunos || '0'}" style="font-weight: bold;"></div>
+            </div>
+            <label>Descrição:</label><textarea readonly>${evento.ds_descricao}</textarea>
+            ${botoesHtml}
+        `;
         
         modal.style.display = 'flex';
     }
