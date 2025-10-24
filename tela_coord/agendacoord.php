@@ -118,6 +118,7 @@
             <div class="header-calendario">
                 <div class="header-parte-de-cima">
                     <h3><?php echo $mes_ano_atual; ?></h3>
+                </div>
                 <div class="header-divisoes-semanas">
                     <div></div>
                     <?php foreach ($dias_desta_semana as $dia): ?>
