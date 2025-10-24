@@ -48,9 +48,6 @@
         <div class="header-calendario">
             <div class="header-parte-de-cima">
                 <h3>Janeiro 2025</h3>
-                <div class="header-turmas">
-                    <h4>Todas as turmas</h4>
-                </div>
             </div>
             <div class="header-divisoes-semanas">
                 <div class="dias-da-semana" style="background-color: #B10000;">

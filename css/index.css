@@ -99,11 +99,6 @@ body {
     font-size: 14px;
 }
 
-.header-turmas {
-    position: absolute;
-    right: 30px;
-}
-
 .header-divisoes-semanas {
     display: grid;
     grid-template-columns: 50px repeat(6, 1fr);
