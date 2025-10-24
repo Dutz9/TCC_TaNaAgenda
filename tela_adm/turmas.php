@@ -24,7 +24,7 @@ require_once '../api/verifica_sessao.php';
 <body>
 <script src="../js/favicon.js"></script>
     <header class="header">
-        <a href="perfilcoord.php">
+        <a href="perfiladm.php">
             <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
         </a>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
@@ -32,15 +32,15 @@ require_once '../api/verifica_sessao.php';
 
     <main>
     <section class="area-lado">
-            <a class="area-lado-logo" href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
+            <a class="area-lado-logo" href="agendaadm.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu">
                 <div class="menu-agenda">
                 <img src="../image/icones/agenda.png" alt="">
-                    <a href="agendacoord.php"><p>Agenda</p></a>
+                    <a href="agendaadm.php"><p>Agenda</p></a>
                 </div>
                 <div class="menu-meus-eventos">
                 <img src="../image/icones/eventos.png" alt="">
-                    <a href="eventoscoord.php"><p>Eventos</p></a>
+                    <a href="eventosadm.php"><p>Eventos</p></a>
                 </div>
                 <div class="menu-professores">
                 <img src="../image/icones/professores.png" alt="">
@@ -49,6 +49,10 @@ require_once '../api/verifica_sessao.php';
                 <div class="menu-administradores">
                 <img src="../image/icones/administradores.png" alt="">
                     <a href="administradores.php"><p>Administradores</p></a>
+                </div>
+                <div class="menu-cursos">
+                <img src="../image/icones/cursos.png" alt="">
+                    <a href="cursos.php"><p>Cursos</p></a>
                 </div> 
                 <div class="menu-turmas ativo">
                 <img src="../image/icones/turmas.png" alt="">
@@ -56,7 +60,7 @@ require_once '../api/verifica_sessao.php';
                 </div>
                 <div class="menu-perfil">
                 <img src="../image/icones/perfil.png" alt="">
-                    <a href="perfilcoord.php"><p>Perfil</p></a>
+                    <a href="perfiladm.php"><p>Perfil</p></a>
                 </div>  
                 <a href="../login.php"><div class="menu-sair"><p>SAIR</p></div></a> 
             </div>
@@ -93,7 +97,7 @@ require_once '../api/verifica_sessao.php';
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
+                <p>Professores: 5</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -141,7 +145,7 @@ require_once '../api/verifica_sessao.php';
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
+                <p>Professores: 12</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -157,7 +161,7 @@ require_once '../api/verifica_sessao.php';
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
+                <p>Professores: 8</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -188,7 +192,7 @@ require_once '../api/verifica_sessao.php';
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
+                <p>Professores: 7</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -212,7 +216,7 @@ require_once '../api/verifica_sessao.php';
             <div class="cardturma">
                 <div class="turma-infos">
                 <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
+                <p>Professores: 9</p>
                 </div>
                 <p></p>
                 <button class="Editar-btn">Editar</button>
@@ -245,8 +249,8 @@ require_once '../api/verifica_sessao.php';
             <div class="coordinator-info">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
                 <div>
-                    <h3>Nome Coordenador</h3>
-                    <p>Coordenador EM</p>
+                    <h3>Nome Administrador</h3>
+                    <p>Administrador</p>
                 </div>
             </div>
             <div class="responses-section">

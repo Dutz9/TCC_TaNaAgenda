@@ -142,6 +142,16 @@ a > img {
 }
 
 
+.menu-cursos {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.menu-cursos > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
 
 
 
