@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Garante que as 'pontes' de dados do PHP existem
-    if (typeof relacaoTurmaProfessor === 'undefined' || typeof mapaAlunosTurma === 'undefined') {
-        console.error("Variáveis de dados ('relacaoTurmaProfessor' ou 'mapaAlunosTurma') não foram encontradas.");
+    if (typeof relacaoTurmaProfessor === 'undefined' || typeof usuario_logado === 'undefined' || typeof mapaAlunosTurma === 'undefined') {
+        console.error("Uma ou mais variáveis de dados ('relacaoTurmaProfessor', 'usuario_logado', 'mapaAlunosTurma') não foram encontradas.");
         return;
     }
 
@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const modalConfirmText = document.getElementById('modal-prof-name');
     const btnConfirmYes = document.getElementById('btn-confirm-yes');
     const btnConfirmNo = document.getElementById('btn-confirm-no');
-    let professorParaRemover = null;
+    let professorParaRemover = null; // Variável para guardar o item a ser removido
 
     // --- 1. LÓGICA DO SELETOR DE TURMAS (Choices.js) ---
     if (turmasElement) {
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // "Escuta" mudanças nas turmas para atualizar a lista de professores E O TOTAL DE ALUNOS
+        // "Escuta" mudanças nas turmas para atualizar professores E contagem de alunos
         selectTurmas.passedElement.element.addEventListener('change', function() {
             const turmasSelecionadasIds = Array.from(this.selectedOptions).map(option => option.value);
             const professoresParaExibir = {};
@@ -42,27 +42,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Remove inputs hidden antigos de professores
             form.querySelectorAll('input[name="professores_notificar[]"]').forEach(input => input.remove());
-            
             displayProfessores.innerHTML = ''; // Limpa a lista visual de professores
 
-            // Itera sobre as turmas selecionadas
             turmasSelecionadasIds.forEach(turmaId => {
-                // --- Lógica para Professores ---
-                if (relacaoTurmaProfessor[turmaId]) {
-                    relacaoTurmaProfessor[turmaId].forEach(prof => {
-                        professoresParaExibir[prof.id] = prof;
-                    });
-                }
-                // --- Lógica para Alunos ---
+                // Soma os alunos
                 if (mapaAlunosTurma[turmaId]) {
                     totalAlunos += parseInt(mapaAlunosTurma[turmaId], 10);
                 }
+                
+                // Monta a lista de professores
+                if (relacaoTurmaProfessor[turmaId]) {
+                    relacaoTurmaProfessor[turmaId].forEach(prof => {
+                        // Filtra o próprio usuário logado
+                        if (prof.id !== usuario_logado.cd_usuario) { 
+                            professoresParaExibir[prof.id] = prof;
+                        }
+                    });
+                }
             });
             
-            // Atualiza o display de total de alunos
+            // Exibe o total de alunos
             displayTotalAlunos.value = totalAlunos;
 
-            // Atualiza a lista visual de professores e cria os inputs hidden
+            // Exibe a lista de professores
             const professores = Object.values(professoresParaExibir);
             if (professores.length > 0) {
                 professores.forEach(prof => {
@@ -72,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     profItem.innerHTML = `<p>${prof.nome}</p><span class="remove-prof-btn" data-nome="${prof.nome}" title="Remover professor da lista">&times;</span>`;
                     displayProfessores.appendChild(profItem);
 
+                    // Cria um input escondido para cada professor
                     const hiddenInput = document.createElement('input');
                     hiddenInput.type = 'hidden';
                     hiddenInput.name = 'professores_notificar[]';
@@ -80,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     form.appendChild(hiddenInput);
                 });
             } else {
-                displayProfessores.innerHTML = '<p>Selecione uma ou mais turmas...</p>';
+                displayProfessores.innerHTML = '<p>Nenhum outro professor encontrado para estas turmas.</p>';
             }
         });
     }
@@ -95,11 +98,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
-
+    
     const fecharModal = () => {
-        modalConfirm.style.display = 'none';
+        if (modalConfirm) modalConfirm.style.display = 'none';
         professorParaRemover = null;
     };
+
     if (btnConfirmNo) btnConfirmNo.addEventListener('click', fecharModal);
     if (modalConfirm) modalConfirm.addEventListener('click', (e) => { if (e.target === modalConfirm) fecharModal(); });
 
@@ -129,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 for (const option of horarioFimElem.options) {
                     if (option.value) option.disabled = true;
                 }
-                horarioFimElem.value = ""; // Limpa a seleção
+                horarioFimElem.value = "";
                 return;
             }
             

@@ -89,6 +89,7 @@
 <script>
     const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
     const mapaAlunosTurma = <?php echo json_encode($mapa_alunos_turma); ?>;
+    const usuario_logado = <?php echo json_encode($usuario_logado); ?>;
 </script>
 
 <!DOCTYPE html>

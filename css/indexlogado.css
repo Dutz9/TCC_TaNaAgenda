@@ -469,3 +469,114 @@
 .event.tipo-conselho-de-classe { background-color: #8e57e3; } /* Roxo */
 .event.tipo-evento-esportivo { background-color: #e38e57; } /* Laranja */
 .event.tipo-outro { background-color: #888888; } /* Cinza */
+
+/* --- NOVO ESTILO DOS FILTROS (ACORDEÃO) --- */
+.filtrar-calendario {
+    border: 2px solid white;
+    border-radius: 10px;
+    color: white;
+    padding: 15px;
+    margin: 15px 10px 0 10px;
+}
+
+.filtrar-calendario h2 {
+    font-weight: 500;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.filtro-item {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.filtro-item:last-of-type {
+    border-bottom: none;
+}
+
+.filtro-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+.filtro-header h3 {
+    font-weight: 400;
+    font-size: 16px;
+}
+.filtro-seta {
+    width: 14px;
+    transition: transform 0.3s ease;
+}
+.filtro-item.aberto .filtro-seta {
+    transform: rotate(180deg);
+}
+
+.filtro-opcoes {
+    max-height: 0; /* Começa fechado */
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+.filtro-item.aberto .filtro-opcoes {
+    max-height: 200px; /* Altura máxima para abrir */
+    overflow-y: auto; /* Adiciona scroll se as opções forem muitas */
+    margin-top: 10px;
+}
+
+/* Estilo dos Checkboxes (baseado na image_97e97a.png) */
+.filtro-opcoes label {
+    display: block;
+    font-size: 14px;
+    padding: 5px 0;
+    cursor: pointer;
+}
+.filtro-opcoes label:hover {
+    color: #0479F9;
+}
+.filtro-opcoes input[type="checkbox"] {
+    margin-right: 8px;
+    accent-color: #0479F9;
+}
+
+/* Estilo para a lista de turmas com scroll */
+/* Limite de altura SÓ QUANDO o filtro de turmas estiver aberto */
+.filtro-item.aberto #filtro-opcoes-turmas {
+    max-height: 150px;
+}
+
+/* Botão Limpar Filtros */
+.filtro-botoes {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.botao-limpar-filtro,
+.botao-filtrar {
+    flex: 1; /* Faz os dois botões ocuparem metade do espaço */
+    padding: 10px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    text-align: center;
+}
+
+.botao-limpar-filtro {
+    background-color: #6c757d;
+}
+.botao-limpar-filtro:hover {
+    background-color: #5a6268;
+}
+
+.botao-filtrar {
+    background-color: #007bff;
+}
+.botao-filtrar:hover {
+    background-color: #0056b3;
+}

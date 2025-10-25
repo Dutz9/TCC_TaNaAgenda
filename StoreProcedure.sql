@@ -210,35 +210,48 @@ BEGIN
     ORDER BY e.dt_solicitacao DESC;
 END$$
 
--- 2. CORREÇÃO DA LISTAR EVENTOS APROVADOS (PARA A AGENDA)
 DROP PROCEDURE IF EXISTS `listarEventosAprovados`$$
 CREATE PROCEDURE `listarEventosAprovados`(
     IN pDataInicio DATE,
-    IN pDataFim DATE
+    IN pDataFim DATE,
+    -- Os parâmetros agora são VARCHAR para aceitar listas (ex: "Manha,Tarde")
+    IN pPeriodo VARCHAR(100),
+    IN pCdTurma VARCHAR(255),
+    IN pTipoEvento VARCHAR(255)
 )
 BEGIN
     SELECT
         e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim, e.tipo_evento, e.ds_descricao,
         solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
-        
         (SELECT GROUP_CONCAT(t.nm_turma SEPARATOR ', ') 
          FROM eventos_has_turmas eht 
          JOIN turmas t ON eht.turmas_cd_turma = t.cd_turma 
-         WHERE eht.eventos_cd_evento = e.cd_evento
-        ) AS turmas_envolvidas,
-        
-        -- LÓGICA CORRIGIDA: Agora SEMPRE busca da tabela 'resolucao_eventos_usuarios'
+         WHERE eht.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
         (SELECT GROUP_CONCAT(DISTINCT u.nm_usuario SEPARATOR ', ') 
          FROM resolucao_eventos_usuarios reu
          JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
-         WHERE reu.eventos_cd_evento = e.cd_evento
-        ) AS professores_envolvidos
+         WHERE reu.eventos_cd_evento = e.cd_evento) AS professores_envolvidos
         
     FROM eventos e
     JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
+    LEFT JOIN eventos_has_turmas eht_filtro ON e.cd_evento = eht_filtro.eventos_cd_evento
+    
     WHERE 
         e.status = 'Aprovado'
         AND e.dt_evento BETWEEN pDataInicio AND pDataFim
+        
+        -- NOVOS FILTROS (agora usando FIND_IN_SET)
+        AND (pTipoEvento IS NULL OR FIND_IN_SET(e.tipo_evento, pTipoEvento))
+        AND (pCdTurma IS NULL OR FIND_IN_SET(eht_filtro.turmas_cd_turma, pCdTurma))
+        
+        -- Filtro de Período com lógica FIND_IN_SET
+        AND (pPeriodo IS NULL
+            OR (FIND_IN_SET('Manha', pPeriodo) AND e.horario_inicio < '13:00:00')
+            OR (FIND_IN_SET('Tarde', pPeriodo) AND e.horario_inicio >= '13:00:00' AND e.horario_inicio < '18:30:00')
+            OR (FIND_IN_SET('Noite', pPeriodo) AND e.horario_inicio >= '18:30:00')
+        )
+        
+    GROUP BY e.cd_evento
     ORDER BY e.dt_evento, e.horario_inicio;
 END$$
 
@@ -267,42 +280,61 @@ BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS `listarEventosParaProfessor`$$
-CREATE PROCEDURE `listarEventosParaProfessor`(IN pCdUsuario VARCHAR(25))
+CREATE PROCEDURE `listarEventosParaProfessor`(
+    IN pCdUsuario VARCHAR(25),
+    IN pStatus ENUM('Solicitado', 'Aprovado', 'Recusado'),
+    -- 1. ATUALIZAÇÃO AQUI: Mudamos 'Pendente' para 'OutrosProfessores'
+    IN pSolicitante ENUM('Todos', 'Eu', 'OutrosProfessores', 'Coordenador'), 
+    IN pCdTurma INT,
+    IN pTipoEvento ENUM('Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
+    IN pDataFiltro ENUM('Todos', 'Proximos7Dias', 'EsteMes', 'MesPassado', 'ProximoMes')
+)
 BEGIN
     SELECT
         e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
         e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
         solicitante.nm_usuario AS nm_solicitante,
         solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
-        
-        (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') 
-         FROM eventos_has_turmas eht_inner
-         JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
-         WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
-
-        -- CAMPO ADICIONADO DE VOLTA
-        (SELECT SUM(t_inner.qt_alunos) 
-         FROM eventos_has_turmas eht_inner
-         JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
-         WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
-        
-        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']')
-         FROM resolucao_eventos_usuarios reu
-         JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
-         WHERE reu.eventos_cd_evento = e.cd_evento
-           AND u.cd_usuario != e.cd_usuario_solicitante) AS respostas_professores,
-        
-        (SELECT status_resolucao FROM resolucao_eventos_usuarios 
-         WHERE eventos_cd_evento = e.cd_evento AND usuarios_cd_usuario = pCdUsuario) AS minha_resposta
+        (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
+        (SELECT SUM(t_inner.qt_alunos) FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
+        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']') FROM resolucao_eventos_usuarios reu JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario WHERE reu.eventos_cd_evento = e.cd_evento AND u.cd_usuario != e.cd_usuario_solicitante) AS respostas_professores,
+        (SELECT status_resolucao FROM resolucao_eventos_usuarios WHERE eventos_cd_evento = e.cd_evento AND usuarios_cd_usuario = pCdUsuario) AS minha_resposta
         
     FROM eventos e
     JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
+    LEFT JOIN eventos_has_turmas eht_filtro ON e.cd_evento = eht_filtro.eventos_cd_evento
+        
     WHERE 
-        e.cd_usuario_solicitante = pCdUsuario 
-        OR EXISTS (SELECT 1 FROM resolucao_eventos_usuarios reu_check WHERE reu_check.eventos_cd_evento = e.cd_evento AND reu_check.usuarios_cd_usuario = pCdUsuario)
-        OR (solicitante.tipo_usuario_ic_usuario = 'Coordenador' AND EXISTS (SELECT 1 FROM eventos_has_turmas eht_check JOIN usuarios_has_turmas uht_check ON eht_check.turmas_cd_turma = uht_check.turmas_cd_turma WHERE eht_check.eventos_cd_evento = e.cd_evento AND uht_check.usuarios_cd_usuario = pCdUsuario))
+        ( -- A regra de relevância principal está correta e não muda
+            e.cd_usuario_solicitante = pCdUsuario 
+            OR EXISTS (SELECT 1 FROM resolucao_eventos_usuarios reu_check WHERE reu_check.eventos_cd_evento = e.cd_evento AND reu_check.usuarios_cd_usuario = pCdUsuario)
+            OR (solicitante.tipo_usuario_ic_usuario = 'Coordenador' AND EXISTS (SELECT 1 FROM eventos_has_turmas eht_check JOIN usuarios_has_turmas uht_check ON eht_check.turmas_cd_turma = uht_check.turmas_cd_turma WHERE eht_check.eventos_cd_evento = e.cd_evento AND uht_check.usuarios_cd_usuario = pCdUsuario))
+        )
+        AND (pStatus IS NULL OR e.status = pStatus)
+        AND (pTipoEvento IS NULL OR e.tipo_evento = pTipoEvento)
+        AND (pCdTurma IS NULL OR eht_filtro.turmas_cd_turma = pCdTurma)
+        
+        -- 2. LÓGICA DE FILTRO ATUALIZADA
+        AND (pSolicitante IS NULL OR pSolicitante = 'Todos'
+            OR (pSolicitante = 'Eu' AND e.cd_usuario_solicitante = pCdUsuario)
+            -- Esta é a nova lógica:
+            OR (pSolicitante = 'OutrosProfessores' 
+                AND e.cd_usuario_solicitante != pCdUsuario
+                AND solicitante.tipo_usuario_ic_usuario = 'Professor')
+            OR (pSolicitante = 'Coordenador' 
+                AND solicitante.tipo_usuario_ic_usuario = 'Coordenador')
+        )
+        
+        AND (pDataFiltro IS NULL OR pDataFiltro = 'Todos' OR
+            (pDataFiltro = 'Proximos7Dias' AND e.dt_evento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)) OR
+            (pDataFiltro = 'EsteMes' AND MONTH(e.dt_evento) = MONTH(CURDATE()) AND YEAR(e.dt_evento) = YEAR(CURDATE())) OR
+            (pDataFiltro = 'MesPassado' AND MONTH(e.dt_evento) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(e.dt_evento) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) OR
+            (pDataFiltro = 'ProximoMes' AND MONTH(e.dt_evento) = MONTH(DATE_ADD(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(e.dt_evento) = YEAR(DATE_ADD(CURDATE(), INTERVAL 1 MONTH)))
+        )
+        
     GROUP BY e.cd_evento
     ORDER BY dt_solicitacao DESC;
+
 END$$
 
 CREATE PROCEDURE `listarRelacaoProfessorTurma`()
@@ -319,24 +351,23 @@ BEGIN
         u.tipo_usuario_ic_usuario = 'Professor';
 END$$
 
--- 2. ATUALIZANDO A VISÃO DO COORDENADOR (COM total_alunos)
 DROP PROCEDURE IF EXISTS `listarEventosParaCoordenador`$$
-CREATE PROCEDURE `listarEventosParaCoordenador`(IN pCdUsuario VARCHAR(25))
+CREATE PROCEDURE `listarEventosParaCoordenador`(
+    IN pCdUsuario VARCHAR(25),
+    IN pStatus ENUM('Solicitado', 'Aprovado', 'Recusado'),
+    IN pSolicitante ENUM('Todos', 'Eu', 'Professores'), -- Lógica de filtro diferente aqui
+    IN pCdTurma INT,
+    IN pTipoEvento ENUM('Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
+    IN pDataFiltro ENUM('Todos', 'Proximos7Dias', 'EsteMes', 'MesPassado', 'ProximoMes')
+)
 BEGIN
     SELECT
         e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
         e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
         solicitante.nm_usuario AS nm_solicitante,
         solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
-        
         (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
-
-        -- CAMPO ADICIONADO DE VOLTA
-        (SELECT SUM(t_inner.qt_alunos) 
-         FROM eventos_has_turmas eht_inner
-         JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma
-         WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
-        
+        (SELECT SUM(t_inner.qt_alunos) FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
         CASE 
             WHEN solicitante.tipo_usuario_ic_usuario = 'Professor' THEN
                 (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']')
@@ -350,12 +381,38 @@ BEGIN
         
     FROM eventos e
     JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
+    LEFT JOIN eventos_has_turmas eht_filtro ON e.cd_evento = eht_filtro.eventos_cd_evento
+        
     WHERE 
-        e.status = 'Solicitado'
-        OR e.cd_usuario_solicitante = pCdUsuario
-        OR e.cd_usuario_aprovador = pCdUsuario
+        -- 1. Regra de Relevância (O que eu posso ver)
+        (
+            e.status = 'Solicitado' -- Eventos pendentes de professores
+            OR e.cd_usuario_solicitante = pCdUsuario -- Eventos que eu criei
+            OR e.cd_usuario_aprovador = pCdUsuario -- Eventos que eu julguei
+        )
+        
+        -- 2. FILTROS
+        AND (pStatus IS NULL OR e.status = pStatus)
+        AND (pTipoEvento IS NULL OR e.tipo_evento = pTipoEvento)
+        AND (pCdTurma IS NULL OR eht_filtro.turmas_cd_turma = pCdTurma)
+        
+        -- Lógica do Filtro de Solicitante para o COORDENADOR
+        AND (pSolicitante IS NULL OR pSolicitante = 'Todos'
+            OR (pSolicitante = 'Eu' AND e.cd_usuario_solicitante = pCdUsuario)
+            OR (pSolicitante = 'Professores' AND solicitante.tipo_usuario_ic_usuario = 'Professor')
+        )
+        
+        -- Lógica de Data
+        AND (pDataFiltro IS NULL OR pDataFiltro = 'Todos'
+            OR (pDataFiltro = 'Proximos7Dias' AND e.dt_evento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY))
+            OR (pDataFiltro = 'EsteMes' AND MONTH(e.dt_evento) = MONTH(CURDATE()) AND YEAR(e.dt_evento) = YEAR(CURDATE()))
+            OR (pDataFiltro = 'MesPassado' AND MONTH(e.dt_evento) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(e.dt_evento) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))
+            OR (pDataFiltro = 'ProximoMes' AND MONTH(e.dt_evento) = MONTH(DATE_ADD(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(e.dt_evento) = YEAR(DATE_ADD(CURDATE(), INTERVAL 1 MONTH)))
+        )
+        
     GROUP BY e.cd_evento
     ORDER BY FIELD(e.status, 'Solicitado', 'Aprovado', 'Recusado'), dt_solicitacao DESC;
+
 END$$
 
 -- Procedure para o coordenador APROVAR um evento (versão atualizada)

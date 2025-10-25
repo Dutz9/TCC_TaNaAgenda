@@ -44,6 +44,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'tipo-' + eventType.toLowerCase().replace(/ /g, '-');
     };
 
+    // --- LÓGICA DOS FILTROS ACORDEÃO ---
+    const formFiltrosAgenda = document.getElementById('form-filtros-agenda');
+    if (formFiltrosAgenda) {
+        // 1. Controla a abertura/fechamento do acordeão
+        document.querySelectorAll('.filtro-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                item.classList.toggle('aberto');
+            });
+        });
+        
+        // (O auto-submit 'change' listener foi removido)
+    }
+    
     // --- LÓGICA DO MODAL DE EVENTO INDIVIDUAL ---
     function showEventModal(eventData) {
         modalContent.innerHTML = `
