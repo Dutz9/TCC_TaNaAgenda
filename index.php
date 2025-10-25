@@ -153,7 +153,10 @@ foreach ($lista_eventos as $evento) {
             <div class="header-calendario">
                 <div class="header-parte-de-cima">
                     <h3><?php echo $mes_ano_atual; ?></h3>
+<<<<<<< HEAD
                     <div class="header-turmas"><h4>Todas as turmas</h4></div>
+=======
+>>>>>>> b93d6e9e5b0659901318286c4cf89e7b9c9ab128
                 </div>
                 <div class="header-divisoes-semanas">
                     <div></div>

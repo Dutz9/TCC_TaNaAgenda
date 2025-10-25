@@ -133,6 +133,35 @@ a > img {
     margin-left: 10px;
 }
 
+
+
+
+.menu-administradores {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.menu-administradores > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
+
+
+.menu-cursos {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.menu-cursos > svg {
+    max-height: 42px;
+    margin-left: 10px;
+}
+
+
+
+
 .menu-turmas {
     display: flex;
     align-items: center;
