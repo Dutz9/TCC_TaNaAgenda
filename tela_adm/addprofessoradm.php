@@ -13,10 +13,10 @@ require_once '../api/verifica_sessao.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Adicionar Administrador - TáNaAgenda</title>
+    <title>Adicionar Professor ou Coordenador - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/addadministrador.css">
+    <link rel="stylesheet" href="../css/addprofessor.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -42,11 +42,11 @@ require_once '../api/verifica_sessao.php';
                 <img src="../image/icones/eventos.png" alt="">
                     <a href="eventosadm.php"><p>Eventos</p></a>
                 </div>
-                <div class="menu-professores">
+                <div class="menu-professores  ativo">
                 <img src="../image/icones/professores.png" alt="">
                     <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
-                <div class="menu-administradores  ativo">
+                <div class="menu-administradores">
                 <img src="../image/icones/administradores.png" alt="">
                     <a href="administradores.php"><p>Administradores</p></a>
                 </div>
@@ -66,11 +66,11 @@ require_once '../api/verifica_sessao.php';
             </div>
         </section>
 
-        <section class="formulario-adm" >
-            <h2>Adicionar Administrador</h2>
+        <section class="formulario-professor" >
+            <h2>Adicionar Professor ou Coordenador</h2>
             <div class="linha-form">
                 <div  class="campo">
-                    <label  for="titulo">Nome do Administrador:</label>
+                    <label  for="titulo">Nome do Professor/Coordenador:</label>
                     <input  type="text" id="titulo" name="titulo" placeholder="Nome">
                 </div>
                 <div  class="campo">
@@ -95,12 +95,64 @@ require_once '../api/verifica_sessao.php';
                     <label  for="titulo">Telefone:</label>
                     <input  type="text" id="titulo" name="titulo" placeholder="Telefone">
                 </div>
-            </div>            
+
+                <div class="campo">
+                    <label  placeholder="3I,2I,1I" for="turmas">Turmas</label >
+                    <select  id="turmas" name="turmas">
+                        <option>1I</option>
+                        <option>2I</option>
+                        <option>3I</option>
+    
+                        <option>1P</option>
+                        <option>2P</option>
+                        <option>3P</option>
+    
+                        <option>1R</option>
+                        <option>2R</option>
+                        <option>3R</option>
+    
+                        <option>1N</option>
+                        <option>2N</option>
+                        <option>3N</option>
+    
+                        <option>1G</option>
+                        <option>2G</option>
+                        <option>3G</option>
+    
+                        <option>1K</option>
+                        <option>2K</option>
+                        <option>3K</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="linha-form">
+                <div  class="campo">
+                    <label  for="titulo">Cargo:</label>
+                    <select id="cargo">
+                    <option value="" disabled selected>Cargo do funcionário</option>
+                    <option value="Professor">Professor</option>
+                    <option value="Coord-pedagogico">Coordenador Pedagógico</option>
+                    <option value="Coord-area">Coordenador de Área</option>
+                    </select>
+                </div>
+                <div class="campo">
+                <label for="cursos-gerenciados">Curso(s)</label> <!--Visivel apenas para cargo = coordenador pedagógico ou de área-->
+                <select id="cursos-gerenciados">
+                    <option value="" disabled selected>Cursos que o coordenador gerencia</option>
+                    <option value="sem-curso">Nenhum</option>
+                    <option value="Curso-1">Automação Industrial</option>
+                    <option value="Curso-2">Eletrônica</option>
+                    <option value="Curso-3">Informática</option>
+                </select>
+                </div>
+            </div>
             <div class="linha-botoes">
                 <div class="botoes">
-                    <a href="administradores.php"><button type="button" class="botao-cancelar">Cancelar</button></a>
-                    <a href="administradores.php"><button type="submit" class="botao-enviar">Adicionar Administrador</button></a>
+                    <a href="professoresadm.php"><button type="button" class="botao-cancelar">Cancelar</button></a>
+                    <a href="professoresadm.php"><button type="submit" class="botao-enviar">Adicionar Funcionário</button></a>
                 </div>
+            </div>
         </div>
     </section>
 </body>

@@ -44,7 +44,7 @@ require_once '../api/verifica_sessao.php';
                 </div>
                 <div class="menu-professores">
                 <img src="../image/icones/professores.png" alt="">
-                    <a href="professores.php"><p>Professores e Coordenadores</p></a>
+                    <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
                 <div class="menu-administradores">
                 <img src="../image/icones/administradores.png" alt="">
@@ -79,7 +79,7 @@ require_once '../api/verifica_sessao.php';
             <div class="cardturma">
                 <div class="turma-infos">
                     <p style="font-size: 16px; font-weight: 600;">Sigla da turma</p>
-                    <p>Professores: 6</p>
+                    <p>Professores:</p>
                 </div>
                 <p></p>
                 <button class="adicionar-btn">Adicionar
@@ -134,122 +134,15 @@ require_once '../api/verifica_sessao.php';
                 <p></p>
                 <button class="Editar-btn">Editar</button>
             </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 12</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 8</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 7</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 9</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardturma">
-                <div class="turma-infos">
-                <p style="font-size: 16px; font-weight: 600;">SIG2</p>
-                <p>Professores: 6</p>
-                </div>
-                <p></p>
-                <button class="Editar-btn">Editar</button>
-            </div>
         </div>
 </section>
-
-
-
-
 <div id="modal-overlay" class="modal-overlay" style="display: none;">
     <div class="modal-content">
         <div class="modal-left">
             <div class="coordinator-info">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
                 <div>
-                    <h3>Nome Administrador</h3>
+                    <h3><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></h3>
                     <p>Administrador</p>
                 </div>
             </div>
@@ -307,12 +200,16 @@ require_once '../api/verifica_sessao.php';
 
             <div class="form-row">
             <div class="form-group">
-                <label for="nome-turma">Nome da Turma</label>
+                <label for="nome-turma">Nome ou Sigla da Turma</label>
                 <input type="text" id="nome-turma" value="Nome Atual da Turma">
             </div>
             <div class="form-group">
-                <label for="sigla-turma">Sigla</label>
-                <input type="text" id="sigla-turma" value="1N1">
+                <label for="ano-turma">Ano Escolar</label>
+                <select id="ano-turma">
+                    <option value="1ºAno">1º</option>
+                    <option value="2ºAno">2º</option>
+                    <option value="3ºAno">3º</option>
+                </select>
             </div>
             </div>
             <div class="form-row">
@@ -327,13 +224,13 @@ require_once '../api/verifica_sessao.php';
             </div>
             <div class="form-row">
             <div class="form-group">
-                <label for="ano-turma">Ano Escolar</label>
+                <label for="ano-turma">Curso</label>
                 <select id="ano-turma">
-                    <option value="1ºAno">1º</option>
-                    <option value="2ºAno">2º</option>
-                    <option value="3ºAno">3º</option>
+                    <option value="Curso-1">Curso 1</option>
+                    <option value="Curso-2">Curso 2</option>
+                    <option value="Curso-3">Curso 3</option>
                 </select>
-            </div> 
+            </div>
             </div>
             <div class="modal-buttons">
                 <button class="excluir">Excluir Turma</button>
@@ -352,10 +249,6 @@ require_once '../api/verifica_sessao.php';
         </div>
     </div>
 </div>
-
-
     <script src="../js/turmas.js"></script>
-
 </body> 
-
 </html>

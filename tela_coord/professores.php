@@ -206,7 +206,7 @@ require_once '../api/verifica_sessao.php';
             <div class="coordinator-info">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
                 <div>
-                    <h3>Nome Coordenador</h3>
+                    <h3><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></h3>
                     <p>Coordenador EM</p>
                 </div>
             </div>
@@ -235,7 +235,7 @@ require_once '../api/verifica_sessao.php';
             <div class="form-group">
                 <label for="tipo-evento">Turmas</label>
                 <select id="tipo-evento">
-                    <option value="" disabled selected>Turmas que o professor da aula</option>
+                    <option value="" disabled selected>Turmas que o professor leciona</option>
                     <option value="1ºAno">1I1</option>
                     <option value="2ºAno">2I1</option>
                     <option value="3ºAno">3I1</option>

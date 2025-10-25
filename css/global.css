@@ -120,15 +120,13 @@ a > img {
     display: flex;
     align-items: center;
     margin-top: 10px;
+    line-height: 115%;
 }
 
 .menu-professores > svg {
     max-height: 42px;
     margin-left: 10px;
 }
-
-
-
 
 .menu-administradores {
     display: flex;
@@ -141,7 +139,6 @@ a > img {
     margin-left: 10px;
 }
 
-
 .menu-cursos {
     display: flex;
     align-items: center;
@@ -152,9 +149,6 @@ a > img {
     max-height: 42px;
     margin-left: 10px;
 }
-
-
-
 
 .menu-turmas {
     display: flex;

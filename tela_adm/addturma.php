@@ -45,7 +45,7 @@ require_once '../api/verifica_sessao.php';
                 </div>
                 <div class="menu-professores">
                 <img src="../image/icones/professores.png" alt="">
-                    <a href="professores.php"><p>Professores e Coordenadores</p></a>
+                    <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
                 <div class="menu-administradores">
                 <img src="../image/icones/administradores.png" alt="">

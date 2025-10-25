@@ -55,7 +55,7 @@ require_once '../api/verifica_sessao.php';
                 <img src="../image/icone perfil.svg" alt="Foto de Perfil">
                 <div class="perfil-informacoes">
                     <h3>
-                        Nome Professor
+                    <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?>
                     </h3>
                     <p>
                         Professor EM
@@ -65,11 +65,11 @@ require_once '../api/verifica_sessao.php';
             <section class="perfil-menu">
                 <a href="perfil.php">
                 <div class="informacoes">
-                   <img src="../image/perfil.png" alt=""> <p>Informações Pessoais</p>
+                   <img src="../image/Icones/informacoes.png" alt=""> <p>Informações Pessoais</p>
                 </div></a>
                 <a href="seguranca.php">
                 <div class="seguranca">
-                   <img src="../image/cadeadi.svg" alt=""> <p>Segurança</p>
+                   <img src="../image/Icones/seguranca.png" alt=""> <p>Segurança</p>
                 </div></a>
             </section>
             </div>
@@ -80,27 +80,24 @@ require_once '../api/verifica_sessao.php';
                 <div class="informacoes-pessoais">
                     <div class="infos" id="nome">
                         <label for="nome">Nome Completo:</label>
-                        <input type="text" id="nome" placeholder="Nome do Professor" readonly>
+                        <input type="text" id="nome" placeholder=" <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?>" readonly>
                     </div>
                     <div class="infos"  id="email">
                         <label for="email">E-mail:</label>
-                        <input type="email" id="email" placeholder="professor@gmail.com">
+                        <input type="email" id="email" placeholder=" <?php echo htmlspecialchars($usuario_logado['nm_email']); ?>">
                     </div>
                     <div  class="infos" id="telefone">
                         <label for="telefone">Telefone:</label>
                         <input type="tel" id="telefone" placeholder="(13)4002-8922">
                     </div>
-                    <div class="infos"  id="senha">
-                        <label for="senha">Senha:</label>
-                        <input type="password" id="senha" placeholder="********">
-                    </div>
                     <div class="infos"  id="rm">
                         <label for="rm">RM:</label>
-                        <input type="text" id="RM" placeholder="39415" readonly>
+                        <input type="text" id="RM" placeholder=" <?php echo htmlspecialchars($usuario_logado['cd_usuario']); ?>" readonly>
                     </div>
                     <div class="infos" id="Salvar">
                         <button class="btn-salvar">Salvar</button>
                     </div>
+                </div>
             </div>
         </section>
     </section>

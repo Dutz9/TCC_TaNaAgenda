@@ -57,7 +57,7 @@ require_once '../api/verifica_sessao.php';
                     <img src="../image/icone perfil.svg" alt="Foto de Perfil">
                     <div class="perfil-informacoes">
                         <h3>
-                            Nome Professor
+                        <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?>
                         </h3>
                         <p>
                             Professor EM
@@ -65,20 +65,19 @@ require_once '../api/verifica_sessao.php';
                     </div>
                 </div>
                 <section class="perfil-menu">
-                    <a href="perfil.php">
-                    <div class="informacoes">
-                       <img src="../image/perfil.png" alt=""> <p>Informações Pessoais</p>
-                    </div></a>
-
-                    <a href="seguranca.php">
-                    <div class="seguranca">
-                       <img src="../image/cadeadi.svg" alt=""> <p>Segurança</p>
-                    </div></a>
+                <a href="perfil.php">
+                <div class="informacoes">
+                   <img src="../image/Icones/informacoes.png" alt=""> <p>Informações Pessoais</p>
+                </div></a>
+                <a href="seguranca.php">
+                <div class="seguranca">
+                   <img src="../image/Icones/seguranca.png" alt=""> <p>Segurança</p>
+                </div></a>
                 </section>
             </div>
             <div class="lado-direito">
                 <h1>
-                    Segurança
+                    Alterar Senha
                 </h1>
                 <div class="informacoes-pessoais">
                     <div class="infos" id="nome">
@@ -93,13 +92,13 @@ require_once '../api/verifica_sessao.php';
                         <label for="telefone">Confirmar Senha:</label>
                         <input type="password" id="telefone" placeholder="">
                     </div>
-                   
-                    <div class="infos" id="Salvar">
-                        <button class="btn-salvar">Salvar</button>
+                    <div class="infos" id="Alterar">
+                        <button class="btn-alterar">Alterar</button>
                     </div>
             </div>
-        </section>
+        </div>    
     </section>
+</section>
 </body>
 </html>
 </body>

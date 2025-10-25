@@ -71,7 +71,7 @@ require_once '../api/verifica_sessao.php';
             <div class="cardturma">
                 <div class="turma-infos">
                     <p style="font-size: 16px; font-weight: 600;">Sigla da turma</p>
-                    <p>Professores: 6</p>
+                    <p>Professores:</p>
                 </div>
                 <p></p>
                 <button class="adicionar-btn">Adicionar

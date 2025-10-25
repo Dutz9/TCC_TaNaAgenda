@@ -13,10 +13,10 @@ require_once '../api/verifica_sessao.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administradores - TáNaAgenda</title>
+    <title>Professores e Coordenadores - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/administradores.css">
+    <link rel="stylesheet" href="../css/professores.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -42,11 +42,11 @@ require_once '../api/verifica_sessao.php';
                 <img src="../image/icones/eventos.png" alt="">
                     <a href="eventosadm.php"><p>Eventos</p></a>
                 </div>
-                <div class="menu-professores">
+                <div class="menu-professores  ativo">
                 <img src="../image/icones/professores.png" alt="">
                     <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
-                <div class="menu-administradores  ativo">
+                <div class="menu-administradores">
                 <img src="../image/icones/administradores.png" alt="">
                     <a href="administradores.php"><p>Administradores</p></a>
                 </div>
@@ -66,56 +66,95 @@ require_once '../api/verifica_sessao.php';
             </div>
         </section>
  
-        <section class="area-adm">
-    <h2>Administradores</h2>
+        <section class="areaprof">
+    <h2>Professores e Coordenadores</h2>
       <div class="barra-de-pesquisa">
         <div class="barra">
             <label for="search">Pesquisar:</label>
-            <input type="text" id="search" name="search" placeholder="Nome">
+            <input type="text" id="search" name="search" placeholder="Nome ou RM">
         </div>
         </div>
     
-        <div class="grid-adm">
-            <div class="card-adm">
-                <div class="adm-infos">
+        <div class="gridprof">
+            <div class="cardprof">
+                <div class="prof-infos">
                     <p style="font-size: 16px; font-weight: 600;" >RM - Nome e Sobrenome </p>
+                    <p>Cargo:</p>
+                    <p>Turmas:</p>
                 </div>
                 <p></p>
                 <button class="adicionar-btn">Adicionar
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
                 </button>
             </div>
-            <div class="card-adm">
-                <div class="adm-infos">
+            <div class="cardprof">
+                <div class="prof-infos">
                     <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
+                    <p>Cargo: Professor</p>
+                    <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
                 <button class="Editar-btn">Editar</button>
             </div>
-            <div class="card-adm">
-                <div class="adm-infos">
+            <div class="cardprof">
+                <div class="prof-infos">
                     <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
+                    <p>Cargo: Professor</p>
+                    <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
                 <button class="Editar-btn">Editar</button>
             </div>
-            <div class="card-adm">
-                <div class="adm-infos">
+            <div class="cardprof">
+                <div class="prof-infos">
                     <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
+                    <p>Cargo: Coordenador (Automação Industrial)</p>
+                    <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
                 <button class="Editar-btn">Editar</button>
             </div>
-            <div class="card-adm">
-                <div class="adm-infos">
+            <div class="cardprof">
+                <div class="prof-infos">
                     <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
+                    <p>Cargo: Coordenador (Eletrônica - Automação Industrial)</p>
+                    <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
                 <button class="Editar-btn">Editar</button>
             </div>
-            <div class="card-adm">
-                <div class="adm-infos">
+            <div class="cardprof">
+                <div class="prof-infos">
                     <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
+                    <p>Cargo: Professor</p>
+                    <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
+                </div>
+                
+                <button class="Editar-btn">Editar</button>
+            </div>
+            <div class="cardprof">
+                <div class="prof-infos">
+                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
+                    <p>Cargo: Coordenador (Automação Industrial)</p>
+                    <p>Turmas: Nenhuma</p>
+                </div>
+                
+                <button class="Editar-btn">Editar</button>
+            </div>
+            <div class="cardprof">
+                <div class="prof-infos">
+                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
+                    <p>Cargo: Professor</p>
+                    <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
+                </div>
+                
+                <button class="Editar-btn">Editar</button>
+            </div>
+            <div class="cardprof">
+                <div class="prof-infos">
+                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
+                    <p>Cargo: Professor</p>
+                    <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
                 </div>
                 
                 <button class="Editar-btn">Editar</button>
@@ -135,11 +174,12 @@ require_once '../api/verifica_sessao.php';
             </div>
         </div>
         <div class="modal-right">
-            <h3>Informações Administrador</h3>
+            <h3>Editar Professor ou Coordenador</h3>
+
             <div class="form-row">
             <div class="form-group">
-                <label for="nome-adm">Nome do Administrador</label>
-                <input type="text" id="nome-adm" value="Nome Atual do Administrador">
+                <label for="nome-professor">Nome do Professor ou Coordenador</label>
+                <input type="text" id="nome-professor" value="Nome Atual do Professor">
             </div>
             <div class="form-group">
                 <label for="rm">RM</label>
@@ -148,14 +188,45 @@ require_once '../api/verifica_sessao.php';
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="text" id="email" value="adm@gmail.com">
+                <input type="text" id="email" value="professor@gmail.com">
             </div>
             <div class="form-group">
                 <label for="telefone">Telefone</label>
                 <input type="text" id="telefone" value="(13)4002-8922">
             </div>
+            <div class="form-row">
+           <div class="form-group">
+                <label for="cargo">Cargo</label>
+                <select id="cargo">
+                    <option value="Professor">Professor</option>
+                    <option value="Coord-pedagogico">Coordenador Pedagógico</option>
+                    <option value="Coord-area">Coordenador de Área</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="cursos-gerenciados">Curso(s) que o coordenador gerencia</label> <!--Visivel apenas para cargo = coordenador pedagógico ou de área-->
+                <select id="cursos-gerenciados">
+                    <option value="sem-curso">Nenhum</option>
+                    <option value="Curso-1">Automação Industrial</option>
+                    <option value="Curso-2">Eletrônica</option>
+                    <option value="Curso-3">Informática</option>
+                </select>
+            </div>
+            </div> <div class="form-group">
+                <label for="turmas-lecionadas">Turmas</label>
+                <select id="turmas-lecionadas">
+                    <option value="" disabled selected>Turmas lecionadas</option>
+                    <option value="sem-aula">Nenhuma</option>
+                    <option value="1ºAno">1I1</option>
+                    <option value="2ºAno">2I1</option>
+                    <option value="3ºAno">3I1</option>
+                    <option value="1ºAno">1N1</option>
+                    <option value="2ºAno">2N1</option>
+                    <option value="3ºAno">3N1</option>
+                </select>
+            </div>
             <div class="modal-buttons">
-                <button class="excluir">Excluir Professor</button>
+                <button class="excluir">Excluir Usuário</button>
                 <button class="salvar">Salvar Alterações</button>
             </div>
         </div>
@@ -163,14 +234,14 @@ require_once '../api/verifica_sessao.php';
 </div>
 <div id="confirmation-modal" class="confirmation-modal" style="display: none;">
     <div class="confirmation-content">
-        <h3>Realmente deseja excluir o administrador?</h3>
+        <h3>Realmente deseja excluir o usuário?</h3>
         <div class="confirmation-buttons">
             <button class="cancelar">Cancelar</button>
             <button class="excluir-confirm">Excluir</button>
         </div>
     </div>
 </div>
-    <script src="../js/administradores.js"></script>
+    <script src="../js/professoresadm.js"></script>
 </body> 
 
 </html>

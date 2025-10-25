@@ -64,22 +64,21 @@ require_once '../api/verifica_sessao.php';
                 <img src="../image/icone perfil.svg" alt="Foto de Perfil">
                 <div class="perfil-informacoes">
                     <h3>
-                        Nome Coordenador
+                    <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?>
                     </h3>
                     <p>
-                    <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?>
+                        Coordenador EM
                     </p>
                 </div>
             </div>
             <section class="perfil-menu">
                 <a href="perfilcoord.php">
                 <div class="informacoes">
-                   <img src="../image/perfil.png" alt=""> <p>Informações Pessoais</p>
-                </div></a>
-                
+                   <img src="../image/Icones/informacoes.png" alt=""> <p>Informações Pessoais</p>
+                </div></a>   
                 <a href="segurancacoord.php">
                 <div class="seguranca">
-                   <img src="../image/cadeadi.svg" alt=""> <p>Segurança</p>
+                   <img src="../image/Icones/seguranca.png" alt=""> <p>Segurança</p>
                 </div></a>
             </section>
             </div>
@@ -107,6 +106,7 @@ require_once '../api/verifica_sessao.php';
                     <div class="infos" id="Salvar">
                         <button class="btn-salvar">Salvar</button>
                     </div>
+                </div>
             </div>
         </section>
     </section>
