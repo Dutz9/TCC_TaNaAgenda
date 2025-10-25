@@ -211,7 +211,7 @@
 .calendario-lado-direito {
     width: 225px;
     background-color: white;
-    border-radius: 15px;
+    border-radius: 30px 30px 15px 15px;
     display: flex;
     align-self: center;
     flex-direction: column;
