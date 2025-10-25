@@ -49,6 +49,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- LÓGICA DOS FILTROS ---
+    const formFiltros = document.getElementById('form-filtros');
+    if (formFiltros) {
+        // Adiciona um "escutador" para qualquer mudança nos selects
+        formFiltros.addEventListener('change', () => {
+            formFiltros.submit(); // Envia o formulário
+        });
+    }
+
     // --- FUNÇÕES ---
 
     async function enviarDecisaoFinal(eventoId, decisao, botao) {

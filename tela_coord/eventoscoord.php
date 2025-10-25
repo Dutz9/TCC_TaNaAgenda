@@ -1,22 +1,51 @@
 <?php
+
+    // 1. CONFIGURAÇÃO E SEGURANÇA
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // Busca todos os eventos RELEVANTES para o coordenador
-    $eventoController = new EventoController();
-    $lista_eventos = $eventoController->listarParaCoordenador($usuario_logado['cd_usuario']);
+    // 2. BUSCA DE DADOS PARA FILTROS
+    // Precisamos da lista de turmas para preencher o dropdown de filtro
+    $turmaController = new TurmaController();
+    $lista_turmas_filtro = $turmaController->listar();
+    // Lista dos tipos de evento que definimos no banco
+    $tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
 
-    // Verifica se há uma mensagem de sucesso na sessão para exibir com o toast
+    // 3. LEITURA DOS FILTROS DA URL (via GET)
+    $filtros = [
+        'status' => $_GET['status'] ?? null,
+        'solicitante' => $_GET['solicitante'] ?? null,
+        'turma' => $_GET['turma'] ?? null,
+        'tipo' => $_GET['tipo'] ?? null,
+        'data' => $_GET['data'] ?? null
+    ];
+    // Limpa filtros vazios (ex: ?status="")
+    foreach ($filtros as $chave => $valor) {
+        if (empty($valor)) {
+            $filtros[$chave] = null;
+        }
+    }
+
+    // 4. BUSCA DOS DADOS PRINCIPAIS (AGORA COM FILTROS)
+    $eventoController = new EventoController();
+    $cd_usuario_logado = $usuario_logado['cd_usuario'];
+    // Passa o array de filtros para o controller
+    $lista_eventos = $eventoController->listarParaCoordenador($cd_usuario_logado, $filtros);
+
+    // 5. LÓGICA PARA MENSAGEM DE FEEDBACK (TOAST)
     if (isset($_SESSION['mensagem_sucesso'])) {
         $mensagem_toast = $_SESSION['mensagem_sucesso'];
         unset($_SESSION['mensagem_sucesso']);
     }
+
 ?>
+
 <script>
     // Ponte de dados para o JavaScript
     const eventosDaPagina = <?php echo json_encode($lista_eventos); ?>;
     const usuario_logado = <?php echo json_encode($usuario_logado); ?>;
 </script>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -55,7 +84,54 @@
         </section>
 
         <section class="area-notificacoes">
+            <div id="feedback-bar" class="feedback-bar"></div>
+            
             <h2>Eventos</h2>
+
+            <form id="form-filtros" action="eventoscoord.php" method="GET" class="container-filtros">
+                
+                <select name="data">
+                    <option value="">Todas as Datas</option>
+                    <option value="Proximos7Dias" <?php if($filtros['data'] == 'Proximos7Dias') echo 'selected'; ?>>Próximos 7 dias</option>
+                    <option value="EsteMes" <?php if($filtros['data'] == 'EsteMes') echo 'selected'; ?>>Este Mês</option>
+                    <option value="ProximoMes" <?php if($filtros['data'] == 'ProximoMes') echo 'selected'; ?>>Próximo Mês</option>
+                    <option value="MesPassado" <?php if($filtros['data'] == 'MesPassado') echo 'selected'; ?>>Mês Passado</option>
+                </select>
+                
+                <select name="status">
+                    <option value="">Todos os Status</option>
+                    <option value="Solicitado" <?php if($filtros['status'] == 'Solicitado') echo 'selected'; ?>>Solicitado</option>
+                    <option value="Aprovado" <?php if($filtros['status'] == 'Aprovado') echo 'selected'; ?>>Aprovado</option>
+                    <option value="Recusado" <?php if($filtros['status'] == 'Recusado') echo 'selected'; ?>>Recusado</option>
+                </select>
+
+                <select name="solicitante">
+                    <option value="">Todos os Solicitantes</option>
+                    <option value="Eu" <?php if($filtros['solicitante'] == 'Eu') echo 'selected'; ?>>Criados por mim</option>
+                    <option value="Professores" <?php if($filtros['solicitante'] == 'Professores') echo 'selected'; ?>>Solicitados por Professores</option>
+                </select>
+
+                <select name="turma">
+                    <option value="">Todas as Turmas</option>
+                    <?php foreach($lista_turmas_filtro as $turma): ?>
+                        <option value="<?php echo $turma['cd_turma']; ?>" <?php if($filtros['turma'] == $turma['cd_turma']) echo 'selected'; ?>>
+                            <?php echo htmlspecialchars($turma['nm_turma']); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <select name="tipo">
+                    <option value="">Todos os Tipos</option>
+                    <?php foreach($tipos_evento as $tipo): ?>
+                        <option value="<?php echo $tipo; ?>" <?php if($filtros['tipo'] == $tipo) echo 'selected'; ?>>
+                            <?php echo $tipo; ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                
+                <a href="eventoscoord.php" class="botao-limpar">Limpar Filtros</a>
+                
+            </form>
             <div class="notificacao-container">
                 <a href="criareventocoord.php" class="criar-btn">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
@@ -65,14 +141,21 @@
                     <p class="sem-eventos">Nenhum evento para gerenciar no momento.</p>
                 <?php else: ?>
                     <?php foreach ($lista_eventos as $evento): 
-                        $cor_status = '';
-                        switch ($evento['status']) {
-                            case 'Aprovado': $cor_status = 'status-aprovado'; break;
-                            case 'Recusado': $cor_status = 'status-recusado'; break;
-                            default: $cor_status = 'status-solicitado'; break;
+                        $dt_solicitacao = (new DateTime($evento['dt_solicitacao']))->format('d/m/Y');
+                        $dt_evento = (new DateTime($evento['dt_evento']))->format('d/m/Y');
+                        $cor_status = 'status-' . strtolower($evento['status']);
+
+                        // --- LÓGICA CORRETA PARA O CARD DO COORDENADOR ---
+                        $classe_card = 'notificacao'; // Classe padrão
+
+                        // Se o status do evento NÃO é mais "Solicitado" (ou seja, já foi Aprovado ou Recusado),
+                        // então ele já foi tratado e deve ser esmaecido.
+                        if ($evento['status'] !== 'Solicitado') {
+                            $classe_card = 'notificacao card-respondido'; 
                         }
+                        // --- FIM DA LÓGICA CORRETA ---
                     ?>
-                        <div class="notificacao">
+                        <div class="<?php echo $classe_card; ?>">
                             <h3><?php echo htmlspecialchars($evento['nm_evento']); ?></h3>
                             <p class="<?php echo $cor_status; ?>"><b>Status:</b> <?php echo $evento['status']; ?></p>
                             <p><b>Solicitado por:</b> <?php echo htmlspecialchars($evento['nm_solicitante']); ?></p>

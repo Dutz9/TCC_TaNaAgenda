@@ -1,12 +1,36 @@
 <?php
 class EventoController extends Banco {
 
-    public function listarAprovados($dataInicio, $dataFim) {
+    /**
+     * Busca no banco de dados todos os eventos que já foram aprovados,
+     * aplicando filtros de data, período, turma e tipo.
+     *
+     * @param string $dataInicio Data de início (YYYY-MM-DD)
+     * @param string $dataFim Data de fim (YYYY-MM-DD)
+     * @param array $filtros Array associativo com os filtros (periodo, turma, tipo)
+     * @return array Lista de eventos aprovados e filtrados.
+     */
+    public function listarAprovados($dataInicio, $dataFim, $filtros = []) {
         try {
-            $parametros = ['pDataInicio' => $dataInicio, 'pDataFim' => $dataFim];
+            // Converte os arrays de filtro em strings separadas por vírgula
+            // Se o array estiver vazio, envia NULL
+            $periodoFiltro = !empty($filtros['periodo']) ? implode(',', $filtros['periodo']) : null;
+            $turmaFiltro = !empty($filtros['turma']) ? implode(',', $filtros['turma']) : null;
+            $tipoFiltro = !empty($filtros['tipo']) ? implode(',', $filtros['tipo']) : null;
+
+            $parametros = [
+                'pDataInicio' => $dataInicio,
+                'pDataFim' => $dataFim,
+                'pPeriodo' => $periodoFiltro,
+                'pCdTurma' => $turmaFiltro,
+                'pTipoEvento' => $tipoFiltro
+            ];
+            
             $dados = $this->Consultar('listarEventosAprovados', $parametros);
             return $dados;
-        } catch (\Throwable $th) { throw $th; }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
     }
 
     public function criar($dadosEvento) {
@@ -101,16 +125,56 @@ class EventoController extends Banco {
         }
     }
 
-    public function listarParaProfessor($cdUsuario) {
+    /**
+     * Lista os eventos relevantes para um professor, aplicando filtros.
+     * @param string $cdUsuario O código do usuário logado.
+     * @param array $filtros Um array associativo com os filtros da página.
+     * @return array A lista de eventos filtrada.
+     */
+    public function listarParaProfessor($cdUsuario, $filtros = []) {
         try {
-            return $this->Consultar('listarEventosParaProfessor', ['pCdUsuario' => $cdUsuario]);
-        } catch (\Throwable $th) { throw $th; }
+            // Define os parâmetros que a Stored Procedure espera
+            $parametros = [
+                'pCdUsuario' => $cdUsuario,
+                // Usa o 'operador de coalescência nula' (??) para enviar NULL se o filtro não existir
+                'pStatus' => $filtros['status'] ?? null,
+                'pSolicitante' => $filtros['solicitante'] ?? null,
+                'pCdTurma' => $filtros['turma'] ?? null,
+                'pTipoEvento' => $filtros['tipo'] ?? null,
+                'pDataFiltro' => $filtros['data'] ?? null
+            ];
+            
+            return $this->Consultar('listarEventosParaProfessor', $parametros);
+            
+        } catch (\Throwable $th) { 
+            throw $th; 
+        }
     }
 
-    public function listarParaCoordenador($cdUsuario) {
+    /**
+     * Lista os eventos relevantes para um Coordenador, aplicando filtros.
+     * @param string $cdUsuario O código do usuário logado.
+     * @param array $filtros Um array associativo com os filtros da página.
+     * @return array A lista de eventos filtrada.
+     */
+    public function listarParaCoordenador($cdUsuario, $filtros = []) {
         try {
-            return $this->Consultar('listarEventosParaCoordenador', ['pCdUsuario' => $cdUsuario]);
-        } catch (\Throwable $th) { throw $th; }
+            // Define os parâmetros que a Stored Procedure espera
+            $parametros = [
+                'pCdUsuario' => $cdUsuario,
+                // Usa o 'operador de coalescência nula' (??) para enviar NULL se o filtro não existir
+                'pStatus' => $filtros['status'] ?? null,
+                'pSolicitante' => $filtros['solicitante'] ?? null,
+                'pCdTurma' => $filtros['turma'] ?? null,
+                'pTipoEvento' => $filtros['tipo'] ?? null,
+                'pDataFiltro' => $filtros['data'] ?? null
+            ];
+            
+            return $this->Consultar('listarEventosParaCoordenador', $parametros);
+            
+        } catch (\Throwable $th) { 
+            throw $th; 
+        }
     }
 
     public function registrarRespostaProfessor($cdEvento, $cdUsuario, $statusResposta) {

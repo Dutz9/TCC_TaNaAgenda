@@ -604,3 +604,58 @@
     color: #FF0000; /* Vermelho */
     font-weight: bold;
 }
+
+/* --- ESTILO PARA CARDS JÁ RESPONDIDOS --- */
+
+.notificacao.card-respondido {
+    /* Deixa o card com uma aparência "desbotada" para indicar que já foi tratado */
+    opacity: 0.6;
+    background-color: #f8f9fa; /* Um cinza bem claro */
+    transition: opacity 0.3s ease, background-color 0.3s ease;
+}
+
+.notificacao.card-respondido:hover {
+    /* Ao passar o mouse, ele volta ao normal para mostrar que ainda é clicável */
+    opacity: 1;
+    background-color: #ffffff;
+}
+
+/* --- ESTILOS DO CONTAINER DE FILTROS --- */
+.container-filtros {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 10px;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.container-filtros select {
+    flex: 1; 
+    min-width: 150px; 
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.container-filtros .botao-limpar {
+    flex-shrink: 0; 
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #6c757d; /* Cinza */
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+.container-filtros .botao-limpar:hover {
+    background-color: #5a6268;
+}

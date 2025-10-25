@@ -1,21 +1,23 @@
 document.addEventListener('DOMContentLoaded', () => {
     // --- VERIFICAÇÃO INICIAL ---
-    // Garante que o PHP nos deu os dados dos eventos antes de continuar.
     if (typeof eventosDoBanco === 'undefined') {
         console.error("A variável 'eventosDoBanco' não foi encontrada. Verifique o script PHP.");
         return;
     }
 
-    // --- ELEMENTOS DO MODAL (POP-UP) ---
+    // --- ELEMENTOS PRINCIPAIS DA PÁGINA ---
     const modalOverlay = document.getElementById('modal-overlay');
     const modalContent = modalOverlay.querySelector('.modal-content');
     const dayModalOverlay = document.getElementById('day-modal-overlay');
     const dayModalContent = dayModalOverlay.querySelector('.modal-content');
     const selectedDaySpan = document.getElementById('selected-day');
+    const rightCalendarDays = document.querySelector('.dias-calendario-lado-direito');
+    const miniCalHeaderMonth = document.querySelector('.header-calendario-lado-direito h3:nth-child(1)');
+    const miniCalHeaderYear = document.querySelector('.header-calendario-lado-direito h3:nth-child(2)');
 
     // --- FUNÇÕES AUXILIARES ---
 
-    /**
+     /**
      * Formata uma data local para 'YYYY-MM-DD' sem bugs de fuso horário.
      * @param {Date} dateObject - O objeto de data.
      * @returns {string} - A data formatada.
@@ -27,30 +29,36 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${ano}-${mes}-${dia}`;
     }
 
-    /**
-     * Pega uma data e retorna todos os eventos daquele dia.
-     * @param {Date} dateObject - O objeto de data do dia desejado.
-     * @returns {Array} - Um array de eventos para aquele dia.
-     */
-    function getEventsForDate(dateObject) {
-        // Usa a nova função local, à prova de fuso horário
+    const getEventsForDate = (dateObject) => {
         const targetDate = formatarDataParaFiltro(dateObject); // <-- CORRIGIDO
         return eventosDoBanco.filter(event => event.dt_evento === targetDate);
-    }
+    };
     
-    /**
-     * Formata a data do evento para o padrão brasileiro (DD/MM/YYYY).
-     * @param {string} dateString - A data no formato 'YYYY-MM-DD'.
-     * @returns {string} - A data formatada.
-     */
-    function formatarData(dateString) {
+    const formatarData = (dateString) => {
         const [ano, mes, dia] = dateString.split('-');
         return `${dia}/${mes}/${ano}`;
+    };
+
+    const getEventTypeClass = (eventType) => {
+        if (!eventType) return 'tipo-outro';
+        return 'tipo-' + eventType.toLowerCase().replace(/ /g, '-');
+    };
+
+    // --- LÓGICA DOS FILTROS ACORDEÃO ---
+    const formFiltrosAgenda = document.getElementById('form-filtros-agenda');
+    if (formFiltrosAgenda) {
+        // 1. Controla a abertura/fechamento do acordeão
+        document.querySelectorAll('.filtro-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                item.classList.toggle('aberto');
+            });
+        });
+        
+        // (O auto-submit 'change' listener foi removido)
     }
-
+    
     // --- LÓGICA DO MODAL DE EVENTO INDIVIDUAL ---
-
-    // Função que abre o modal e o preenche com os dados do evento clicado.
     function showEventModal(eventData) {
         modalContent.innerHTML = `
             <h3>${eventData.nome}</h3>
@@ -66,16 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
         modalOverlay.style.display = 'flex';
     }
 
-    // Adiciona o "escutador de cliques" em cada evento que o PHP desenhou.
     document.querySelectorAll('.event').forEach(eventDiv => {
         eventDiv.addEventListener('click', (e) => {
-            e.stopPropagation(); // Impede que outros cliques sejam acionados.
+            e.stopPropagation();
             const data = e.currentTarget.dataset;
             showEventModal(data);
         });
     });
 
-    // Fecha o modal se o usuário clicar fora da caixa de conteúdo.
     modalOverlay.addEventListener('click', (e) => {
         if (e.target === modalOverlay) modalOverlay.style.display = 'none';
     });
@@ -83,22 +89,57 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === dayModalOverlay) dayModalOverlay.style.display = 'none';
     });
 
+    // --- LÓGICA DO PAINEL DIREITO (MINI-CALENDÁRIO E RESUMOS) ---
+    function updateSummaries(date) {
+        const todayEvents = getEventsForDate(date);
+        const tomorrowDate = new Date(date);
+        tomorrowDate.setDate(date.getDate() + 1);
+        const tomorrowEvents = getEventsForDate(tomorrowDate);
 
-    // --- LÓGICA DO MINI CALENDÁRIO E RESUMOS ---
+        const todaySummaryContainer = document.querySelector(".resumo-geral-lado-direito:nth-of-type(1) .container-scroll-eventos");
+        const tomorrowSummaryContainer = document.querySelector(".resumo-geral-lado-direito:nth-of-type(2) .container-scroll-eventos");
+        
+        todaySummaryContainer.innerHTML = '';
+        if (todayEvents.length > 0) {
+            todayEvents.forEach(evt => {
+                const p = document.createElement('div');
+                p.className = 'area-escrita-resumo-geral event-summary ' + getEventTypeClass(evt.tipo_evento);
+                p.innerHTML = `<p>${evt.nm_evento}</p><p>${evt.horario_inicio.substr(0, 5)}</p>`;
+                todaySummaryContainer.appendChild(p);
+            });
+        } else {
+            todaySummaryContainer.innerHTML = '<div class="area-escrita-resumo-geral"><p>Nenhum evento hoje.</p></div>';
+        }
+        
+        tomorrowSummaryContainer.innerHTML = '';
+        if (tomorrowEvents.length > 0) {
+            tomorrowEvents.forEach(evt => {
+                const p = document.createElement('div');
+                p.className = 'area-escrita-resumo-geral event-summary ' + getEventTypeClass(evt.tipo_evento);
+                p.innerHTML = `<p>${evt.nm_evento}</p><p>${evt.horario_inicio.substr(0, 5)}</p>`;
+                tomorrowSummaryContainer.appendChild(p);
+            });
+        } else {
+            tomorrowSummaryContainer.innerHTML = '<div class="area-escrita-resumo-geral"><p>Nenhum evento amanhã.</p></div>';
+        }
+    }
     
-    // As funções do seu `index.js` original, agora adaptadas para usar `eventosDoBanco`.
-    const rightCalendarDays = document.querySelector('.dias-calendario-lado-direito');
-    const miniCalHeaderMonth = document.querySelector('.header-calendario-lado-direito h3:nth-child(1)');
-    const miniCalHeaderYear = document.querySelector('.header-calendario-lado-direito h3:nth-child(2)');
-
     function updateRightPanel(date) {
-        // Atualiza o mini-calendário
         const month = date.getMonth();
         const year = date.getFullYear();
+        const dayOfWeek = date.getDay();
         const monthsPt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         miniCalHeaderMonth.innerText = monthsPt[month];
         miniCalHeaderYear.innerText = year;
+        
+        const diasSemanaMini = document.querySelectorAll('.dia-semana');
+        diasSemanaMini.forEach(dia => dia.classList.remove('atual'));
+        if (dayOfWeek >= 1 && dayOfWeek <= 6) {
+            diasSemanaMini[dayOfWeek - 1].classList.add('atual');
+        } else if (dayOfWeek === 0) {
+            diasSemanaMini[6].classList.add('atual');
+        }
 
         rightCalendarDays.innerHTML = '';
         const firstDayOfMonth = new Date(year, month, 1);
@@ -114,8 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
             dayP.innerText = d < 10 ? `0${d}` : d;
             dayP.classList.add('calendar-day');
 
-            if (d === date.getDate()) {
-                dayP.style.backgroundColor = '#0479F9';
+            if (d === date.getDate() && month === date.getMonth() && year === date.getFullYear()) {
+                dayP.style.backgroundColor = '#022E5E';
                 dayP.style.color = 'white';
                 dayP.style.borderRadius = '10px';
             }
@@ -134,69 +175,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     eventsHtml = '<p>Nenhum evento para este dia.</p>';
                 }
-                dayModalContent.querySelector('div, p').innerHTML = eventsHtml; // Atualiza o conteúdo do modal do dia
+                dayModalContent.querySelector('div').innerHTML = eventsHtml;
                 dayModalOverlay.style.display = 'flex';
             });
             rightCalendarDays.appendChild(dayP);
         }
-
-        // Atualiza os resumos
         updateSummaries(date);
     }
-    
-    function updateSummaries(date) {
-        const todayEvents = getEventsForDate(date);
-        const tomorrowDate = new Date(date);
-        tomorrowDate.setDate(date.getDate() + 1);
-        const tomorrowEvents = getEventsForDate(tomorrowDate);
 
-      // Função auxiliar para gerar a classe de tipo de evento
-      function getEventTypeClass(eventType) {
-        if (!eventType) return '';
-        return 'tipo-' + eventType.toLowerCase().replace(/ /g, '-');
-    }
-    
-  // Resumo de hoje
-const todaySummaryDiv = document.querySelector(".resumo-geral-lado-direito:nth-of-type(1)");
-const todayScrollContainer = todaySummaryDiv.querySelector(".container-scroll-eventos");
-todayScrollContainer.innerHTML = '';
-
-if(todayEvents.length > 0){
-    todayEvents.forEach(evt => {
-        const p = document.createElement('div');
-        // Adicione a classe 'event-summary' e a classe de tipo de evento
-        p.className = 'area-escrita-resumo-geral event-summary ' + getEventTypeClass(evt.tipo_evento);
-        p.innerHTML = `<p>${evt.nm_evento}</p><p>${evt.horario_inicio.substr(0, 5)}</p>`;
-        todayScrollContainer.appendChild(p);
-    });
-} else {
-     const p = document.createElement('div');
-     p.className = 'area-escrita-resumo-geral';
-     p.innerHTML = `<p>Nenhum evento hoje.</p>`;
-     todayScrollContainer.appendChild(p);
-}
-
-// Resumo de amanhã
-const tomorrowSummaryDiv = document.querySelector(".resumo-geral-lado-direito:nth-of-type(2)");
-const tomorrowScrollContainer = tomorrowSummaryDiv.querySelector(".container-scroll-eventos");
-tomorrowScrollContainer.innerHTML = '';
-
-if(tomorrowEvents.length > 0){
-    tomorrowEvents.forEach(evt => {
-        const p = document.createElement('div');
-        // Adicione a classe 'event-summary' e a classe de tipo de evento
-        p.className = 'area-escrita-resumo-geral event-summary ' + getEventTypeClass(evt.tipo_evento);
-        p.innerHTML = `<p>${evt.nm_evento}</p><p>${evt.horario_inicio.substr(0, 5)}</p>`;
-        tomorrowScrollContainer.appendChild(p);
-    });
-} else {
-     const p = document.createElement('div');
-     p.className = 'area-escrita-resumo-geral';
-     p.innerHTML = `<p>Nenhum evento amanhã.</p>`;
-     tomorrowScrollContainer.appendChild(p);
-}
-    }
-
-    // Inicializa o painel direito com a data atual.
+    // --- INICIALIZAÇÃO ---
     updateRightPanel(new Date());
 });
