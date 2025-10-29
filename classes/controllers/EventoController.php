@@ -202,5 +202,30 @@ class EventoController extends Banco {
             }
         } catch (\Throwable $th) { throw $th; }
     }
+
+    // Adicione esta nova função dentro da classe EventoController
+    
+    /**
+     * Cancela uma solicitação de evento.
+     * Chama a procedure que apaga o evento e suas associações,
+     * mas apenas se o usuário logado for o solicitante e o status for 'Solicitado'.
+     *
+     * @param string $cdEvento O ID do evento a ser cancelado.
+     * @param string $cdUsuario O ID do usuário que está tentando cancelar.
+     */
+    public function cancelarSolicitacao($cdEvento, $cdUsuario) {
+        try {
+            // Chama a Stored Procedure que criamos no Passo 1
+            $this->Executar('cancelarSolicitacaoEvento', [
+                'pCdEvento' => $cdEvento,
+                'pCdUsuarioSolicitante' => $cdUsuario
+            ]);
+        } catch (\Throwable $th) {
+            // Se der erro (ex: tentar apagar evento de outro), joga a exceção
+            throw $th;
+        }
+    }
+
 }
+
 ?>

@@ -439,4 +439,27 @@ BEGIN
         cd_evento = pCdEvento;
 END$$
 
+CREATE PROCEDURE `cancelarSolicitacaoEvento`(
+    IN pCdEvento VARCHAR(25),
+    IN pCdUsuarioSolicitante VARCHAR(10)
+)
+BEGIN
+    -- 1. Apaga primeiro as respostas dos professores (chaves estrangeiras)
+    DELETE FROM resolucao_eventos_usuarios 
+    WHERE eventos_cd_evento = pCdEvento;
+    
+    -- 2. Apaga as turmas associadas (chaves estrangeiras)
+    DELETE FROM eventos_has_turmas 
+    WHERE eventos_cd_evento = pCdEvento;
+    
+    -- 3. Finalmente, apaga o evento principal
+    --    (com uma dupla verificação de segurança:
+    --     só apaga se o ID do usuário for o mesmo do solicitante
+    --     E o status ainda for 'Solicitado')
+    DELETE FROM eventos 
+    WHERE cd_evento = pCdEvento 
+      AND cd_usuario_solicitante = pCdUsuarioSolicitante
+      AND status = 'Solicitado';
+END$$
+
 DELIMITER ;

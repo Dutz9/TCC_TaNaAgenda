@@ -189,6 +189,17 @@
         </div>
     </div>
 
+    <div id="modal-confirm-cancelar" class="modal-overlay" style="display: none;">
+        <div class="modal-content-confirm">
+            <h3>Confirmar Cancelamento</h3>
+            <p>Você tem certeza que deseja cancelar esta solicitação de evento? Esta ação não pode ser desfeita.</p>
+            <div class="confirmation-buttons">
+                <button id="btn-cancelar-nao" class="botao-cancelar">Voltar</button>
+                <button id="btn-cancelar-sim" class="botao-enviar" style="background-color: #dc3545; color: white;">Sim, Cancelar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/meuseventos.js"></script>
 
     <?php if (isset($mensagem_toast)): ?>

@@ -752,8 +752,9 @@
 }
  
 .modal-buttons .btn-recusar,
-.modal-buttons .recusar {
-    background-color: #ff0000;
+.modal-buttons .recusar,
+.modal-buttons .btn-cancelar-solicitacao { /* <-- ADICIONE ESTA LINHA */
+    background-color: #ff0000; /* Vermelho */
     color: white;
     border: none;
     padding: 10px 20px;
@@ -763,7 +764,8 @@
 }
  
 .modal-buttons .btn-recusar:hover,
-.modal-buttons .recusar:hover {
+.modal-buttons .recusar:hover,
+.modal-buttons .btn-cancelar-solicitacao:hover { /* <-- ADICIONE ESTA LINHA */
     background-color: #cc0000;
 }
  
@@ -836,4 +838,42 @@
 }
 .container-filtros .botao-limpar:hover {
     background-color: #5a6268;
+}
+
+/* --- ESTILO DO MODAL DE CONFIRMAÇÃO DE CANCELAMENTO --- */
+.modal-content-confirm {
+    background: white;
+    border-radius: 10px;
+    padding: 25px;
+    width: 90%;
+    max-width: 450px; /* Menor que o modal de detalhes */
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.modal-content-confirm h3 {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.modal-content-confirm p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 25px;
+}
+
+.modal-content-confirm .confirmation-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+/* Reutiliza os estilos dos botões do formulário */
+.modal-content-confirm .confirmation-buttons button {
+    font-weight: bold;
+    font-size: 14px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
 }
