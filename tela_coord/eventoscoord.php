@@ -181,6 +181,17 @@
         </div>
     </div>
 
+    <div id="modal-confirm-excluir" class="modal-overlay" style="display: none;">
+        <div class="modal-content-confirm">
+            <h3>Confirmar Exclusão</h3>
+            <p>Você tem certeza que deseja **excluir** este evento? Esta ação é permanente e não pode ser desfeita.</p>
+            <div class="confirmation-buttons">
+                <button id="btn-excluir-nao" class="botao-cancelar">Voltar</button>
+                <button id="btn-excluir-sim" class="botao-enviar" style="background-color: #dc3545; color: white;">Sim, Excluir</button>
+            </div>
+        </div>
+    </div>
+
     <script src="../js/eventoscoord.js"></script>
     
     <?php if (isset($mensagem_toast)): ?>

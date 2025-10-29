@@ -462,4 +462,22 @@ BEGIN
       AND status = 'Solicitado';
 END$$
 
+CREATE PROCEDURE `excluirEventoDefinitivo`(
+    IN pCdEvento VARCHAR(25)
+)
+BEGIN
+    -- 1. Apaga primeiro as respostas dos professores (chaves estrangeiras)
+    DELETE FROM resolucao_eventos_usuarios 
+    WHERE eventos_cd_evento = pCdEvento;
+    
+    -- 2. Apaga as turmas associadas (chaves estrangeiras)
+    DELETE FROM eventos_has_turmas 
+    WHERE eventos_cd_evento = pCdEvento;
+    
+    -- 3. Finalmente, apaga o evento principal
+    -- (Sem verificação de status ou solicitante, pois o Coordenador tem poder total)
+    DELETE FROM eventos 
+    WHERE cd_evento = pCdEvento;
+END$$
+
 DELIMITER ;

@@ -14,19 +14,32 @@ function showFeedback(message, type = 'sucesso') {
 
 // --- LÓGICA PRINCIPAL DA PÁGINA ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Garante que as 'pontes' de dados do PHP existem
     if (typeof eventosDaPagina === 'undefined' || typeof usuario_logado === 'undefined') {
         console.error("Variáveis de dados ('eventosDaPagina' ou 'usuario_logado') não foram encontradas.");
         return;
     }
 
+    // --- Elementos Principais ---
     const container = document.querySelector('.notificacao-container');
-    const modal = document.getElementById('modal-decisao-coord');
-    const modalLeft = document.getElementById('modal-left-coord');
-    const modalRight = document.getElementById('modal-right-coord');
+    const modalDetalhes = document.getElementById('modal-decisao-coord');
+    const modalConfirmar = document.getElementById('modal-confirm-excluir'); // O modal de confirmação
 
-    if (!container || !modal) return;
+    if (!container || !modalDetalhes || !modalConfirmar) {
+        console.error('Elementos essenciais (container ou modais) não foram encontrados.');
+        return;
+    }
+
+    const modalLeft = modalDetalhes.querySelector('.modal-left');
+    const modalRight = modalDetalhes.querySelector('.modal-right');
+    const btnConfirmarSim = document.getElementById('btn-excluir-sim');
+    const btnConfirmarNao = document.getElementById('btn-excluir-nao');
+    
+    let eventoParaExcluir = null; // Guarda o ID do evento a ser excluído
 
     // --- "ESCUTADORES" DE CLIQUES ---
+    
+    // 1. Escutador nos CARDS para abrir o modal de detalhes
     container.addEventListener('click', (e) => {
         const botao = e.target.closest('button.detalhes-btn');
         if (botao) {
@@ -36,30 +49,91 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.style.display = 'none';
-            return;
-        }
+    // 2. Escutador DENTRO DO MODAL DE DETALHES
+    modalDetalhes.addEventListener('click', (e) => {
+        if (e.target === modalDetalhes) modalDetalhes.style.display = 'none';
+
         const botao = e.target.closest('button');
-        if (botao && (botao.classList.contains('aprovar') || botao.classList.contains('recusar'))) {
+        if (!botao) return;
+
+        // Ação de Aprovar/Recusar
+        if (botao.classList.contains('aprovar') || botao.classList.contains('recusar')) {
             const eventoId = botao.dataset.id;
             const decisao = botao.classList.contains('aprovar') ? 'Aprovado' : 'Recusado';
             enviarDecisaoFinal(eventoId, decisao, botao);
         }
+        
+        // Ação de Excluir Evento
+        if (botao.classList.contains('btn-excluir-evento')) {
+            eventoParaExcluir = botao.dataset.id; // Guarda o ID do evento
+            modalConfirmar.style.display = 'flex'; // Abre o modal de confirmação
+        }
     });
 
-    // --- LÓGICA DOS FILTROS ---
-    const formFiltros = document.getElementById('form-filtros');
-    if (formFiltros) {
-        // Adiciona um "escutador" para qualquer mudança nos selects
-        formFiltros.addEventListener('change', () => {
-            formFiltros.submit(); // Envia o formulário
-        });
+    // 3. Escutadores no MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
+    btnConfirmarNao.addEventListener('click', () => {
+        modalConfirmar.style.display = 'none';
+        eventoParaExcluir = null;
+    });
+
+    btnConfirmarSim.addEventListener('click', () => {
+        if (eventoParaExcluir) {
+            enviarExclusao(eventoParaExcluir);
+        }
+    });
+
+    modalConfirmar.addEventListener('click', (e) => {
+        if (e.target === modalConfirmar) {
+            modalConfirmar.style.display = 'none';
+            eventoParaExcluir = null;
+        }
+    });
+
+    // --- FUNÇÕES AJAX ---
+
+    /**
+     * Envia o pedido de EXCLUSÃO para a API.
+     */
+    async function enviarExclusao(eventoId) {
+        btnConfirmarSim.disabled = true;
+        btnConfirmarSim.textContent = 'Excluindo...';
+        
+        const formData = new FormData();
+        formData.append('cd_evento', eventoId);
+
+        try {
+            const response = await fetch('../api/excluir_evento.php', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+
+            if (response.ok && result.status === 'sucesso') {
+                modalConfirmar.style.display = 'none';
+                modalDetalhes.style.display = 'none';
+                showFeedback(result.mensagem, 'sucesso');
+                
+                const card = document.querySelector(`.notificacao .detalhes-btn[data-id="${eventoId}"]`).closest('.notificacao');
+                if (card) {
+                    card.style.opacity = '0';
+                    setTimeout(() => card.remove(), 500);
+                }
+            } else {
+                alert('Erro: ' + (result.mensagem || 'Não foi possível excluir.'));
+            }
+        } catch (error) {
+            alert('Erro de comunicação.');
+            console.error('Erro no fetch:', error);
+        }
+        
+        btnConfirmarSim.disabled = false;
+        btnConfirmarSim.textContent = 'Sim, Excluir';
+        eventoParaExcluir = null;
     }
 
-    // --- FUNÇÕES ---
-
+    /**
+     * Envia a decisão final (Aprovado/Recusado) do coordenador para a API.
+     */
     async function enviarDecisaoFinal(eventoId, decisao, botao) {
         const botoesContainer = botao.parentElement;
         botoesContainer.innerHTML = '<p>Processando...</p>';
@@ -73,7 +147,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok && result.status === 'sucesso') {
                 showFeedback(`Evento ${decisao.toLowerCase()} com sucesso!`, 'sucesso');
-                modal.style.display = 'none';
+                modalDetalhes.style.display = 'none';
 
                 const card = document.querySelector(`.notificacao .detalhes-btn[data-id="${eventoId}"]`).closest('.notificacao');
                 if (card) {
@@ -84,6 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         pStatus.className = statusClasse;
                     }
                     card.querySelector('.detalhes-btn').textContent = 'Ver Detalhes';
+                    card.classList.add('card-respondido'); 
                 }
 
                 const indiceEvento = eventosDaPagina.findIndex(ev => ev.cd_evento === eventoId);
@@ -101,11 +176,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    /**
+     * Formata a data para DD/MM/YYYY
+     */
     function formatarData(dateString) {
         const [ano, mes, dia] = dateString.split('-');
         return `${dia}/${mes}/${ano}`;
     }
 
+    /**
+     * Abre e preenche o modal de DETALHES com os botões corretos.
+     */
     function abrirModalDecisao(evento) {
         let respostas = [];
         if (evento.respostas_professores) {
@@ -141,13 +222,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (evento.status === 'Solicitado') {
             botoesHtml = `<div class="modal-buttons"><button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button><button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button></div>`;
         }
+        else {
+             botoesHtml = `<div class="modal-buttons"><button class="btn-excluir-evento recusar" data-id="${evento.cd_evento}">Excluir Evento</button></div>`;
+        }
 
         modalRight.innerHTML = `
             <h3>Detalhes do Evento</h3>
             <div class="form-group"><label>Título:</label><input type="text" readonly value="${evento.nm_evento}"></div>
             <div class="form-row">
                 <div class="form-group"><label>Horário:</label><input type="text" readonly value="${evento.horario_inicio.substr(0, 5)} - ${evento.horario_fim.substr(0, 5)}"></div>
-                <div class="form-group"><label>Data:</label><input type="text" readonly value="${new Date(evento.dt_evento + 'T00:00:00').toLocaleDateString('pt-BR')}"></div>
+                <div class="form-group"><label>Data:</label><input type="text" readonly value="${formatarData(evento.dt_evento)}"></div>
             </div>
             <div class="form-row">
                 <div class="form-group"><label>Turmas:</label><input type="text" readonly value="${evento.turmas_envolvidas || 'N/A'}"></div>
@@ -157,6 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
             ${botoesHtml}
         `;
         
-        modal.style.display = 'flex';
+        modalDetalhes.style.display = 'flex';
     }
 });

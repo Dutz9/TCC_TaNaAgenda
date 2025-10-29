@@ -226,6 +226,26 @@ class EventoController extends Banco {
         }
     }
 
+    // Adicione esta nova função dentro da classe EventoController
+    
+    /**
+     * Exclui um evento e todas as suas associações de forma definitiva.
+     * Esta ação é (normalmente) reservada para Coordenadores.
+     *
+     * @param string $cdEvento O ID do evento a ser excluído.
+     */
+    public function excluirDefinitivo($cdEvento) {
+        try {
+            // Chama a Stored Procedure que criamos no Passo 1
+            $this->Executar('excluirEventoDefinitivo', [
+                'pCdEvento' => $cdEvento
+            ]);
+        } catch (\Throwable $th) {
+            // Se der erro, joga a exceção
+            throw $th;
+        }
+    }
+
 }
 
 ?>
