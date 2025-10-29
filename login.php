@@ -42,6 +42,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     header('Location: tela_coord/agendacoord.php');
                     exit(); // Encerra o script após o redirecionamento
                 } 
+
+                elseif ($tipoUsuario == 'Administrador') {
+                    header('Location: tela_adm/agendaadm.php');
+                    exit(); // Encerra o script após o redirecionamento
+                } 
                 
                 else {
                     // Caso seja outro tipo de usuário (ex: Administrador)
