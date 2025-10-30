@@ -246,6 +246,33 @@ class EventoController extends Banco {
         }
     }
 
+    // Adicione esta nova função dentro da classe EventoController
+    
+    /**
+     * Busca os dados de um evento específico para preencher o formulário de edição.
+     *
+     * @param string $cdEvento O ID do evento a ser editado.
+     * @param string $cdUsuario O ID do usuário que está tentando editar (para segurança).
+     * @return array|null Os dados do evento, ou null se não for encontrado ou não tiver permissão.
+     */
+    public function buscarParaEditar($cdEvento, $cdUsuario) {
+        try {
+            $dados = $this->Consultar('buscarEventoParaEdicao', [
+                'pCdEvento' => $cdEvento,
+                'pCdUsuarioSolicitante' => $cdUsuario
+            ]);
+
+            // A procedure retorna um array. Se o evento for encontrado, ele estará na posição 0.
+            if (count($dados) > 0) {
+                return $dados[0]; // Retorna o primeiro (e único) evento encontrado
+            } else {
+                return null; // Nenhum evento encontrado (ou sem permissão)
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
 }
 
 ?>

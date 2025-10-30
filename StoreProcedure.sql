@@ -480,4 +480,33 @@ BEGIN
     WHERE cd_evento = pCdEvento;
 END$$
 
+CREATE PROCEDURE `buscarEventoParaEdicao`(
+    IN pCdEvento VARCHAR(25),
+    IN pCdUsuarioSolicitante VARCHAR(10)
+)
+BEGIN
+    SELECT
+        e.nm_evento,
+        e.dt_evento,
+        e.horario_inicio,
+        e.horario_fim,
+        e.tipo_evento,
+        e.ds_descricao,
+        -- Usamos GROUP_CONCAT para pegar os IDs das turmas como uma string (ex: "1,4,5")
+        GROUP_CONCAT(DISTINCT eht.turmas_cd_turma) AS turmas_ids,
+        -- Usamos GROUP_CONCAT para pegar os IDs dos professores convidados
+        GROUP_CONCAT(DISTINCT reu.usuarios_cd_usuario) AS professores_ids
+    FROM eventos e
+    LEFT JOIN eventos_has_turmas eht ON e.cd_evento = eht.eventos_cd_evento
+    LEFT JOIN resolucao_eventos_usuarios reu ON e.cd_evento = reu.eventos_cd_evento
+    WHERE
+        e.cd_evento = pCdEvento
+        -- Condição de Segurança: Só pode editar se for o dono
+        AND e.cd_usuario_solicitante = pCdUsuarioSolicitante
+        -- Condição de Segurança: Só pode editar se ainda estiver "Solicitado"
+        AND e.status = 'Solicitado'
+    GROUP BY
+        e.cd_evento;
+END$$
+
 DELIMITER ;

@@ -243,13 +243,14 @@ document.addEventListener('DOMContentLoaded', () => {
             botoesHtml = `<div class="modal-buttons">
                             <button class="btn-recusar" data-id="${evento.cd_evento}">Recusar</button>
                             <button class="btn-aprovar" data-id="${evento.cd_evento}">Aprovar</button>
-                          </div>`;
+                        </div>`;
         }
         // 2. Se for MEU e ainda estiver Solicitado
         else if (evento.status === 'Solicitado' && evento.cd_usuario_solicitante === usuario_logado.cd_usuario) {
             botoesHtml = `<div class="modal-buttons">
-                            <button class="btn-cancelar-solicitacao" data-id="${evento.cd_evento}">Cancelar Solicitação</button>
-                          </div>`;
+                            <button class="btn-cancelar-solicitacao recusar" data-id="${evento.cd_evento}">Cancelar Solicitação</button>
+                            <a href="criarevento.php?edit=${evento.cd_evento}" class="btn-editar-evento">Editar</a>
+                        </div>`;
         }
 
         modalRight.innerHTML = `
