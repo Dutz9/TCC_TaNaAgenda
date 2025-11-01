@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- Elementos do Formulário ---
     const turmasElement = document.getElementById('selecao-turmas');
     const displayProfessores = document.getElementById('display-professores');
-    const displayTotalAlunos = document.getElementById('display-total-alunos');
+    const displayTotalAlunos = document.getElementById('display-total-alunos'); // Elemento para o total de alunos
     const form = document.querySelector('.formulario-evento form');
     const inputData = document.getElementById('data');
     const horarioInicioElem = document.getElementById('horario_inicio');
@@ -28,14 +28,17 @@ document.addEventListener('DOMContentLoaded', function() {
             removeItemButton: true,
             placeholder: true,
             placeholderValue: 'Clique para selecionar ou digite para buscar...',
-            fuseOptions: { keys: ['label'], threshold: 0.3 }
+            fuseOptions: {
+                keys: ['label'],
+                threshold: 0.3
+            }
         });
 
         // "Escuta" mudanças nas turmas para atualizar professores e alunos
         selectTurmas.passedElement.element.addEventListener('change', function() {
             const turmasSelecionadasIds = Array.from(this.selectedOptions).map(option => option.value);
             const professoresParaExibir = {};
-            let totalAlunos = 0;
+            let totalAlunos = 0; // Variável para a soma
 
             form.querySelectorAll('input[name="professores_notificar[]"]').forEach(input => input.remove());
             displayProfessores.innerHTML = '';
@@ -57,12 +60,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             
-            displayTotalAlunos.value = totalAlunos;
-            const professores = Object.values(professoresParaExibir);
+            // Exibe o total de alunos
+            if(displayTotalAlunos) {
+                displayTotalAlunos.value = totalAlunos;
+            }
 
+            // Exibe a lista de professores
+            const professores = Object.values(professoresParaExibir);
             if (professores.length > 0) {
                 professores.forEach(prof => {
-                    // --- LÓGICA DE EDIÇÃO ---
                     // Se estiver criando (não-edição), OU se estiver editando E o prof estava na lista, mostre-o.
                     if (!modoEdicao || (modoEdicao && professoresSelecionados[prof.id])) {
                         const profItem = document.createElement('div');
@@ -80,7 +86,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             } else {
-                displayProfessores.innerHTML = '<p>Selecione uma ou mais turmas...</p>';
+                displayProfessores.innerHTML = '<p>Nenhum outro professor encontrado para estas turmas.</p>';
             }
         });
 
@@ -127,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function() {
         hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
         const dataMinima = hoje.toISOString().split('T')[0];
         
-        // No modo de edição, não podemos definir uma data mínima que seja posterior à data já salva
         if (modoEdicao && inputData.value < dataMinima) {
              // Se o evento é antigo, não define data mínima
         } else {
@@ -153,9 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
 
-            // Se a opção selecionada (do modo de edição) for desabilitada, não faz nada
-            // Mas se o usuário MUDAR o início, e o fim se tornar inválido, ele limpa.
-            if (!modoEdicao && horarioFimElem.options[horarioFimElem.selectedIndex]?.disabled) {
+            if (horarioFimElem.options[horarioFimElem.selectedIndex]?.disabled) {
                 horarioFimElem.value = "";
             }
         };

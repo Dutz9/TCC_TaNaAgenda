@@ -509,4 +509,56 @@ BEGIN
         e.cd_evento;
 END$$
 
+CREATE PROCEDURE `atualizarSolicitacaoEvento`(
+    IN pCdEvento VARCHAR(25),
+    IN pNmEvento VARCHAR(45),
+    IN pDtEvento DATE,
+    IN pHorarioInicio VARCHAR(10),
+    IN pHorarioFim VARCHAR(10),
+    IN pTipoEvento ENUM('Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
+    IN pDsDescricao TEXT
+)
+BEGIN
+    -- 1. Atualiza os dados principais do evento
+    UPDATE eventos SET
+        nm_evento = pNmEvento,
+        dt_evento = pDtEvento,
+        horario_inicio = pHorarioInicio,
+        horario_fim = pHorarioFim,
+        tipo_evento = pTipoEvento,
+        ds_descricao = pDsDescricao
+    WHERE
+        cd_evento = pCdEvento;
+        
+    -- 2. Limpa as listas antigas de turmas e professores
+    DELETE FROM eventos_has_turmas WHERE eventos_cd_evento = pCdEvento;
+    DELETE FROM resolucao_eventos_usuarios WHERE eventos_cd_evento = pCdEvento;
+    
+    -- As novas turmas e professores serão inseridos pelo Controller
+END$$
+
+CREATE PROCEDURE `buscarEventoParaEdicaoCoordenador`(
+    IN pCdEvento VARCHAR(25)
+)
+BEGIN
+    SELECT
+        e.nm_evento,
+        e.dt_evento,
+        e.horario_inicio,
+        e.horario_fim,
+        e.tipo_evento,
+        e.ds_descricao,
+        -- Pega os IDs das turmas como uma string (ex: "1,4,5")
+        GROUP_CONCAT(DISTINCT eht.turmas_cd_turma) AS turmas_ids,
+        -- Pega os IDs dos professores convidados
+        GROUP_CONCAT(DISTINCT reu.usuarios_cd_usuario) AS professores_ids
+    FROM eventos e
+    LEFT JOIN eventos_has_turmas eht ON e.cd_evento = eht.eventos_cd_evento
+    LEFT JOIN resolucao_eventos_usuarios reu ON e.cd_evento = reu.eventos_cd_evento
+    WHERE
+        e.cd_evento = pCdEvento
+    GROUP BY
+        e.cd_evento;
+END$$
+
 DELIMITER ;

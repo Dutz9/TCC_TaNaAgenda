@@ -273,6 +273,85 @@ class EventoController extends Banco {
         }
     }
 
+    // Adicione esta nova função dentro da classe EventoController
+    
+    /**
+     * Atualiza uma solicitação de evento existente.
+     * Esta é uma operação transacional:
+     * 1. Atualiza os dados principais do evento.
+     * 2. Limpa as turmas e professores antigos (feito pela procedure).
+     * 3. Re-insere as novas listas de turmas e professores.
+     *
+     * @param string $cdEvento O ID do evento a ser atualizado.
+     * @param array $dadosEvento Os novos dados do evento vindos do formulário.
+     */
+    public function atualizarSolicitacao($cdEvento, $dadosEvento) {
+        $this->iniciarTransacao(); // <-- INICIA A TRANSAÇÃO
+        try {
+            // 1. Atualiza os dados principais do evento (e limpa as associações)
+            $this->Executar('atualizarSolicitacaoEvento', [
+                'pCdEvento' => $cdEvento,
+                'pNmEvento' => $dadosEvento['nm_evento'],
+                'pDtEvento' => $dadosEvento['dt_evento'],
+                'pHorarioInicio' => $dadosEvento['horario_inicio'],
+                'pHorarioFim' => $dadosEvento['horario_fim'],
+                'pTipoEvento' => $dadosEvento['tipo_evento'],
+                'pDsDescricao' => $dadosEvento['ds_descricao']
+            ]);
+            
+            // 2. Re-insere as turmas atualizadas
+            foreach ($dadosEvento['turmas'] as $cdTurma) {
+                $this->ExecutarSQL(
+                    'INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES (:cd_evento, :cd_turma)',
+                    ['cd_evento' => $cdEvento, 'cd_turma' => $cdTurma]
+                );
+            }
+
+            // 3. Re-insere os professores atualizados (que não foram excluídos)
+            if (!empty($dadosEvento['professores'])) {
+                foreach ($dadosEvento['professores'] as $cdProfessor) {
+                    $this->Executar('registrarAprovacaoProfessor', [
+                        'pCdEvento' => $cdEvento,
+                        'pCdUsuario' => $cdProfessor,
+                        'pStatus' => 'Pendente'
+                    ]);
+                }
+            }
+            
+            $this->commitTransacao(); // <-- SUCESSO: Confirma todas as alterações
+
+        } catch (\Throwable $th) {
+            $this->rollbackTransacao(); // <-- FALHA: Desfaz tudo
+            throw $th; // Joga o erro para o formulário
+        }
+    }
+
+    // Adicione esta nova função dentro da classe EventoController
+    
+    /**
+     * Busca os dados de um evento específico para o Coordenador editar.
+     * Esta procedure não tem trava de segurança, pois a segurança
+     * será validada na API (verificando se o usuário é Coordenador).
+     *
+     * @param string $cdEvento O ID do evento a ser editado.
+     * @return array|null Os dados do evento, ou null se não for encontrado.
+     */
+    public function buscarParaEditarCoordenador($cdEvento) {
+        try {
+            $dados = $this->Consultar('buscarEventoParaEdicaoCoordenador', [
+                'pCdEvento' => $cdEvento
+            ]);
+
+            if (count($dados) > 0) {
+                return $dados[0]; // Retorna o primeiro (e único) evento encontrado
+            } else {
+                return null; // Nenhum evento encontrado
+            }
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
 }
 
 ?>

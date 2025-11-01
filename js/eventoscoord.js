@@ -1,8 +1,5 @@
 /**
  * Mostra uma barra de feedback flutuante no topo da tela.
- * Fica fora do DOMContentLoaded para ser acessível pelo PHP.
- * @param {string} message - A mensagem a ser exibida.
- * @param {string} type - 'sucesso' ou 'erro'.
  */
 function showFeedback(message, type = 'sucesso') {
     const bar = document.getElementById('feedback-bar');
@@ -14,16 +11,14 @@ function showFeedback(message, type = 'sucesso') {
 
 // --- LÓGICA PRINCIPAL DA PÁGINA ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante que as 'pontes' de dados do PHP existem
     if (typeof eventosDaPagina === 'undefined' || typeof usuario_logado === 'undefined') {
         console.error("Variáveis de dados ('eventosDaPagina' ou 'usuario_logado') não foram encontradas.");
         return;
     }
 
-    // --- Elementos Principais ---
     const container = document.querySelector('.notificacao-container');
     const modalDetalhes = document.getElementById('modal-decisao-coord');
-    const modalConfirmar = document.getElementById('modal-confirm-excluir'); // O modal de confirmação
+    const modalConfirmar = document.getElementById('modal-confirm-excluir');
 
     if (!container || !modalDetalhes || !modalConfirmar) {
         console.error('Elementos essenciais (container ou modais) não foram encontrados.');
@@ -35,11 +30,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfirmarSim = document.getElementById('btn-excluir-sim');
     const btnConfirmarNao = document.getElementById('btn-excluir-nao');
     
-    let eventoParaExcluir = null; // Guarda o ID do evento a ser excluído
+    let eventoParaExcluir = null;
 
     // --- "ESCUTADORES" DE CLIQUES ---
     
-    // 1. Escutador nos CARDS para abrir o modal de detalhes
     container.addEventListener('click', (e) => {
         const botao = e.target.closest('button.detalhes-btn');
         if (botao) {
@@ -49,28 +43,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. Escutador DENTRO DO MODAL DE DETALHES
     modalDetalhes.addEventListener('click', (e) => {
         if (e.target === modalDetalhes) modalDetalhes.style.display = 'none';
 
-        const botao = e.target.closest('button');
+        const botao = e.target.closest('button, a'); // Agora escuta por 'a' (links) também
         if (!botao) return;
 
-        // Ação de Aprovar/Recusar
         if (botao.classList.contains('aprovar') || botao.classList.contains('recusar')) {
+            e.preventDefault(); // Previne o comportamento padrão (caso seja um <a>)
             const eventoId = botao.dataset.id;
             const decisao = botao.classList.contains('aprovar') ? 'Aprovado' : 'Recusado';
             enviarDecisaoFinal(eventoId, decisao, botao);
         }
         
-        // Ação de Excluir Evento
         if (botao.classList.contains('btn-excluir-evento')) {
-            eventoParaExcluir = botao.dataset.id; // Guarda o ID do evento
-            modalConfirmar.style.display = 'flex'; // Abre o modal de confirmação
+            e.preventDefault();
+            eventoParaExcluir = botao.dataset.id;
+            modalConfirmar.style.display = 'flex';
         }
+        
+        // Se for o botão de editar, o clique no link <a> já faz o redirecionamento.
+        // Não precisamos de lógica JS extra para ele, a não ser que ele fosse um <button>.
+        // A lógica do 'a' href="..." já funciona.
     });
 
-    // 3. Escutadores no MODAL DE CONFIRMAÇÃO DE EXCLUSÃO
     btnConfirmarNao.addEventListener('click', () => {
         modalConfirmar.style.display = 'none';
         eventoParaExcluir = null;
@@ -91,9 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÕES AJAX ---
 
-    /**
-     * Envia o pedido de EXCLUSÃO para a API.
-     */
     async function enviarExclusao(eventoId) {
         btnConfirmarSim.disabled = true;
         btnConfirmarSim.textContent = 'Excluindo...';
@@ -102,17 +95,12 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('cd_evento', eventoId);
 
         try {
-            const response = await fetch('../api/excluir_evento.php', {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch('../api/excluir_evento.php', { method: 'POST', body: formData });
             const result = await response.json();
-
             if (response.ok && result.status === 'sucesso') {
                 modalConfirmar.style.display = 'none';
                 modalDetalhes.style.display = 'none';
                 showFeedback(result.mensagem, 'sucesso');
-                
                 const card = document.querySelector(`.notificacao .detalhes-btn[data-id="${eventoId}"]`).closest('.notificacao');
                 if (card) {
                     card.style.opacity = '0';
@@ -131,9 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
         eventoParaExcluir = null;
     }
 
-    /**
-     * Envia a decisão final (Aprovado/Recusado) do coordenador para a API.
-     */
     async function enviarDecisaoFinal(eventoId, decisao, botao) {
         const botoesContainer = botao.parentElement;
         botoesContainer.innerHTML = '<p>Processando...</p>';
@@ -144,11 +129,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('../api/decisao_final_evento.php', { method: 'POST', body: formData });
             const result = await response.json();
-
             if (response.ok && result.status === 'sucesso') {
                 showFeedback(`Evento ${decisao.toLowerCase()} com sucesso!`, 'sucesso');
                 modalDetalhes.style.display = 'none';
-
                 const card = document.querySelector(`.notificacao .detalhes-btn[data-id="${eventoId}"]`).closest('.notificacao');
                 if (card) {
                     const pStatus = card.querySelector('p[class*="status-"]');
@@ -160,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     card.querySelector('.detalhes-btn').textContent = 'Ver Detalhes';
                     card.classList.add('card-respondido'); 
                 }
-
                 const indiceEvento = eventosDaPagina.findIndex(ev => ev.cd_evento === eventoId);
                 if (indiceEvento > -1) {
                     eventosDaPagina[indiceEvento].status = decisao;
@@ -176,17 +158,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Formata a data para DD/MM/YYYY
-     */
     function formatarData(dateString) {
         const [ano, mes, dia] = dateString.split('-');
         return `${dia}/${mes}/${ano}`;
     }
 
-    /**
-     * Abre e preenche o modal de DETALHES com os botões corretos.
-     */
     function abrirModalDecisao(evento) {
         let respostas = [];
         if (evento.respostas_professores) {
@@ -194,10 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 respostas = JSON.parse(evento.respostas_professores) || [];
             } catch (e) { console.warn("JSON das respostas inválido."); }
         }
-
         let tituloRespostas = 'Respostas dos Professores';
         let respostasHtml = '';
-
         if (evento.tipo_solicitante === 'Coordenador') {
             tituloRespostas = 'Professores Envolvidos';
             if (respostas.length > 0) {
@@ -220,10 +194,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let botoesHtml = '';
         if (evento.status === 'Solicitado') {
-            botoesHtml = `<div class="modal-buttons"><button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button><button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button></div>`;
+            botoesHtml = `<div class="modal-buttons">
+                            <button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button>
+                            <button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button>
+                          </div>`;
         }
         else {
-             botoesHtml = `<div class="modal-buttons"><button class="btn-excluir-evento recusar" data-id="${evento.cd_evento}">Excluir Evento</button></div>`;
+             botoesHtml = `<div class="modal-buttons">
+                            <button class="btn-excluir-evento recusar" data-id="${evento.cd_evento}">Excluir Evento</button>
+                            <a href="criareventocoord.php?edit=${evento.cd_evento}" class="btn-editar-evento">Editar</a>
+                          </div>`;
         }
 
         modalRight.innerHTML = `

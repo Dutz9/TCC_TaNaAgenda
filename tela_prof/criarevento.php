@@ -2,59 +2,48 @@
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // --- DETECÇÃO DO MODO (CRIAR vs EDITAR) ---
+    $eventoController = new EventoController();
     $modo_edicao = false;
     $dados_edicao = null;
     $cd_evento_edicao = null;
-    $turmas_selecionadas = []; // Array dos IDs das turmas
-    $professores_selecionados_map = []; // Mapa de IDs de profs para o JS
+    $turmas_selecionadas = [];
+    $professores_selecionados_map = [];
 
-    $eventoController = new EventoController();
-
+    // --- DETECÇÃO DO MODO (CRIAR vs EDITAR) ---
     if (isset($_GET['edit']) && !empty($_GET['edit'])) {
         $modo_edicao = true;
         $cd_evento_edicao = $_GET['edit'];
         
-        // Busca os dados do evento no banco
         $dados_edicao = $eventoController->buscarParaEditar($cd_evento_edicao, $usuario_logado['cd_usuario']);
         
         if ($dados_edicao === null) {
-            // Se o evento não for encontrado ou não pertencer ao usuário, redireciona com erro
-            $_SESSION['mensagem_sucesso'] = "Erro: Evento não encontrado ou você não tem permissão para editá-lo."; // Usando a sessão para mostrar o toast
+            $_SESSION['mensagem_sucesso'] = "Erro: Evento não encontrado ou você não tem permissão para editá-lo.";
             header('Location: meuseventos.php');
             exit();
         }
         
-        // Prepara os arrays de turmas e professores para o formulário
         if (!empty($dados_edicao['turmas_ids'])) {
             $turmas_selecionadas = explode(',', $dados_edicao['turmas_ids']);
         }
         if (!empty($dados_edicao['professores_ids'])) {
             $professores_selecionados = explode(',', $dados_edicao['professores_ids']);
             foreach ($professores_selecionados as $prof_id) {
-                if (!empty($prof_id)) {
-                    $professores_selecionados_map[$prof_id] = true;
-                }
+                if (!empty($prof_id)) { $professores_selecionados_map[$prof_id] = true; }
             }
         }
     }
 
     // --- CARREGAMENTO DE DADOS PARA OS FORMULÁRIOS ---
     $turmaController = new TurmaController();
-    $lista_turmas = $turmaController->listar(); // Lista todas as turmas para o <select>
-
+    $lista_turmas = $turmaController->listar();
     $usuarioController = new UsuarioController();
     $relacao_prof_turma_raw = $usuarioController->listarRelacaoProfessorTurma();
-
     $relacao_turma_prof = [];
     foreach ($relacao_prof_turma_raw as $rel) {
         $turma_id = $rel['turmas_cd_turma'];
-        if (!isset($relacao_turma_prof[$turma_id])) {
-            $relacao_turma_prof[$turma_id] = [];
-        }
+        if (!isset($relacao_turma_prof[$turma_id])) { $relacao_turma_prof[$turma_id] = []; }
         $relacao_turma_prof[$turma_id][] = ['id' => $rel['cd_usuario'], 'nome' => $rel['nm_usuario']];
     }
-    // Mapa de alunos por turma
     $mapa_alunos_turma = [];
     foreach ($lista_turmas as $turma) {
         $mapa_alunos_turma[$turma['cd_turma']] = $turma['qt_alunos'];
@@ -64,15 +53,12 @@
     $mensagem = '';
     $tipo_mensagem = '';
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // !! A LÓGICA DE ATUALIZAÇÃO (UPDATE) AINDA SERÁ IMPLEMENTADA AQUI !!
-        // Por enquanto, ele ainda chama a lógica de CRIAÇÃO
         try {
             $titulo = trim($_POST['titulo']);
             if (empty($titulo)) { throw new Exception("O título não pode ser vazio."); }
             if (strlen($titulo) > 45) { throw new Exception("O título é muito longo (máx 45 caracteres)."); }
 
             $dadosEvento = [
-                'cd_evento' => uniqid('EVT_'),
                 'nm_evento' => $titulo,
                 'dt_evento' => $_POST['data'],
                 'horario_inicio' => $_POST['horario_inicio'],
@@ -83,12 +69,31 @@
                 'professores' => $_POST['professores_notificar'] ?? [],
                 'cd_usuario_solicitante' => $usuario_logado['cd_usuario']
             ];
-            $eventoController->criar($dadosEvento);
+
+            // --- A LÓGICA DE DECISÃO ESTÁ AQUI ---
+            if ($modo_edicao) {
+                // MODO DE ATUALIZAÇÃO
+                // Passa o ID do evento e os novos dados para o controller
+                $eventoController->atualizarSolicitacao($cd_evento_edicao, $dadosEvento);
+                $_SESSION['mensagem_sucesso'] = "Evento atualizado com sucesso!";
+            } else {
+                // MODO DE CRIAÇÃO
+                $dadosEvento['cd_evento'] = uniqid('EVT_'); // Só precisa de um novo ID se for criação
+                $eventoController->criar($dadosEvento);
+                $_SESSION['mensagem_sucesso'] = "Evento solicitado com sucesso!";
+            }
             
-            $_SESSION['mensagem_sucesso'] = "Evento solicitado com sucesso!";
             header('Location: meuseventos.php');
             exit();
 
+        } catch (PDOException $e) {
+            $codigoErro = $e->getCode();
+            if ($codigoErro == '22001') {
+                $mensagem = "Erro: Os dados inseridos são longos demais. Verifique o título ou a descrição.";
+            } else {
+                $mensagem = "Erro de banco de dados: " . $e->getMessage();
+            }
+            $tipo_mensagem = 'erro';
         } catch (Exception $e) {
             $mensagem = "Erro: " . $e->getMessage();
             $tipo_mensagem = 'erro';
@@ -97,15 +102,10 @@
 ?>
 
 <script>
-    // Ponte de dados do PHP para o JavaScript
     const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
     const mapaAlunosTurma = <?php echo json_encode($mapa_alunos_turma); ?>;
     const usuario_logado = <?php echo json_encode($usuario_logado); ?>;
-    
-    // --- NOVAS VARIÁVEIS PARA O MODO DE EDIÇÃO ---
-    // Informa ao JS que estamos em modo de edição
     const modoEdicao = <?php echo $modo_edicao ? 'true' : 'false'; ?>; 
-    // Passa o mapa de professores que já estavam selecionados (para a lógica de exclusão)
     const professoresSelecionados = <?php echo json_encode($professores_selecionados_map); ?>;
 </script>
 
@@ -119,9 +119,6 @@
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/criarevento.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js" defer></script> 
 </head>
 <body>
@@ -258,11 +255,11 @@
 
                     <div class="linha-form">
                          <div class="campo">
-                            <label>Professores a Notificar</label>
+                            <label>Professores a Notificar (automático)</label>
                             <div id="display-professores" class="display-box"><p>Carregando professores...</p></div>
                         </div>
                         <div class="campo">
-                            <label>Total de Alunos</label>
+                            <label>Total de Alunos (automático)</label>
                             <input type="text" id="display-total-alunos" value="0" readonly class="display-box-alunos">
                         </div>
                     </div>
