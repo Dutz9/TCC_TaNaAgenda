@@ -1,81 +1,110 @@
 <?php
-// =================================================================
-// BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX) (v2 com Filtros)
-// =================================================================
+    // =================================================================
+    // BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX) (v3 com Navegação)
+    // =================================================================
 
-// 1. CONFIGURAÇÃO (SEM VERIFICAÇÃO DE SESSÃO)
-require_once 'config_local.php';
+    // 1. CONFIGURAÇÃO (SEM VERIFICAÇÃO DE SESSÃO)
+    require_once 'config_local.php';
 
-// 2. CONFIGURAÇÃO DE DATAS
-date_default_timezone_set('America/Sao_Paulo');
-$hoje = new DateTime();
-$dia_da_semana_hoje = (int)$hoje->format('N');
-$inicio_semana = clone $hoje;
-$inicio_semana->modify('-' . ($dia_da_semana_hoje - 1) . ' days');
-$dias_desta_semana = [];
-for ($i = 0; $i < 6; $i++) {
-    $dia_atual = clone $inicio_semana;
-    $dia_atual->modify("+$i days");
-    $dias_desta_semana[] = $dia_atual;
-}
-$meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-$dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-$mes_atual_num = (int)$hoje->format('n') - 1;
-$mes_ano_atual = $meses_pt[$mes_atual_num] . ' ' . $hoje->format('Y');
-
-// 3. BUSCA DE DADOS PARA OS FILTROS
-$turmaController = new TurmaController();
-$lista_turmas_filtro = $turmaController->listar();
-$tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
-
-// 4. LEITURA DOS FILTROS DA URL
-$filtros = [
-    'periodo' => $_GET['periodo'] ?? [],
-    'turma' => $_GET['turma'] ?? [],
-    'tipo' => $_GET['tipo'] ?? []
-];
-foreach ($filtros as $chave => $valor) {
-    if (empty($valor)) { $filtros[$chave] = []; }
-}
-
-// 5. LÓGICA DE EVENTOS (COM FILTROS)
-$data_inicio_mes = $hoje->format('Y-m-01');
-$data_fim_mes = $hoje->format('Y-m-t');
-$eventoController = new EventoController();
-$lista_eventos = $eventoController->listarAprovados($data_inicio_mes, $data_fim_mes, $filtros);
-
-// 6. PROCESSAMENTO PARA O GRID (COM FILTRO DE HORÁRIO)
-$horarios_todos = [
-    "07:10", "08:00", "08:50", "10:00", "10:50", "11:40",
-    "13:30", "14:20", "15:10", "16:20", "17:10", "18:00",
-    "18:30", "19:20", "20:10", "21:20", "22:10"
-];
-if (!empty($filtros['periodo'])) {
-    $horarios_semana = [];
-    if (in_array('Manha', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40"]); }
-    if (in_array('Tarde', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["13:30", "14:20", "15:10", "16:20", "17:10", "18:00"]); }
-    if (in_array('Noite', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["18:30", "19:20", "20:10", "21:20", "22:10"]); }
-    if (empty($horarios_semana)) $horarios_semana = $horarios_todos;
-} else {
-    $horarios_semana = $horarios_todos;
-}
-$calendario_grid = [];
-$dias_para_grid = [];
-foreach ($dias_desta_semana as $dia) { $dias_para_grid[] = $dia->format('Y-m-d'); }
-foreach ($horarios_semana as $horario) {
-    foreach ($dias_para_grid as $data_chave) { $calendario_grid[$horario][$data_chave] = []; }
-}
-foreach ($lista_eventos as $evento) {
-    $data_evento_chave = $evento['dt_evento'];
-    $horario_inicio = substr($evento['horario_inicio'], 0, 5);
-    if (isset($calendario_grid[$horario_inicio][$data_evento_chave])) {
-        $calendario_grid[$horario_inicio][$data_evento_chave][] = $evento;
+    // 2. LEITURA DOS FILTROS (VEM ANTES DAS DATAS)
+    $filtros = [
+        'periodo' => $_GET['periodo'] ?? [],
+        'turma' => $_GET['turma'] ?? [],
+        'tipo' => $_GET['tipo'] ?? []
+    ];
+    foreach ($filtros as $chave => $valor) {
+        if (empty($valor)) { $filtros[$chave] = []; }
     }
-}
+    $filtros_url = http_build_query($filtros);
+
+    // 3. CONFIGURAÇÃO DE DATAS (COM LÓGICA DE NAVEGAÇÃO)
+    date_default_timezone_set('America/Sao_Paulo');
+    $hoje = new DateTime(); // Referência para o dia atual
+
+    if (isset($_GET['week']) && !empty($_GET['week'])) {
+        try { $data_base = new DateTime($_GET['week']); } 
+        catch (Exception $e) { $data_base = new DateTime(); }
+    } else {
+        $data_base = new DateTime();
+    }
+
+    $dia_da_semana_num = (int)$data_base->format('N');
+    $inicio_semana = clone $data_base;
+    if ($dia_da_semana_num != 1) {
+        $inicio_semana->modify('-' . ($dia_da_semana_num - 1) . ' days');
+    }
+
+    // --- CÁLCULO DOS LINKS DE NAVEGAÇÃO ---
+    $link_semana_anterior = 'index.php?week=' . (clone $inicio_semana)->modify('-7 days')->format('Y-m-d') . '&' . $filtros_url;
+    $link_proxima_semana = 'index.php?week=' . (clone $inicio_semana)->modify('+7 days')->format('Y-m-d') . '&' . $filtros_url;
+    $link_hoje = 'index.php?' . $filtros_url;
+
+    $dias_desta_semana = [];
+    for ($i = 0; $i < 6; $i++) {
+        $dia_atual = clone $inicio_semana;
+        $dia_atual->modify("+$i days");
+        $dias_desta_semana[] = $dia_atual;
+    }
+
+    $meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+    $dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+
+    $mes_ano_inicio_obj = $dias_desta_semana[0];
+    $mes_ano_fim_obj = $dias_desta_semana[5];
+    $mes_ano_inicio = $meses_pt[(int)$mes_ano_inicio_obj->format('n') - 1] . ' ' . $mes_ano_inicio_obj->format('Y');
+    $mes_ano_fim = $meses_pt[(int)$mes_ano_fim_obj->format('n') - 1] . ' ' . $mes_ano_fim_obj->format('Y');
+
+    if ($mes_ano_inicio == $mes_ano_fim) {
+        $mes_ano_atual = $mes_ano_inicio;
+    } else {
+        if ($mes_ano_inicio_obj->format('Y') != $mes_ano_fim_obj->format('Y')) {
+            $mes_ano_atual = $mes_ano_inicio . ' / ' . $mes_ano_fim;
+        } else {
+            $mes_ano_atual = $meses_pt[(int)$mes_ano_inicio_obj->format('n') - 1] . ' / ' . $meses_pt[(int)$mes_ano_fim_obj->format('n') - 1] . ' ' . $mes_ano_fim_obj->format('Y');
+        }
+    }
+
+    // 4. BUSCA DE DADOS PARA OS FILTROS
+    $turmaController = new TurmaController();
+    $lista_turmas_filtro = $turmaController->listar();
+    $tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
+
+    // 5. LÓGICA DE EVENTOS (BUSCA NO BANCO)
+    $data_inicio_semana = $dias_desta_semana[0]->format('Y-m-d');
+    $data_fim_semana = $dias_desta_semana[5]->format('Y-m-d');
+    $eventoController = new EventoController();
+    $lista_eventos = $eventoController->listarAprovados($data_inicio_semana, $data_fim_semana, $filtros);
+
+    // 6. PROCESSAMENTO PARA O GRID
+    $horarios_todos = [ "07:10", "08:00", "08:50", "10:00", "10:50", "11:40", "13:30", "14:20", "15:10", "16:20", "17:10", "18:00", "18:30", "19:20", "20:10", "21:20", "22:10" ];
+    if (!empty($filtros['periodo'])) {
+        $horarios_semana = [];
+        if (in_array('Manha', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40"]); }
+        if (in_array('Tarde', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["13:30", "14:20", "15:10", "16:20", "17:10", "18:00"]); }
+        if (in_array('Noite', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["18:30", "19:20", "20:10", "21:20", "22:10"]); }
+        if (empty($horarios_semana)) $horarios_semana = [];
+    } else {
+        $horarios_semana = $horarios_todos;
+    }
+    $calendario_grid = [];
+    $dias_para_grid = [];
+    foreach ($dias_desta_semana as $dia) { $dias_para_grid[] = $dia->format('Y-m-d'); }
+    foreach ($horarios_semana as $horario) {
+        foreach ($dias_para_grid as $data_chave) { $calendario_grid[$horario][$data_chave] = []; }
+    }
+    foreach ($lista_eventos as $evento) {
+        $data_evento_chave = $evento['dt_evento'];
+        $horario_inicio = substr($evento['horario_inicio'], 0, 5);
+        if (isset($calendario_grid[$horario_inicio][$data_evento_chave])) {
+            $calendario_grid[$horario_inicio][$data_evento_chave][] = $evento;
+        }
+    }
 ?>
+
 <script>
     const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
 </script>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -85,15 +114,12 @@ foreach ($lista_eventos as $evento) {
     <link id="favicon" rel="shortcut icon" href="image/Favicon-light.png">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/index.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
     <script src="js/favicon.js"></script>
     <header class="header">
         <a href="login.php"><p>Login</p></a>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffffff" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
     </header>
 
     <main>
@@ -101,6 +127,10 @@ foreach ($lista_eventos as $evento) {
             <a class="area-lado-logo" href="index.php"><img src="image/logotipo fundo azul.png" alt="Logotipo TáNaAgenda"></a>
             
             <form id="form-filtros-agenda" action="index.php" method="GET">
+                <?php if (isset($_GET['week'])): ?>
+                    <input type="hidden" name="week" value="<?php echo htmlspecialchars($_GET['week']); ?>">
+                <?php endif; ?>
+
                 <section class="filtrar-calendario">
                     <h2>Filtrar Calendário</h2>
                     
@@ -155,7 +185,13 @@ foreach ($lista_eventos as $evento) {
         <section class="calendario">
             <div class="header-calendario">
                 <div class="header-parte-de-cima">
+                    <div class="navegacao-calendario">
+                        <a href="<?php echo $link_semana_anterior; ?>" class="nav-btn" title="Semana Anterior">&lt;</a>
+                        <a href="<?php echo $link_hoje; ?>" class="nav-btn today">Hoje</a>
+                        <a href="<?php echo $link_proxima_semana; ?>" class="nav-btn" title="Próxima Semana">&gt;</a>
+                    </div>
                     <h3><?php echo $mes_ano_atual; ?></h3>
+                    <div class="header-turmas"><h4>Todas as turmas</h4></div>
                 </div>
                 <div class="header-divisoes-semanas">
                     <div></div>
@@ -199,7 +235,12 @@ foreach ($lista_eventos as $evento) {
 
         <section class="area-lado-direito">
             <div class="calendario-lado-direito">
-                <div class="header-calendario-lado-direito"><h3>Janeiro</h3><h3>2025</h3></div>
+                <div class="header-calendario-lado-direito">
+                    <div id="mini-cal-prev" class="mini-cal-nav" title="Mês Anterior">&lt;</div>
+                    <h3>Janeiro</h3>
+                    <h3>2025</h3>
+                    <div id="mini-cal-next" class="mini-cal-nav" title="Próximo Mês">&gt;</div>
+                </div>
                 <div class="dias-da-semana-calendario-lado-direito"><p class="dia-semana seg">Seg</p><p class="dia-semana ter">Ter</p><p class="dia-semana qua">Qua</p><p class="dia-semana qui">Qui</p><p class="dia-semana sex">Sex</p><p class="dia-semana sab">Sab</p><p class="dia-semana dom">Dom</p></div>
                 <div class="dias-calendario-lado-direito"></div>
             </div>
