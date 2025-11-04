@@ -62,25 +62,6 @@ BEGIN
     END IF;
 END$$
 
--- Procedure para atualizar dados de usuário (corrigida: usa email para identificar)
-DROP PROCEDURE IF EXISTS atualizaDadosUsuario$$
-CREATE PROCEDURE atualizaDadosUsuario(
-    IN pEmail VARCHAR(45), 
-    IN pNome VARCHAR(45), 
-    IN pSenha VARCHAR(45)  -- Plain-text
-)
-BEGIN
-    DECLARE qtd INT DEFAULT 0;
-    
-    SELECT COUNT(*) INTO qtd FROM usuarios WHERE nm_email = pEmail;
-    IF (qtd = 0) THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Usuário não encontrado!';
-    ELSE
-        UPDATE usuarios SET nm_usuario = pNome, cd_senha = pSenha
-        WHERE nm_email = pEmail;
-    END IF;
-END$$
-
 -- Procedure para excluir usuário (corrigida: usa email)
 DROP PROCEDURE IF EXISTS excluirUsuario$$
 CREATE PROCEDURE excluirUsuario(IN pEmail VARCHAR(45))
@@ -559,6 +540,55 @@ BEGIN
         e.cd_evento = pCdEvento
     GROUP BY
         e.cd_evento;
+END$$
+
+-- 1. Procedure para BUSCAR todos os dados de um usuário
+DROP PROCEDURE IF EXISTS `buscarDadosUsuario`$$
+CREATE PROCEDURE `buscarDadosUsuario`(IN pCdUsuario VARCHAR(10))
+BEGIN
+    SELECT nm_usuario, nm_email, cd_telefone, cd_usuario
+    FROM usuarios
+    WHERE cd_usuario = pCdUsuario;
+END$$
+
+-- 2. Procedure para ATUALIZAR os dados (Nome e Telefone)
+DROP PROCEDURE IF EXISTS `atualizarDadosUsuario`$$
+CREATE PROCEDURE `atualizarDadosUsuario`(
+    IN pCdUsuario VARCHAR(10),
+    IN pNome VARCHAR(45),
+    IN pTelefone VARCHAR(45)
+)
+BEGIN
+    UPDATE usuarios 
+    SET 
+        nm_usuario = pNome,
+        cd_telefone = pTelefone
+    WHERE 
+        cd_usuario = pCdUsuario;
+END$$
+
+CREATE PROCEDURE `mudarSenha`(
+    IN pCdUsuario VARCHAR(10),
+    IN pSenhaAntiga VARCHAR(255),
+    IN pSenhaNova VARCHAR(255)
+)
+BEGIN
+    DECLARE usuarioExiste INT DEFAULT 0;
+
+    -- 1. Verifica se o usuário existe E se a senha antiga está correta
+    SELECT COUNT(*) INTO usuarioExiste 
+    FROM usuarios 
+    WHERE cd_usuario = pCdUsuario AND cd_senha = pSenhaAntiga;
+
+    -- 2. Se a contagem for 0, significa que a senha antiga está errada
+    IF (usuarioExiste = 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A senha atual está incorreta.';
+    ELSE
+        -- 3. Se a senha antiga estiver correta, atualiza para a nova
+        UPDATE usuarios 
+        SET cd_senha = pSenhaNova
+        WHERE cd_usuario = pCdUsuario;
+    END IF;
 END$$
 
 DELIMITER ;

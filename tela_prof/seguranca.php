@@ -1,11 +1,57 @@
 <?php 
+    require_once '../api/config.php'; 
+    require_once '../api/verifica_sessao.php'; 
 
-// 1. Gire a chave: Carrega o autoloader para que o PHP encontre as classes.
-require_once '../config_local.php'; 
+    $mensagem = '';
+    $tipo_mensagem = '';
 
-// 2. Chame o guardião: Ele verifica a sessão E cria a variável $usuario_logado para nós.
-require_once '../api/verifica_sessao.php'; 
+    // --- PROCESSAR MUDANÇA DE SENHA (SE FOR POST) ---
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $senha_atual = $_POST['senha_atual'] ?? null;
+        $senha_nova = $_POST['senha_nova'] ?? null;
+        $senha_confirma = $_POST['senha_confirma'] ?? null;
 
+        try {
+            // Validação 1: Campos vazios
+            if (empty($senha_atual) || empty($senha_nova) || empty($senha_confirma)) {
+                throw new Exception("Todos os campos são obrigatórios.");
+            }
+            // Validação 2: Senhas novas não batem
+            if ($senha_nova !== $senha_confirma) {
+                throw new Exception("A 'Nova Senha' e a 'Confirmação' não são iguais.");
+            }
+            
+            // --- A NOVA VALIDAÇÃO (O QUE VOCÊ PEDIU) ---
+            if ($senha_atual === $senha_nova) {
+                throw new Exception("A nova senha não pode ser igual à senha atual.");
+            }
+            // --- FIM DA NOVA VALIDAÇÃO ---
+
+            // Validação 4: Senha nova curta
+            if (strlen($senha_nova) < 3) {
+                throw new Exception("A nova senha deve ter pelo menos 3 caracteres.");
+            }
+
+            // Se passou em tudo, tenta trocar no banco
+            $usuarioController = new UsuarioController();
+            $usuarioController->mudarSenha($usuario_logado['cd_usuario'], $senha_atual, $senha_nova);
+            
+            $mensagem = "Senha alterada com sucesso!";
+            $tipo_mensagem = 'sucesso';
+
+        } catch (Exception $e) {
+            // O "tradutor" de erros amigáveis
+            $erro = $e->getMessage();
+            
+            if (strpos($erro, 'A senha atual está incorreta') !== false) {
+                $mensagem = "A senha atual está incorreta.";
+            } else {
+                // Mostra outros erros (ex: "Senhas não são iguais", "Senha é igual à atual")
+                $mensagem = $erro;
+            }
+            $tipo_mensagem = 'erro';
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -13,42 +59,30 @@ require_once '../api/verifica_sessao.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfil - TáNaAgenda</title>
+    <title>Segurança - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/perfil.css">
     <link rel="stylesheet" href="../css/seguranca.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
 <script src="../js/favicon.js"></script>
     <header class="header">
         <a href="perfil.php">
-            <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
+            <p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></p>
         </a>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffffff" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
     </header>
 
     <section class="area-lado">
-            <a class="area-lado-logo" href="agendaprof.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
-            <div class="area-menu">         
-                <div class="menu-agenda">
-                <img src="../image/icones/agenda.png" alt="">
-                    <a href="agendaprof.php"><p>Agenda</p></a>
-                </div>
-                <div class="menu-meus-eventos">
-                <img src="../image/icones/eventos.png" alt="">
-                    <a href="meuseventos.php"><p>Eventos</p></a>
-                </div>
-                <div class="menu-perfil ativo">
-                <img src="../image/icones/perfil.png" alt="">
-                    <a href="perfil.php"><p>Perfil</p></a>
-                </div>  
-                <a href="../login.php"><div class="menu-sair"><p>SAIR</p></div></a> 
-            </div>
-        </section>
+        <a class="area-lado-logo" href="agendaprof.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
+        <div class="area-menu"> 
+            <div class="menu-agenda"><img src="../image/icones/agenda.png" alt=""><a href="agendaprof.php"><p>Agenda</p></a></div>
+            <div class="menu-meus-eventos"><img src="../image/icones/eventos.png" alt=""><a href="meuseventos.php"><p>Eventos</p></a></div>
+            <div class="menu-perfil ativo"><img src="../image/icones/perfil.png" alt=""><a href="perfil.php"><p>Perfil</p></a></div> 
+            <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
+        </div>
+    </section>
 
     <section class="area-perfil">
         <section class="perfil-container">
@@ -56,50 +90,48 @@ require_once '../api/verifica_sessao.php';
                 <div class="perfil-info">
                     <img src="../image/icone perfil.svg" alt="Foto de Perfil">
                     <div class="perfil-informacoes">
-                        <h3>
-                        <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?>
-                        </h3>
-                        <p>
-                            Professor EM
-                        </p>
+                        <h3><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></h3>
+                        <p>Professor</p>
                     </div>
                 </div>
                 <section class="perfil-menu">
-                <a href="perfil.php">
-                <div class="informacoes">
-                   <img src="../image/Icones/informacoes.png" alt=""> <p>Informações Pessoais</p>
-                </div></a>
-                <a href="seguranca.php">
-                <div class="seguranca">
-                   <img src="../image/Icones/seguranca.png" alt=""> <p>Segurança</p>
-                </div></a>
+                    <a href="perfil.php">
+                        <div class="informacoes-menu"> <img src="../image/Icones/informacoes.png" alt=""> <p>Informações Pessoais</p>
+                        </div>
+                    </a>
+                    <a href="seguranca.php">
+                        <div class="seguranca-menu ativo"> <img src="../image/Icones/seguranca.png" alt=""> <p>Segurança</p>
+                        </div>
+                    </a>
                 </section>
             </div>
+            
             <div class="lado-direito">
-                <h1>
-                    Alterar Senha
-                </h1>
-                <div class="informacoes-pessoais">
-                    <div class="infos" id="nome">
-                        <label for="nome">Senha Atual:</label>
-                        <input type="password" id="nome" placeholder="Digite sua senha atual">
+                <h1>Alterar Senha</h1>
+                
+                <?php if (!empty($mensagem)): ?>
+                    <div class="mensagem <?php echo $tipo_mensagem; ?>"><?php echo $mensagem; ?></div>
+                <?php endif; ?>
+
+                <form class="informacoes-pessoais" method="POST" action="seguranca.php">
+                    <div class="infos">
+                        <label for="senha_atual">Senha Atual:</label>
+                        <input type="password" id="senha_atual" name="senha_atual" placeholder="Digite sua senha atual" required>
                     </div>
-                    <div class="infos" id="email">
-                        <label for="email">Senha Nova:</label>
-                        <input type="password" id="email" placeholder="">
+                    <div class="infos">
+                        <label for="senha_nova">Nova Senha:</label>
+                        <input type="password" id="senha_nova" name="senha_nova" placeholder="Digite a nova senha" required>
                     </div>
-                    <div  class="infos" id="telefone">
-                        <label for="telefone">Confirmar Senha:</label>
-                        <input type="password" id="telefone" placeholder="">
+                    <div class="infos">
+                        <label for="senha_confirma">Confirmar Nova Senha:</label>
+                        <input type="password" id="senha_confirma" name="senha_confirma" placeholder="Confirme a nova senha" required>
                     </div>
                     <div class="infos" id="Alterar">
-                        <button class="btn-alterar">Alterar</button>
+                        <button type="submit" class="btn-salvar">Alterar Senha</button>
                     </div>
-            </div>
-        </div>    
+                </form>
+            </div> 
+        </section>
     </section>
-</section>
-</body>
-</html>
 </body>
 </html>

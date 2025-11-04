@@ -25,92 +25,65 @@
 }
 .perfil-menu{
     display: flex;
+    flex-direction: column;
 }
-
 .perfil-informacoes{
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
+.perfil-informacoes h3{ font-size: 18px; }
+.perfil-informacoes p{ font-size: 14px; color: #666; }
+.perfil-info{ display: flex; }
 
-.perfil-informacoes h3{
-    font-size: 18px;
-}
-
-.perfil-informacoes p{
-    font-size: 14px;
-    color: #666;
-}
-
-.perfil-info{
-    display: flex;
-}
-.perfil-menu{
-    display: flex;
-    flex-direction: column;
-    
-}  
-.informacoes{
-    width: 293px;
-    height: 45px;
-    border: 2px solid #0479F9;
-    border-radius: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-    display: flex;
-    align-items: center;
-    background-color: #F3F3F3;
-}
-
-.informacoes p{
-    font-size: 14px;
-}
-
-.seguranca{
+/* Estilos dos botões do menu lateral */
+.informacoes-menu, .seguranca-menu {
     width: 293px;
     height: 45px;
     border: 2px solid #dbdbdb;
     border-radius: 10px;
     margin-left: 10px;
     margin-right: 10px;
-    margin-top: 15px;
     display: flex;
     align-items: center;
     background-color: #F3F3F3;
+    transition: background-color 0.2s, border-color 0.2s;
 }
-
-.seguranca p{
+.seguranca-menu {
+    margin-top: 15px;
+}
+.informacoes-menu p, .seguranca-menu p {
     font-size: 14px;
 }
-
-.informacoes > img{
+.informacoes-menu > img, .seguranca-menu > img {
     width: 25px;
     height: 25px;
     margin-right: 10px;
     margin-left: 10px;
 }
-.seguranca > img{
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
-    margin-left: 10px;
+.informacoes-menu:hover, .seguranca-menu:hover {
+    background-color: #e9ecef;
+}
+/* Estilo ATIVO para o menu */
+.informacoes-menu.ativo, .seguranca-menu.ativo {
+    border-color: #0479F9;
+    background-color: #f3f3f3;
 }
 
+/* Lado Direito */
 .lado-direito{
     width: 60%;
     height: 616px;
-    border: 1px solid #dbdbdb;
-    border-radius: 10px;
+    border-left: 1px solid #dbdbdb; /* Borda fica só na divisão */
     margin-top: 18px;
     padding: 20px;
 }
-
 .lado-direito h1{
   font-size: 18px;
 }
 
+/* Campos do formulário */
 .infos > input{
-    
     width: 90%;
     height: 38px;
     border: 1px solid #ccc;
@@ -118,48 +91,55 @@
     padding: 15px;
     margin: 5px 0;
 }
-
+/* Estilo para campos readonly */
+.infos > input[readonly] {
+    background-color: #eee;
+    color: #777;
+    cursor: not-allowed;
+}
 .infos > label{
     display: block;
     font-size: 14px;
     color: #1d1d1d;
 }
-
 .infos {
     display: flex;
     flex-direction: column;
     margin: 20px 0;
 }
-button{
+.btn-salvar {
     width: 245px;
     height: 33px;
-    border: 2px solid #b4b4b4;
+    border: 2px solid #007bff;
     border-radius: 5px;
     font-weight: bold;
+    background-color: #007bff;
+    color: white;
 }
-
-button:hover{
+.btn-salvar:hover{
     cursor: pointer;
-    border: #0056b3 solid 2px;
-    border-radius: 5px;
+    background-color: #0056b3;
+    border-color: #0056b3;
 }
 
 #Salvar{
     display: flex;
-    width: 900px;
+    width: 90%;
     align-items: end;
 }
 
-#Salvar.infos{
+/* MENSAGENS DE FEEDBACK */
+.mensagem {
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    color: #fff;
+    text-align: center;
     width: 90%;
 }
-
-#Alterar{
-    display: flex;
-    width: 900px;
-    align-items: end;
+.mensagem.sucesso { 
+    background-color: #28a745; 
 }
-
-#Alterar.infos{
-    width: 90%;
+.mensagem.erro { 
+    background-color: #dc3545; 
 }
