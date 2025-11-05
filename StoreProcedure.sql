@@ -15,11 +15,37 @@ BEGIN
     ORDER BY u.nm_usuario;
 END$$
 
--- Procedure para listar professores (corrigida: filtro por 'Professor')
-DROP PROCEDURE IF EXISTS listarProfessores$$
-CREATE PROCEDURE listarProfessores()
+-- Procedure para listar professores
+DROP PROCEDURE IF EXISTS `listarProfessores`$$
+CREATE PROCEDURE `listarProfessores`()
 BEGIN
-    SELECT u.nm_email, u.nm_usuario, u.tipo_usuario_ic_usuario AS tipo_usuario
+    -- Lista todos os dados dos professores
+    SELECT 
+        u.cd_usuario, 
+        u.nm_usuario, 
+        u.nm_email, 
+        u.cd_telefone,
+        u.tipo_usuario_ic_usuario AS tipo_usuario
+    FROM usuarios u
+    WHERE u.tipo_usuario_ic_usuario = 'Professor'
+    ORDER BY u.nm_usuario;
+END$$
+
+DROP PROCEDURE IF EXISTS `listarProfessores`$$
+DROP PROCEDURE IF EXISTS `listarProfessoresComTurmas`$$
+CREATE PROCEDURE `listarProfessoresComTurmas`()
+BEGIN
+    SELECT 
+        u.cd_usuario, 
+        u.nm_usuario, 
+        u.nm_email, 
+        u.cd_telefone,
+        -- Esta sub-consulta junta todas as turmas do professor em uma única string
+        (SELECT GROUP_CONCAT(t.nm_turma SEPARATOR ', ') 
+         FROM usuarios_has_turmas uht
+         JOIN turmas t ON uht.turmas_cd_turma = t.cd_turma
+         WHERE uht.usuarios_cd_usuario = u.cd_usuario
+        ) AS turmas_associadas
     FROM usuarios u
     WHERE u.tipo_usuario_ic_usuario = 'Professor'
     ORDER BY u.nm_usuario;
@@ -588,6 +614,84 @@ BEGIN
         UPDATE usuarios 
         SET cd_senha = pSenhaNova
         WHERE cd_usuario = pCdUsuario;
+    END IF;
+END$$
+
+-- 1. PROCEDURE PARA ATUALIZAR UM PROFESSOR
+DROP PROCEDURE IF EXISTS `atualizarProfessor`$$
+CREATE PROCEDURE `atualizarProfessor`(
+    IN pCdUsuario VARCHAR(10),
+    IN pNome VARCHAR(45),
+    IN pEmail VARCHAR(45),
+    IN pTelefone VARCHAR(45)
+)
+BEGIN
+    DECLARE emailCount INT DEFAULT 0;
+    
+    -- Verifica se o NOVO email já existe em OUTRO usuário
+    SELECT COUNT(*) INTO emailCount FROM usuarios 
+    WHERE nm_email = pEmail AND cd_usuario != pCdUsuario;
+
+    IF (emailCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este e-mail já está em uso por outro usuário.';
+    ELSE
+        UPDATE usuarios SET
+            nm_usuario = pNome,
+            nm_email = pEmail,
+            cd_telefone = pTelefone
+        WHERE
+            cd_usuario = pCdUsuario;
+    END IF;
+END$$
+
+-- 2. PROCEDURE PARA EXCLUIR UM PROFESSOR (COM SEGURANÇA)
+DROP PROCEDURE IF EXISTS `excluirProfessor`$$
+CREATE PROCEDURE `excluirProfessor`(
+    IN pCdUsuario VARCHAR(10)
+)
+BEGIN
+    -- 1. Remove o professor da tabela de aprovações de eventos
+    DELETE FROM resolucao_eventos_usuarios WHERE usuarios_cd_usuario = pCdUsuario;
+    
+    -- 2. Remove o professor das turmas
+    DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = pCdUsuario;
+    
+    -- 3. Tenta apagar o professor
+    -- NOTA: Se o professor for o 'criador' de um evento (cd_usuario_solicitante),
+    -- a restrição de chave estrangeira do banco VAI IMPEDIR a exclusão e
+    -- retornará um erro. Este é o comportamento correto para proteger o histórico.
+    DELETE FROM usuarios WHERE cd_usuario = pCdUsuario;
+END$$
+
+DROP PROCEDURE IF EXISTS `criarProfessor`$$
+CREATE PROCEDURE `criarProfessor`(
+    IN pCdUsuario VARCHAR(10),  -- Este é o RM
+    IN pNome VARCHAR(45),
+    IN pEmail VARCHAR(45),
+    IN pSenha VARCHAR(255),
+    IN pTelefone VARCHAR(45)
+)
+BEGIN
+    DECLARE emailCount INT DEFAULT 0;
+    DECLARE rmCount INT DEFAULT 0;
+
+    -- 1. Verifica se o RM (cd_usuario) já existe
+    SELECT COUNT(*) INTO rmCount FROM usuarios 
+    WHERE cd_usuario = pCdUsuario;
+    
+    -- 2. Verifica se o E-mail já existe
+    SELECT COUNT(*) INTO emailCount FROM usuarios 
+    WHERE nm_email = pEmail;
+
+    -- 3. Se um dos dois já existir, retorna um erro
+    IF (rmCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este RM já está cadastrado.';
+    ELSEIF (emailCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este e-mail já está em uso.';
+    ELSE
+        -- 4. Se tudo estiver limpo, insere o novo professor
+        INSERT INTO usuarios (cd_usuario, nm_usuario, nm_email, cd_senha, cd_telefone, tipo_usuario_ic_usuario)
+        VALUES (pCdUsuario, pNome, pEmail, pSenha, pTelefone, 'Professor');
     END IF;
 END$$
 

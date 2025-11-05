@@ -1,12 +1,28 @@
 <?php 
+    require_once '../api/config.php'; 
+    require_once '../api/verifica_sessao.php'; 
 
-// 1. Gire a chave: Carrega o autoloader para que o PHP encontre as classes.
-require_once '../config_local.php'; 
+    // 1. GARANTE QUE É COORDENADOR
+    if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
+        header('Location: ../tela_prof/agendaprof.php');
+        exit();
+    }
 
-// 2. Chame o guardião: Ele verifica a sessão E cria a variável $usuario_logado para nós.
-require_once '../api/verifica_sessao.php'; 
+    // --- LÓGICA DE FEEDBACK (TOAST) ---
+    if (isset($_SESSION['mensagem_sucesso'])) {
+        $mensagem_toast = $_SESSION['mensagem_sucesso'];
+        unset($_SESSION['mensagem_sucesso']);
+    }
 
+    // 2. BUSCA OS DADOS DOS PROFESSORES
+    $usuarioController = new UsuarioController();
+    $lista_professores = $usuarioController->listarProfessores(); // Chama a procedure 'listarProfessoresComTurmas'
 ?>
+
+<script>
+    // 3. CRIA A "PONTE DE DADOS" PARA O JAVASCRIPT
+    const professoresDaPagina = <?php echo json_encode($lista_professores); ?>;
+</script>
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -16,7 +32,7 @@ require_once '../api/verifica_sessao.php';
     <title>Professores - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
-    <link rel="stylesheet" href="../css/professores.css">
+    <link rel="stylesheet" href="../css/coordenador.css"> 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
@@ -27,248 +43,114 @@ require_once '../api/verifica_sessao.php';
         <a href="perfilcoord.php">
             <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
         </a>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffffff" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
     </header>
 
     <main>
     <section class="area-lado">
-            <a class="area-lado-logo" href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
-            <div class="area-menu">
-                <div class="menu-agenda">
-                <img src="../image/icones/agenda.png" alt="">
-                    <a href="agendacoord.php"><p>Agenda</p></a>
-                </div>
-                <div class="menu-meus-eventos">
-                <img src="../image/icones/eventos.png" alt="">
-                    <a href="eventoscoord.php"><p>Eventos</p></a>
-                </div>
-                <div class="menu-professores ativo">
-                <img src="../image/icones/professores.png" alt="">
-                    <a href="professores.php"><p>Professores</p></a>
-                </div> 
-                <div class="menu-turmas">
-                <img src="../image/icones/turmas.png" alt="">
-                    <a href="turmas.php"><p>Turmas</p></a>
-                </div> 
-                <div class="menu-perfil">
-                <img src="../image/icones/perfil.png" alt="">
-                    <a href="perfilcoord.php"><p>Perfil</p></a>
-                </div>  
-                <a href="../login.php"><div class="menu-sair"><p>SAIR</p></div></a> 
-            </div>
-        </section>
- 
-        <section class="areaprof">
-    <h2>Professores</h2>
-      <div class="barra-de-pesquisa">
-        <div class="barra">
-            <label for="search">Pesquisar:</label>
-            <input type="text" id="search" name="search" placeholder="Nome ou Turma">
+        <a class="area-lado-logo" href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
+        <div class="area-menu">
+            <div class="menu-agenda"><img src="../image/icones/agenda.png" alt=""><a href="agendacoord.php"><p>Agenda</p></a></div>
+            <div class="menu-meus-eventos"><img src="../image/icones/eventos.png" alt=""><a href="eventoscoord.php"><p>Eventos</p></a></div>
+            <div class="menu-professores ativo"><img src="../image/icones/professores.png" alt=""><a href="professores.php"><p>Professores</p></a></div> 
+            <div class="menu-turmas"><img src="../image/icones/turmas.png" alt=""><a href="turmas.php"><p>Turmas</p></a></div> 
+            <div class="menu-perfil"><img src="../image/icones/perfil.png" alt=""><a href="perfilcoord.php"><p>Perfil</p></a></div> 
+            <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
         </div>
+    </section>
+
+    <section class="area-notificacoes">
+        <div id="feedback-bar" class="feedback-bar"></div> 
+        <h2>Professores</h2>
+        
+        <div class="barra-de-pesquisa">
+            <div class="barra">
+                <label for="search-prof">Pesquisar:</label>
+                <input type="text" id="search-prof" placeholder="Nome, RM ou Turma">
+            </div>
         </div>
     
-        <div class="gridprof">
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >RM - Nome e Sobrenome </p>
-                    <p>Turmas:</p>
-                </div>
-                <p></p>
-                <button class="adicionar-btn">Adicionar
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
-                </button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-            <div class="cardprof">
-                <div class="prof-infos">
-                    <p style="font-size: 16px; font-weight: 600;" >12924 - Nome e Sobrenome </p>
-                <p>Turmas: 1I - 2I - 3I - 1N - 2N - 3N</p>
-                </div>
-                
-                <button class="Editar-btn">Editar</button>
-            </div>
-        </div>
-</section>
+        <div id="admin-card-container" class="admin-card-container">
+            
+            <a href="addprofessor.php" class="admin-card card-adicionar">
+                <h3>Adicionar Novo</h3>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
+            </a>
 
-<div id="modal-overlay" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-        <div class="modal-left">
-            <div class="coordinator-info">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#000000" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
-                <div>
-                    <h3><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></h3>
-                    <p>Coordenador EM</p>
+            <?php if (empty($lista_professores)): ?>
+                <p class="sem-eventos" style="grid-column: 1 / -1; text-align: center;">Nenhum professor cadastrado.</p>
+            <?php endif; ?>
+        </div>
+    </section>
+
+    <div id="modal-overlay" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-left">
+                <div class="coordinator-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                    <div>
+                        <h3 id="modal-coord-nome"><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></h3>
+                        <p>Coordenador</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="modal-right">
-            <h3>Editar Professor</h3>
-
-            <div class="form-row">
-            <div class="form-group">
-                <label for="nome-evento">Nome do Professor:</label>
-                <input type="text" id="nome-evento" value="Nome Atual do Professor">
-            </div>
-            <div class="form-group">
-                <label for="nome-evento">RM:</label>
-                <input type="text" id="nome-evento" value="00010">
-            </div>
-            </div>
-            <div class="form-group">
-                <label for="nome-evento">Email:</label>
-                <input type="text" id="nome-evento" value="professor@gmail.com">
-            </div>
-            <div class="form-group">
-                <label for="nome-evento">Telefone</label>
-                <input type="text" id="nome-evento" value="(13)4002-8922">
-            </div>
-            <div class="form-group">
-                <label for="tipo-evento">Turmas</label>
-                <select id="tipo-evento">
-                    <option value="" disabled selected>Turmas que o professor leciona</option>
-                    <option value="1ºAno">1I1</option>
-                    <option value="2ºAno">2I1</option>
-                    <option value="3ºAno">3I1</option>
-                    <option value="1ºAno">1N1</option>
-                    <option value="2ºAno">2N1</option>
-                    <option value="3ºAno">3N1</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="nome-evento">Senha</label>
-                <input type="text" id="nome-evento" value="********">
-            </div>
-            <div class="modal-buttons">
-                <button class="excluir">Excluir Professor</button>
-                <button class="salvar">Salvar Alterações</button>
+            <div class="modal-right">
+                <h3>Editar Professor</h3>
+                <input type="hidden" id="modal-prof-id" value="">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="modal-prof-nome">Nome do Professor:</label>
+                        <input type="text" id="modal-prof-nome" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-prof-rm">RM:</label>
+                        <input type="text" id="modal-prof-rm" value="" readonly>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="modal-prof-email">Email:</label>
+                    <input type="email" id="modal-prof-email" value="">
+                </div>
+                <div class="form-group">
+                    <label for="modal-prof-telefone">Telefone:</label>
+                    <input type="tel" id="modal-prof-telefone" value="">
+                </div>
+                <div class="form-group">
+                    <label for="modal-prof-turmas">Turmas (somente visualização)</label>
+                    <input type="text" id="modal-prof-turmas" value="" readonly>
+                </div>
+                <div class="form-group">
+                    <label>Senha:</label>
+                    <input type="text" value="********" readonly>
+                </div>
+                <div class="modal-buttons">
+                    <button class="excluir">Excluir Professor</button>
+                    <button class="salvar">Salvar Alterações</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
-    
-<div id="confirmation-modal" class="confirmation-modal" style="display: none;">
-    <div class="confirmation-content">
-        <h3>Realmente deseja excluir o professor?</h3>
-        <div class="confirmation-buttons">
-            <button class="cancelar">Cancelar</button>
-            <button class="excluir-confirm">Excluir</button>
+        
+    <div id="confirmation-modal" class="confirmation-modal" style="display: none;">
+        <div class="confirmation-content">
+            <h3>Realmente deseja excluir o professor?</h3>
+            <div class="confirmation-buttons">
+                <button class="cancelar">Cancelar</button>
+                <button class="excluir-confirm">Excluir</button>
+            </div>
         </div>
     </div>
-</div>
 
     <script src="../js/professores.js"></script>
 
-
+    <?php if (isset($mensagem_toast)): ?>
+    <script>
+        // Espera um instante para garantir que a função showFeedback já foi carregada
+        setTimeout(() => {
+            showFeedback("<?php echo addslashes($mensagem_toast); ?>", 'sucesso');
+        }, 100);
+    </script>
+    <?php endif; ?>
 </body> 
-
 </html>

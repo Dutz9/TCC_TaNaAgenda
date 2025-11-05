@@ -712,3 +712,105 @@
 .modal-buttons .btn-editar-evento:hover {
     background-color: #0056b3;
 }
+
+/* --- ESTILO DA BARRA DE PESQUISA --- */
+.barra-de-pesquisa {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 30px;
+}
+.barra {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.barra label {
+    font-size: 16px;
+    font-weight: 500;
+}
+.barra input[type="text"] {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    min-width: 250px;
+}
+
+/* --- ESTILO UNIFICADO DE CARDS (Professores, Turmas) --- */
+.admin-card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+.admin-card {
+    background-color: #ffffff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.admin-card .prof-infos {
+    flex-grow: 1;
+    min-width: 0; /* Importante para o truncamento funcionar */
+}
+
+.admin-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
+}
+
+.admin-card p {
+    font-size: 14px;
+    color: #666;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-card .admin-btn {
+    background-color: #343a40; /* Botão escuro (como image_fc3144.png) */
+    color: white;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    flex-shrink: 0;
+    transition: background-color 0.2s ease;
+}
+.admin-card .admin-btn:hover {
+    background-color: #23272b;
+}
+
+/* Card de Adicionar */
+.admin-card.card-adicionar {
+    background-color: #007bff;
+    color: white;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.admin-card.card-adicionar:hover {
+    background-color: #0056b3;
+}
+.admin-card.card-adicionar h3 { /* "Adicionar Novo Professor" */
+    color: white;
+}
+.admin-card.card-adicionar svg {
+    max-height: 40px;
+    margin-top: 5px;
+}

@@ -15,6 +15,18 @@
         }
 
         /**
+         * Lista todos os usuários com o perfil de Professor e suas turmas associadas.
+         */
+        public function listarProfessores() {
+            try {
+                $dados = $this->Consultar('listarProfessoresComTurmas', []); // Chama a nova procedure
+                return $dados;
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+
+        /**
          * Cria um novo usuário (para admin, por exemplo)
          */
         public function Criar($usuario) {
@@ -28,6 +40,47 @@
                 $this->Executar('criarUsuario', $parametros);
             } catch (\Throwable $th) {
                 throw $th;
+            }
+        }
+
+        /**
+         * Cria um novo professor e o associa às turmas selecionadas.
+         * Esta é uma operação transacional.
+         *
+         * @param array $dadosProfessor Array com os dados (cd_usuario, nome, email, senha, telefone)
+         * @param array $turmas Array com os IDs das turmas para associar
+         */
+        public function criarProfessor($dadosProfessor, $turmas = []) {
+            $this->iniciarTransacao(); // <-- INICIA A TRANSAÇÃO
+            try {
+                // 1. Cria o usuário professor
+                $this->Executar('criarProfessor', [
+                    'pCdUsuario' => $dadosProfessor['cd_usuario'],
+                    'pNome' => $dadosProfessor['nome'],
+                    'pEmail' => $dadosProfessor['email'],
+                    'pSenha' => $dadosProfessor['senha'],
+                    'pTelefone' => $dadosProfessor['telefone']
+                ]);
+                
+                // 2. Associa o professor às turmas selecionadas
+                if (!empty($turmas)) {
+                    foreach ($turmas as $cdTurma) {
+                        $this->ExecutarSQL(
+                            'INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES (:cd_usuario, :cd_turma)',
+                            [
+                                'cd_usuario' => $dadosProfessor['cd_usuario'],
+                                'cd_turma' => $cdTurma
+                            ]
+                        );
+                    }
+                }
+
+                $this->commitTransacao(); // <-- SUCESSO: Confirma tudo
+
+            } catch (\Throwable $th) {
+                $this->rollbackTransacao(); // <-- FALHA: Desfaz tudo
+                // Joga o erro (ex: "RM já existe") para o formulário
+                throw $th; 
             }
         }
 
@@ -113,6 +166,42 @@
                 ]);
             } catch (\Throwable $th) {
                 // Joga o erro (ex: "A senha atual está incorreta.") para a página
+                throw $th;
+            }
+        }
+
+        /**
+         * Atualiza os dados de um professor (Nome, Email, Telefone).
+         * @param string $cdUsuario O RM do professor a ser atualizado.
+         * @param string $nome O novo nome.
+         * @param string $email O novo email.
+         * @param string $telefone O novo telefone.
+         */
+        public function atualizarProfessor($cdUsuario, $nome, $email, $telefone) {
+            try {
+                $this->Executar('atualizarProfessor', [
+                    'pCdUsuario' => $cdUsuario,
+                    'pNome' => $nome,
+                    'pEmail' => $email,
+                    'pTelefone' => $telefone
+                ]);
+            } catch (\Throwable $th) {
+                // Joga o erro (ex: "Email já em uso") para a API tratar
+                throw $th;
+            }
+        }
+
+        /**
+         * Exclui um professor do sistema.
+         * @param string $cdUsuario O RM do professor a ser excluído.
+         */
+        public function excluirProfessor($cdUsuario) {
+            try {
+                $this->Executar('excluirProfessor', [
+                    'pCdUsuario' => $cdUsuario
+                ]);
+            } catch (\Throwable $th) {
+                // Joga o erro (ex: "Professor não pode ser excluído pois é solicitante de eventos")
                 throw $th;
             }
         }
