@@ -171,19 +171,25 @@
         }
 
         /**
-         * Atualiza os dados de um professor (Nome, Email, Telefone).
+         * Atualiza os dados de um professor (Nome, Email, Telefone) E as suas turmas.
          * @param string $cdUsuario O RM do professor a ser atualizado.
          * @param string $nome O novo nome.
          * @param string $email O novo email.
          * @param string $telefone O novo telefone.
+         * @param array $turmas A lista de IDs de turmas para associar.
          */
-        public function atualizarProfessor($cdUsuario, $nome, $email, $telefone) {
+        public function atualizarProfessor($cdUsuario, $nome, $email, $telefone, $turmas = []) {
             try {
+                // Converte o array de turmas [1, 4, 5] em uma string "1,4,5"
+                // Se o array estiver vazio, envia NULL
+                $turmasString = !empty($turmas) ? implode(',', $turmas) : null;
+
                 $this->Executar('atualizarProfessor', [
                     'pCdUsuario' => $cdUsuario,
                     'pNome' => $nome,
                     'pEmail' => $email,
-                    'pTelefone' => $telefone
+                    'pTelefone' => $telefone,
+                    'pTurmasIDs' => $turmasString // Envia a nova string para a procedure
                 ]);
             } catch (\Throwable $th) {
                 // Joga o erro (ex: "Email já em uso") para a API tratar

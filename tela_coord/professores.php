@@ -1,29 +1,32 @@
 <?php 
-    require_once '../api/config.php'; 
-    require_once '../api/verifica_sessao.php'; 
+require_once '../api/config.php'; 
+require_once '../api/verifica_sessao.php'; 
 
-    // 1. GARANTE QUE É COORDENADOR
-    if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
-        header('Location: ../tela_prof/agendaprof.php');
-        exit();
-    }
+// 1. GARANTE QUE É COORDENADOR
+if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
+    header('Location: ../tela_prof/agendaprof.php');
+    exit();
+}
 
-    // --- LÓGICA DE FEEDBACK (TOAST) ---
-    if (isset($_SESSION['mensagem_sucesso'])) {
-        $mensagem_toast = $_SESSION['mensagem_sucesso'];
-        unset($_SESSION['mensagem_sucesso']);
-    }
+// --- LÓGICA DE FEEDBACK (TOAST) ---
+if (isset($_SESSION['mensagem_sucesso'])) {
+    $mensagem_toast = $_SESSION['mensagem_sucesso'];
+    unset($_SESSION['mensagem_sucesso']);
+}
 
-    // 2. BUSCA OS DADOS DOS PROFESSORES
-    $usuarioController = new UsuarioController();
-    $lista_professores = $usuarioController->listarProfessores(); // Chama a procedure 'listarProfessoresComTurmas'
+// 2. BUSCA OS DADOS DOS PROFESSORES
+$usuarioController = new UsuarioController();
+$lista_professores = $usuarioController->listarProfessores(); // Chama 'listarProfessoresComTurmas'
+
+// 3. BUSCA A LISTA DE TODAS AS TURMAS (PARA O MODAL)
+$turmaController = new TurmaController();
+$lista_todas_turmas = $turmaController->listar();
 ?>
-
 <script>
-    // 3. CRIA A "PONTE DE DADOS" PARA O JAVASCRIPT
+    // 4. CRIA A "PONTE DE DADOS" PARA O JAVASCRIPT
     const professoresDaPagina = <?php echo json_encode($lista_professores); ?>;
+    const todasAsTurmas = <?php echo json_encode($lista_todas_turmas); ?>;
 </script>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -33,9 +36,8 @@
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/coordenador.css"> 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js" defer></script>
 </head>
 <body>
 <script src="../js/favicon.js"></script>
@@ -59,8 +61,8 @@
         </div>
     </section>
 
-    <section class="area-notificacoes">
-        <div id="feedback-bar" class="feedback-bar"></div> 
+    <section class="area-notificacoes"> 
+        <div id="feedback-bar" class="feedback-bar"></div>
         <h2>Professores</h2>
         
         <div class="barra-de-pesquisa">
@@ -116,10 +118,12 @@
                     <label for="modal-prof-telefone">Telefone:</label>
                     <input type="tel" id="modal-prof-telefone" value="">
                 </div>
+                
                 <div class="form-group">
-                    <label for="modal-prof-turmas">Turmas (somente visualização)</label>
-                    <input type="text" id="modal-prof-turmas" value="" readonly>
+                    <label for="modal-prof-turmas">Turmas:</label>
+                    <select id="modal-prof-turmas" name="turmas[]" multiple></select>
                 </div>
+                
                 <div class="form-group">
                     <label>Senha:</label>
                     <input type="text" value="********" readonly>
@@ -143,13 +147,10 @@
     </div>
 
     <script src="../js/professores.js"></script>
-
+    
     <?php if (isset($mensagem_toast)): ?>
     <script>
-        // Espera um instante para garantir que a função showFeedback já foi carregada
-        setTimeout(() => {
-            showFeedback("<?php echo addslashes($mensagem_toast); ?>", 'sucesso');
-        }, 100);
+        setTimeout(() => { showFeedback("<?php echo addslashes($mensagem_toast); ?>", 'sucesso'); }, 100);
     </script>
     <?php endif; ?>
 </body> 

@@ -1,8 +1,5 @@
 /**
  * Mostra uma barra de feedback flutuante no topo da tela.
- * Fica fora do DOMContentLoaded para ser acessível pelo PHP.
- * @param {string} message - A mensagem a ser exibida.
- * @param {string} type - 'sucesso' ou 'erro'.
  */
 function showFeedback(message, type = 'sucesso') {
     const bar = document.getElementById('feedback-bar');
@@ -14,8 +11,9 @@ function showFeedback(message, type = 'sucesso') {
 
 // --- LÓGICA PRINCIPAL DA PÁGINA ---
 document.addEventListener('DOMContentLoaded', () => {
-    if (typeof professoresDaPagina === 'undefined') {
-        console.error("A variável 'professoresDaPagina' não foi encontrada.");
+    // Garante que as pontes de dados existem
+    if (typeof professoresDaPagina === 'undefined' || typeof todasAsTurmas === 'undefined') {
+        console.error("Variáveis de dados ('professoresDaPagina' ou 'todasAsTurmas') não foram encontradas.");
         return;
     }
 
@@ -37,9 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalProfRm = document.getElementById('modal-prof-rm');
     const modalProfEmail = document.getElementById('modal-prof-email');
     const modalProfTelefone = document.getElementById('modal-prof-telefone');
-    const modalProfTurmas = document.getElementById('modal-prof-turmas');
+    const modalTurmasSelect = document.getElementById('modal-prof-turmas');
 
     let professorEmEdicao = null;
+    let choicesTurmas = null; // Variável para guardar a instância do Choices.js
 
     /**
      * Função para "desenhar" os cards na tela
@@ -77,14 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
      */
     function filtrarProfessores() {
         const termoBusca = searchInput.value.toLowerCase();
-        
         const professoresFiltrados = professoresDaPagina.filter(prof => {
             const nome = prof.nm_usuario.toLowerCase();
             const turmas = (prof.turmas_associadas || '').toLowerCase();
             const rm = prof.cd_usuario.toLowerCase();
             return nome.includes(termoBusca) || turmas.includes(termoBusca) || rm.includes(termoBusca);
         });
-        
         renderizarProfessores(professoresFiltrados);
     }
     
@@ -105,17 +102,60 @@ document.addEventListener('DOMContentLoaded', () => {
         professorEmEdicao = professoresDaPagina.find(p => p.cd_usuario === profId);
         
         if (professorEmEdicao) {
+            // Preenche os campos de texto
             modalProfId.value = professorEmEdicao.cd_usuario;
             modalProfNome.value = professorEmEdicao.nm_usuario;
             modalProfRm.value = professorEmEdicao.cd_usuario;
             modalProfEmail.value = professorEmEdicao.nm_email;
             modalProfTelefone.value = professorEmEdicao.cd_telefone || ''; 
-            modalProfTurmas.value = professorEmEdicao.turmas_associadas || 'Nenhuma turma';
+
+            // --- LÓGICA CORRIGIDA DO CHOICES.JS (Versão 3) ---
+            
+            // 1. Destrói o Choices.js antigo, se existir
+            if (choicesTurmas) {
+                choicesTurmas.destroy();
+                choicesTurmas = null;
+            }
+            
+            // 2. Limpa o <select> (só para garantir)
+            modalTurmasSelect.innerHTML = ''; 
+            
+            // 3. Cria um mapa das turmas que o professor JÁ TEM
+            const turmasAtuaisMap = {};
+            if (professorEmEdicao.turmas_associadas) {
+                professorEmEdicao.turmas_associadas.split(', ').forEach(nomeTurma => {
+                    turmasAtuaisMap[nomeTurma] = true;
+                });
+            }
+            
+            // 4. Prepara o array de 'choices' para a biblioteca
+            const turmasOptions = todasAsTurmas.map(turma => {
+                // Verifica se esta turma deve vir pré-selecionada
+                const estaSelecionada = turmasAtuaisMap[turma.nm_turma] === true;
+                
+                return {
+                    value: String(turma.cd_turma), // O value DEVE ser string
+                    label: turma.nm_turma,         // O label é o Nome
+                    selected: estaSelecionada      // Define se vem marcado
+                };
+            });
+            
+            // 5. Inicializa o Choices.js passando as opções (choices)
+            choicesTurmas = new Choices(modalTurmasSelect, {
+                removeItemButton: true,
+                placeholder: true,
+                placeholderValue: 'Selecione as turmas...',
+                choices: turmasOptions, // Passa o array de opções aqui
+                searchEnabled: true
+            });
+            
+            // 6. NÃO precisamos mais chamar setValue()
+            
+            // --- FIM DA CORREÇÃO ---
+            
             modalOverlay.style.display = 'flex';
         }
     });
-
-    // --- LÓGICA DOS BOTÕES DO MODAL ---
 
     // Botão "Salvar Alterações"
     salvarBtn.addEventListener('click', async () => {
@@ -123,12 +163,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const nome = modalProfNome.value;
         const email = modalProfEmail.value;
         const telefone = modalProfTelefone.value;
+        const turmas = choicesTurmas.getValue(true);
 
         const formData = new FormData();
         formData.append('cd_usuario', id);
         formData.append('nome', nome);
         formData.append('email', email);
         formData.append('telefone', telefone);
+        turmas.forEach(turmaId => {
+            formData.append('turmas[]', turmaId);
+        });
 
         salvarBtn.textContent = "Salvando...";
         salvarBtn.disabled = true;
@@ -145,78 +189,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 professorEmEdicao.nm_usuario = nome;
                 professorEmEdicao.nm_email = email;
                 professorEmEdicao.cd_telefone = telefone;
+                professorEmEdicao.turmas_associadas = choicesTurmas.getValue(false).map(item => item.label).join(', ');
 
                 // Atualiza o card na tela
                 const card = document.getElementById(`prof-card-${id}`);
                 if(card) {
                     card.querySelector('h3').textContent = `${id} - ${nome}`;
+                    card.querySelector('p b').nextSibling.textContent = ` ${professorEmEdicao.turmas_associadas || 'Nenhuma turma'}`;
                 }
                 
-                showFeedback(result.mensagem, 'sucesso'); // <-- CORREÇÃO AQUI
+                showFeedback(result.mensagem, 'sucesso');
                 fecharModais();
             } else {
-                showFeedback(result.mensagem || 'Não foi possível salvar.', 'erro'); // <-- CORREÇÃO AQUI
+                showFeedback(result.mensagem || 'Não foi possível salvar.', 'erro');
             }
         } catch (error) {
-            showFeedback('Erro de comunicação. Tente novamente.', 'erro'); // <-- CORREÇÃO AQUI
+            showFeedback('Erro de comunicação. Tente novamente.', 'erro');
             console.error('Erro no fetch:', error);
         }
         salvarBtn.textContent = "Salvar Alterações";
         salvarBtn.disabled = false;
     });
 
-    // Botão "Excluir Professor" (abre a confirmação)
-    excluirModalBtn.addEventListener('click', () => {
-        confirmationModal.style.display = 'flex';
-    });
+    // --- Lógica de Exclusão (igual) ---
+    excluirModalBtn.addEventListener('click', () => { confirmationModal.style.display = 'flex'; });
+    cancelarBtn.addEventListener('click', () => { confirmationModal.style.display = 'none'; });
 
-    // Botão "Cancelar" (na confirmação)
-    cancelarBtn.addEventListener('click', () => {
-        confirmationModal.style.display = 'none';
-    });
-
-    // Botão "Excluir" (final, na confirmação)
     excluirConfirmBtn.addEventListener('click', async () => {
         const id = modalProfId.value;
         if (!id) return;
-
         const formData = new FormData();
         formData.append('cd_usuario', id);
-        
         excluirConfirmBtn.textContent = "Excluindo...";
         excluirConfirmBtn.disabled = true;
-
         try {
-            const response = await fetch('../api/excluir_professor.php', {
-                method: 'POST',
-                body: formData
-            });
+            const response = await fetch('../api/excluir_professor.php', { method: 'POST', body: formData });
             const result = await response.json();
-
             if (response.ok && result.status === 'sucesso') {
-                // Remove o professor da "memória" do JS
                 const index = professoresDaPagina.findIndex(p => p.cd_usuario === id);
-                if (index > -1) {
-                    professoresDaPagina.splice(index, 1);
-                }
-
-                // Remove o card da tela
+                if (index > -1) { professoresDaPagina.splice(index, 1); }
                 document.getElementById(`prof-card-${id}`)?.remove();
-                
-                showFeedback(result.mensagem, 'sucesso'); // <-- CORREÇÃO AQUI
+                showFeedback(result.mensagem, 'sucesso');
                 fecharModais();
             } else {
-                showFeedback(result.mensagem || 'Não foi possível excluir.', 'erro'); // <-- CORREÇÃO AQUI
+                showFeedback(result.mensagem || 'Não foi possível excluir.', 'erro');
             }
         } catch (error) {
-            showFeedback('Erro de comunicação. Tente novamente.', 'erro'); // <-- CORREÇÃO AQUI
+            showFeedback('Erro de comunicação. Tente novamente.', 'erro');
             console.error('Erro no fetch:', error);
         }
         excluirConfirmBtn.textContent = "Excluir";
         excluirConfirmBtn.disabled = false;
     });
 
-    // Fechar modais ao clicar fora
     confirmationModal.addEventListener('click', (e) => { if (e.target === confirmationModal) fecharModais(); });
     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) fecharModais(); });
 

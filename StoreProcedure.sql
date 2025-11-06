@@ -623,24 +623,57 @@ CREATE PROCEDURE `atualizarProfessor`(
     IN pCdUsuario VARCHAR(10),
     IN pNome VARCHAR(45),
     IN pEmail VARCHAR(45),
-    IN pTelefone VARCHAR(45)
+    IN pTelefone VARCHAR(45),
+    IN pTurmasIDs VARCHAR(255) -- Nosso novo parâmetro (ex: "1,4,5")
 )
 BEGIN
     DECLARE emailCount INT DEFAULT 0;
     
-    -- Verifica se o NOVO email já existe em OUTRO usuário
+    -- 1. Verifica se o NOVO email já existe em OUTRO usuário
     SELECT COUNT(*) INTO emailCount FROM usuarios 
     WHERE nm_email = pEmail AND cd_usuario != pCdUsuario;
 
     IF (emailCount > 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este e-mail já está em uso por outro usuário.';
     ELSE
+        -- 2. Atualiza os dados do usuário
         UPDATE usuarios SET
             nm_usuario = pNome,
             nm_email = pEmail,
             cd_telefone = pTelefone
         WHERE
             cd_usuario = pCdUsuario;
+            
+        -- 3. ATUALIZA AS TURMAS
+        -- Primeiro, apaga todas as associações antigas deste professor
+        DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = pCdUsuario;
+        
+        -- Agora, reinsere as novas associações (se houver alguma)
+        IF pTurmasIDs IS NOT NULL AND pTurmasIDs != '' THEN
+        
+            -- Esta é a lógica corrigida e mais segura para inserir múltiplos valores
+            -- a partir de uma string (ex: "1,4,5")
+            SET @sql = NULL;
+            SELECT
+                GROUP_CONCAT(
+                    CONCAT('(', QUOTE(pCdUsuario), ',', QUOTE(turma_id), ')')
+                )
+            INTO @sql
+            FROM
+                JSON_TABLE(
+                    CONCAT('[', pTurmasIDs, ']'),
+                    '$[*]' COLUMNS (turma_id INT PATH '$')
+                ) AS jt;
+
+            IF @sql IS NOT NULL THEN
+                SET @sql = CONCAT('INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES ', @sql);
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+            END IF;
+            
+        END IF;
+        
     END IF;
 END$$
 
