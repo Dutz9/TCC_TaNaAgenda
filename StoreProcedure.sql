@@ -728,4 +728,122 @@ BEGIN
     END IF;
 END$$
 
+DROP PROCEDURE IF EXISTS `listarTurmasComContagem`$$
+CREATE PROCEDURE `listarTurmasComContagem`()
+BEGIN
+    SELECT 
+        t.cd_turma,
+        t.nm_turma,
+        t.ic_serie,
+        t.qt_alunos,
+        t.cd_sala,
+        c.nm_curso,
+        c.ic_periodo,
+        -- Esta sub-consulta conta quantos professores estão ligados a esta turma
+        (SELECT COUNT(uht.usuarios_cd_usuario) 
+         FROM usuarios_has_turmas uht 
+         WHERE uht.turmas_cd_turma = t.cd_turma
+        ) AS contagem_professores
+    FROM turmas t
+    JOIN cursos c ON t.cursos_cd_curso = c.cd_curso
+    ORDER BY t.nm_turma;
+END$$
+
+DROP PROCEDURE IF EXISTS `listarProfessoresPorTurma`$$
+CREATE PROCEDURE `listarProfessoresPorTurma`(
+    IN pCdTurma INT
+)
+BEGIN
+    -- Busca o nome de todos os professores associados a um ID de turma específico
+    SELECT 
+        u.nm_usuario
+    FROM usuarios_has_turmas uht
+    JOIN usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
+    WHERE 
+        uht.turmas_cd_turma = pCdTurma
+        AND u.tipo_usuario_ic_usuario = 'Professor'
+    ORDER BY
+        u.nm_usuario;
+END$$
+
+-- 1. PROCEDURE PARA ATUALIZAR UMA TURMA
+DROP PROCEDURE IF EXISTS `atualizarTurma`$$
+CREATE PROCEDURE `atualizarTurma`(
+    IN pCdTurma INT,
+    IN pNmTurma VARCHAR(45),
+    IN pIcSerie VARCHAR(10),
+    IN pQtAlunos INT,
+    IN pCdSala VARCHAR(45)
+)
+BEGIN
+    -- Verifica se o novo nome da turma já existe em OUTRA turma
+    DECLARE nomeCount INT DEFAULT 0;
+    SELECT COUNT(*) INTO nomeCount FROM turmas
+    WHERE nm_turma = pNmTurma AND cd_turma != pCdTurma;
+
+    IF (nomeCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: O nome desta turma (Sigla) já está em uso.';
+    ELSE
+        UPDATE turmas SET
+            nm_turma = pNmTurma,
+            ic_serie = pIcSerie,
+            qt_alunos = pQtAlunos,
+            cd_sala = pCdSala
+        WHERE
+            cd_turma = pCdTurma;
+    END IF;
+END$$
+
+-- 2. PROCEDURE PARA EXCLUIR UMA TURMA (COM SEGURANÇA)
+DROP PROCEDURE IF EXISTS `excluirTurma`$$
+CREATE PROCEDURE `excluirTurma`(
+    IN pCdTurma INT
+)
+BEGIN
+    -- 1. Remove as associações da turma com professores
+    DELETE FROM usuarios_has_turmas WHERE turmas_cd_turma = pCdTurma;
+    
+    -- 2. Remove as associações da turma com eventos
+    DELETE FROM eventos_has_turmas WHERE turmas_cd_turma = pCdTurma;
+    
+    -- 3. Finalmente, apaga a turma
+    -- NOTA: Se a turma for chave primária em 'cursos' (o que não deve ser),
+    -- o banco irá falhar, o que é o comportamento esperado.
+    DELETE FROM turmas WHERE cd_turma = pCdTurma;
+END$$
+
+DROP PROCEDURE IF EXISTS `criarTurma`$$
+CREATE PROCEDURE `criarTurma`(
+    IN pNmTurma VARCHAR(45),
+    IN pIcSerie VARCHAR(10),
+    IN pQtAlunos INT,
+    IN pCdSala VARCHAR(45),
+    IN pCdCurso INT -- ID do curso (ex: 1 para "Desenvolvimento de Sistemas")
+)
+BEGIN
+    DECLARE nomeCount INT DEFAULT 0;
+
+    -- 1. Verifica se o nome (sigla) da turma já existe
+    SELECT COUNT(*) INTO nomeCount FROM turmas
+    WHERE nm_turma = pNmTurma;
+
+    IF (nomeCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: O nome (Sigla) desta turma já está em uso.';
+    ELSE
+        -- 2. Insere a nova turma
+        INSERT INTO turmas (nm_turma, ic_serie, qt_alunos, cd_sala, cursos_cd_curso)
+        VALUES (pNmTurma, pIcSerie, pQtAlunos, pCdSala, pCdCurso);
+    END IF;
+END$$
+
+DROP PROCEDURE IF EXISTS `listarCursos`$$
+CREATE PROCEDURE `listarCursos`()
+BEGIN
+    -- Lista todos os cursos para preencher o dropdown
+    SELECT cd_curso, nm_curso, ic_periodo 
+    FROM cursos 
+    ORDER BY nm_curso;
+END$$
+
+
 DELIMITER ;

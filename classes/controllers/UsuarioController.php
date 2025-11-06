@@ -212,5 +212,24 @@
             }
         }
 
+        /**
+         * Lista os nomes de todos os professores associados a um ID de turma específico.
+         *
+         * @param int $cdTurma O ID da turma.
+         * @return array Lista de professores (apenas nomes).
+         */
+        public function listarProfessoresPorTurma($cdTurma) {
+            try {
+                // Chama a Stored Procedure que criamos no Passo 1
+                $dados = $this->Consultar('listarProfessoresPorTurma', [
+                    'pCdTurma' => $cdTurma
+                ]);
+                return $dados;
+            } catch (\Throwable $th) {
+                // Se der erro, joga a exceção
+                throw $th;
+            }
+        }
+
     }
 ?>
