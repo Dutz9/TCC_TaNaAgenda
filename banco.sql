@@ -212,3 +212,109 @@ INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES
 ('1012', 5), -- Mariana Costa na turma 2N1
 ('1013', 16); -- Rafael Souza na turma 1I1
 SELECT * FROM usuarios_has_turmas;
+
+USE escola;
+
+-- =================================================================
+-- PARTE 0: LIMPEZA SEGURA (Garante que o script possa ser rodado várias vezes)
+-- =================================================================
+SET FOREIGN_KEY_CHECKS=0;
+-- Limpa apenas os dados que este script cria (EVT_APRESENTACAO_... e professores 1016+)
+DELETE FROM resolucao_eventos_usuarios WHERE eventos_cd_evento LIKE 'EVT_APRESENTACAO_%';
+DELETE FROM eventos_has_turmas WHERE eventos_cd_evento LIKE 'EVT_APRESENTACAO_%';
+DELETE FROM eventos WHERE cd_evento LIKE 'EVT_APRESENTACAO_%';
+DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario >= '1016';
+DELETE FROM usuarios WHERE cd_usuario >= '1016' AND tipo_usuario_ic_usuario = 'Professor';
+SET FOREIGN_KEY_CHECKS=1;
+
+-- =================================================================
+-- PARTE 1: ADICIONANDO 10 NOVOS PROFESSORES (1016 a 1025)
+-- =================================================================
+INSERT INTO usuarios (cd_usuario, nm_usuario, cd_senha, nm_email, tipo_usuario_ic_usuario) VALUES 
+('1016', 'Fernanda Lima', 'prof123', 'fernanda.lima@etec.com', 'Professor'),
+('1017', 'Gustavo Ribeiro', 'prof123', 'gustavo.ribeiro@etec.com', 'Professor'),
+('1018', 'Heloisa Santos', 'prof123', 'heloisa.santos@etec.com', 'Professor'),
+('1019', 'Igor Andrade', 'prof123', 'igor.andrade@etec.com', 'Professor'),
+('1020', 'Julia Martins', 'prof123', 'julia.martins@etec.com', 'Professor'),
+('1021', 'Kevin Borges', 'prof123', 'kevin.borges@etec.com', 'Professor'),
+('1022', 'Leticia Barros', 'prof123', 'leticia.barros@etec.com', 'Professor'),
+('1023', 'Miguel Oliveira', 'prof123', 'miguel.oliveira@etec.com', 'Professor'),
+('1024', 'Natalia Costa', 'prof123', 'natalia.costa@etec.com', 'Professor'),
+('1025', 'Otávio Pereira', 'prof123', 'otavio.pereira@etec.com', 'Professor');
+
+-- =================================================================
+-- PARTE 2: ASSOCIANDO PROFESSORES A TURMAS (Antigos e Novos)
+-- =================================================================
+INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES 
+-- Professores antigos em mais turmas:
+('1001', 4), ('1011', 4), ('1012', 3), ('1013', 17), ('1014', 16), ('1015', 17),
+-- Professores novos:
+('1016', 1), ('1016', 2), ('1017', 4), ('1017', 5), ('1017', 6), ('1018', 16), ('1018', 17),
+('1019', 7), ('1020', 1), ('1020', 4), ('1020', 7), ('1021', 13), ('1021', 14), ('1021', 15),
+('1022', 1), ('1022', 3), ('1022', 5), ('1022', 7), ('1023', 4), ('1023', 5), ('1023', 6),
+('1024', 10), ('1024', 11), ('1024', 12), ('1025', 16), ('1025', 17), ('1025', 18);
+
+-- =================================================================
+-- PARTE 3: ADICIONANDO 18 NOVOS EVENTOS (Foco: 24/11 a 12/12)
+-- =================================================================
+-- Eventos Aprovados (Para encher a agenda na apresentação)
+INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao, cd_usuario_aprovador) VALUES 
+('EVT_APRESENTACAO_01', '2025-11-24', 'Abertura da Semana de TCCs', '08:00', '09:40', 'Palestra', 'Palestra de abertura com Coordenador André.', 'Aprovado', '0002', '2025-11-15', '0002'),
+('EVT_APRESENTACAO_02', '2025-11-25', 'Banca TCC Turma 3I1', '13:30', '16:00', 'Outro', 'Apresentação das bancas de TCC da turma 3I1.', 'Aprovado', '1001', '2025-11-15', '0002'),
+('EVT_APRESENTACAO_03', '2025-11-25', 'Banca TCC Turma 3G2', '19:20', '22:10', 'Outro', 'Apresentação das bancas de TCC da turma 3G2.', 'Aprovado', '1016', '2025-11-16', '0002'),
+('EVT_APRESENTACAO_04', '2025-11-26', 'Palestra: Mercado de Logística', '10:00', '11:40', 'Palestra', 'Palestra com convidado externo sobre o Porto de Santos.', 'Aprovado', '0001', '2025-11-16', '0002'),
+('EVT_APRESENTACAO_05', '2025-11-27', 'Visita Técnica (Porto)', '08:00', '12:30', 'Visita Técnica', 'Visita técnica das turmas de Logística ao Porto.', 'Aprovado', '0002', '2025-11-17', '0002'),
+('EVT_APRESENTACAO_06', '2025-11-28', 'Prova de Redes (1N1)', '19:20', '21:00', 'Prova', 'Prova bimestral de Redes para a turma 1N1.', 'Aprovado', '1017', '2025-11-18', '0002'),
+('EVT_APRESENTACAO_07', '2025-12-01', 'Conselho de Classe (1K2)', '08:50', '10:00', 'Conselho de Classe', 'Conselho de Classe da turma 1K2.', 'Aprovado', '0002', '2025-11-20', '0002'),
+('EVT_APRESENTACAO_08', '2025-12-02', 'Amistoso Futsal (Tarde)', '16:20', '18:00', 'Evento Esportivo', 'Jogo amistoso entre 1I1 e 1G2.', 'Aprovado', '1018', '2025-11-20', '0002'),
+('EVT_APRESENTACAO_09', '2025-12-03', 'Encerramento Semestre (Noite)', '20:10', '21:00', 'Reunião', 'Reunião geral com professores da noite.', 'Aprovado', '0002', '2025-11-21', '0002'),
+('EVT_APRESENTACAO_10', '2025-12-04', 'Feira de Projetos 1I1', '13:30', '16:00', 'Palestra', 'Apresentação da feira de projetos da 1I1.', 'Aprovado', '1022', '2025-11-22', '0002'),
+('EVT_APRESENTACAO_11', '2025-12-05', 'Entrega de Notas (Geral)', '07:10', '18:00', 'Reunião', 'Dia reservado para fechamento e entrega de notas.', 'Aprovado', '0002', '2025-11-23', '0002'),
+('EVT_APRESENTACAO_12', '2025-12-08', 'Palestra Formatação TCC (3º Anos)', '10:00', '11:40', 'Palestra', 'Palestra sobre normas ABNT para os TCCs.', 'Aprovado', '1001', '2025-11-25', '0002'),
+('EVT_APRESENTACAO_13', '2025-12-09', 'Palestra Cibersegurança', '19:20', '21:00', 'Palestra', 'Palestra com especialista em cibersegurança.', 'Aprovado', '1017', '2025-11-25', '0002'),
+('EVT_APRESENTACAO_14', '2025-12-10', 'Visita Google (Cancelada)', '08:00', '17:10', 'Visita Técnica', 'Visita à sede do Google (foi recusada pelo coordenador).', 'Recusado', '1011', '2025-11-26', '0002'),
+('EVT_APRESENTACAO_15', '2025-12-11', 'Prova Final 2G2', '14:20', '16:00', 'Prova', 'Prova final da turma 2G2.', 'Aprovado', '1016', '2025-11-27', '0002');
+
+-- Eventos SOLICITADOS (Para testar filtros e aprovações)
+INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao) VALUES 
+('EVT_APRESENTACAO_16', '2025-12-15', 'Planejamento 2026', '10:00', '11:40', 'Reunião', 'Reunião de planejamento para o próximo ano letivo.', 'Solicitado', '1020', '2025-11-28'),
+('EVT_APRESENTACAO_17', '2025-12-16', 'Confraternização Professores', '19:20', '22:10', 'Outro', 'Confraternização de fim de ano dos professores.', 'Solicitado', '1011', '2025-11-29'),
+('EVT_APRESENTACAO_18', '2025-12-17', 'Teste de Exclusão de Prof (1N1)', '10:00', '10:50', 'Outro', 'Evento para testar a lógica de exclusão de professor.', 'Solicitado', '0001', '2025-11-30');
+
+-- =================================================================
+-- PARTE 4: ASSOCIANDO TURMAS E PROFESSORES AOS NOVOS EVENTOS
+-- =================================================================
+INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES 
+('EVT_APRESENTACAO_01', 18), ('EVT_APRESENTACAO_01', 9), ('EVT_APRESENTACAO_01', 6), ('EVT_APRESENTACAO_01', 15), ('EVT_APRESENTACAO_01', 12), ('EVT_APRESENTACAO_01', 3),
+('EVT_APRESENTACAO_02', 18), ('EVT_APRESENTACAO_03', 9),
+('EVT_APRESENTACAO_04', 7), ('EVT_APRESENTACAO_04', 8), ('EVT_APRESENTACAO_04', 9),
+('EVT_APRESENTACAO_05', 7), ('EVT_APRESENTACAO_05', 8), ('EVT_APRESENTACAO_05', 9),
+('EVT_APRESENTACAO_06', 4), ('EVT_APRESENTACAO_07', 1), ('EVT_APRESENTACAO_08', 16), ('EVT_APRESENTACAO_08', 7),
+('EVT_APRESENTACAO_09', 4), ('EVT_APRESENTACAO_09', 5), ('EVT_APRESENTACAO_09', 6),
+('EVT_APRESENTACAO_10', 16),
+('EVT_APRESENTACAO_11', 1), ('EVT_APRESENTACAO_11', 2), ('EVT_APRESENTACAO_11', 3), ('EVT_APRESENTACAO_11', 4), ('EVT_APRESENTACAO_11', 5), ('EVT_APRESENTACAO_11', 6), 
+('EVT_APRESENTACAO_11', 7), ('EVT_APRESENTACAO_11', 8), ('EVT_APRESENTACAO_11', 9), ('EVT_APRESENTACAO_11', 10), ('EVT_APRESENTACAO_11', 11), ('EVT_APRESENTACAO_11', 12), 
+('EVT_APRESENTACAO_11', 13), ('EVT_APRESENTACAO_11', 14), ('EVT_APRESENTACAO_11', 15), ('EVT_APRESENTACAO_11', 16), ('EVT_APRESENTACAO_11', 17), ('EVT_APRESENTACAO_11', 18),
+('EVT_APRESENTACAO_12', 3), ('EVT_APRESENTACAO_12', 6), ('EVT_APRESENTACAO_12', 9), ('EVT_APRESENTACAO_12', 12), ('EVT_APRESENTACAO_12', 15), ('EVT_APRESENTACAO_12', 18),
+('EVT_APRESENTACAO_13', 4), ('EVT_APRESENTACAO_13', 5), ('EVT_APRESENTACAO_13', 6),
+('EVT_APRESENTACAO_14', 4), ('EVT_APRESENTACAO_14', 5), ('EVT_APRESENTACAO_14', 6),
+('EVT_APRESENTACAO_15', 8),
+('EVT_APRESENTACAO_16', 1), ('EVT_APRESENTACAO_16', 4), ('EVT_APRESENTACAO_16', 7),
+('EVT_APRESENTACAO_17', 4), ('EVT_APRESENTACAO_17', 5), ('EVT_APRESENTACAO_17', 6),
+('EVT_APRESENTACAO_18', 4);
+
+-- **A CORREÇÃO ESTÁ AQUI**
+INSERT INTO resolucao_eventos_usuarios (eventos_cd_evento, usuarios_cd_usuario, status_resolucao) VALUES 
+('EVT_APRESENTACAO_16', '1001', 'Aprovado'), ('EVT_APRESENTACAO_16', '1011', 'Recusado'), ('EVT_APRESENTACAO_16', '0001', 'Pendente'),
+('EVT_APRESENTACAO_16', '1016', 'Pendente'), ('EVT_APRESENTACAO_16', '1017', 'Pendente'), ('EVT_APRESENTACAO_16', '1018', 'Pendente'),
+('EVT_APRESENTACAO_16', '1023', 'Pendente'), 
+('EVT_APRESENTACAO_16', '1022', 'Pendente'), -- CORRIGIDO: 1026 -> 1022 (Leticia Barros)
+('EVT_APRESENTACAO_16', '1019', 'Pendente'),
+
+('EVT_APRESENTACAO_17', '1001', 'Pendente'), ('EVT_APRESENTACAO_17', '0001', 'Pendente'), ('EVT_APRESENTACAO_17', '1012', 'Pendente'),
+('EVT_APRESENTACAO_17', '1017', 'Pendente'), ('EVT_APRESENTACAO_17', '1018', 'Pendente'), ('EVT_APRESENTACAO_17', '1020', 'Pendente'),
+('EVT_APRESENTACAO_17', '1023', 'Pendente'), 
+('EVT_APRESENTACAO_17', '1022', 'Pendente'), -- CORRIGIDO: 1026 -> 1022 (Leticia Barros)
+
+('EVT_APRESENTACAO_18', '1017', 'Pendente'), ('EVT_APRESENTACAO_18', '1018', 'Pendente'),
+('EVT_APRESENTACAO_18', '1020', 'Pendente'), ('EVT_APRESENTACAO_18', '1023', 'Pendente');
