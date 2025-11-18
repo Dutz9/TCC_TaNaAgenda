@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // --- Elementos Principais ---
     const container = document.querySelector('.notificacao-container');
     const modalDetalhes = document.getElementById('modal-decisao-coord');
     const modalConfirmar = document.getElementById('modal-confirm-excluir');
@@ -32,6 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let eventoParaExcluir = null;
 
+    // --- LÓGICA DOS FILTROS (A PARTE QUE FALTAVA) ---
+    const formFiltros = document.getElementById('form-filtros');
+    if (formFiltros) {
+        formFiltros.addEventListener('change', () => {
+            formFiltros.submit(); // Envia o formulário automaticamente
+        });
+    }
+    // --- FIM DA LÓGICA DOS FILTROS ---
+
     // --- "ESCUTADORES" DE CLIQUES ---
     
     container.addEventListener('click', (e) => {
@@ -46,11 +56,11 @@ document.addEventListener('DOMContentLoaded', () => {
     modalDetalhes.addEventListener('click', (e) => {
         if (e.target === modalDetalhes) modalDetalhes.style.display = 'none';
 
-        const botao = e.target.closest('button, a'); // Agora escuta por 'a' (links) também
+        const botao = e.target.closest('button, a');
         if (!botao) return;
 
         if (botao.classList.contains('aprovar') || botao.classList.contains('recusar')) {
-            e.preventDefault(); // Previne o comportamento padrão (caso seja um <a>)
+            e.preventDefault();
             const eventoId = botao.dataset.id;
             const decisao = botao.classList.contains('aprovar') ? 'Aprovado' : 'Recusado';
             enviarDecisaoFinal(eventoId, decisao, botao);
@@ -61,10 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
             eventoParaExcluir = botao.dataset.id;
             modalConfirmar.style.display = 'flex';
         }
-        
-        // Se for o botão de editar, o clique no link <a> já faz o redirecionamento.
-        // Não precisamos de lógica JS extra para ele, a não ser que ele fosse um <button>.
-        // A lógica do 'a' href="..." já funciona.
     });
 
     btnConfirmarNao.addEventListener('click', () => {
@@ -107,10 +113,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     setTimeout(() => card.remove(), 500);
                 }
             } else {
-                alert('Erro: ' + (result.mensagem || 'Não foi possível excluir.'));
+                showFeedback(result.mensagem || 'Não foi possível excluir.', 'erro');
             }
         } catch (error) {
-            alert('Erro de comunicação.');
+            showFeedback('Erro de comunicação.', 'erro');
             console.error('Erro no fetch:', error);
         }
         
@@ -164,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function abrirModalDecisao(evento) {
-        // 1. Lógica de Respostas (continua a mesma)
         let respostas = [];
         if (evento.respostas_professores) {
             try {
@@ -193,30 +198,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         modalLeft.innerHTML = `<div class="coordinator-info"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg><div><h3>${evento.nm_solicitante}</h3><p>${evento.tipo_solicitante}</p></div></div><div class="responses-section"><h4>${tituloRespostas}</h4>${respostasHtml}</div>`;
         
-        // --- LÓGICA DE BOTÕES ATUALIZADA ---
         let botoesHtml = '';
-        
-        // Cenário 1: Evento pendente
         if (evento.status === 'Solicitado') {
-            botoesHtml = `<div class="modal-buttons">
-                            <button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button>
-                            <button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button>
-                        </div>`;
+            botoesHtml = `<div class="modal-buttons"><button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button><button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button></div>`;
         }
-        // Cenário 2: Evento já Aprovado
         else if (evento.status === 'Aprovado') {
-            botoesHtml = `<div class="modal-buttons">
+             botoesHtml = `<div class="modal-buttons">
                             <button class="btn-excluir-evento recusar" data-id="${evento.cd_evento}">Excluir</button>
                             <button class="recusar" data-id="${evento.cd_evento}">Reverter p/ Recusado</button>
                             <a href="criareventocoord.php?edit=${evento.cd_evento}" class="btn-editar-evento">Editar</a>
-                        </div>`;
+                          </div>`;
         }
-        // Cenário 3: Evento já Recusado
         else if (evento.status === 'Recusado') {
-            botoesHtml = `<div class="modal-buttons">
+             botoesHtml = `<div class="modal-buttons">
                             <button class="btn-excluir-evento recusar" data-id="${evento.cd_evento}">Excluir</button>
                             <button class="aprovar" data-id="${evento.cd_evento}">Reverter p/ Aprovado</button>
-                        </div>`;
+                          </div>`;
         }
 
         modalRight.innerHTML = `

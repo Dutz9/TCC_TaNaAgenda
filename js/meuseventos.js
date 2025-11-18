@@ -1,26 +1,16 @@
 /**
  * Mostra uma barra de feedback flutuante no topo da tela.
- * Esta função fica fora do DOMContentLoaded para ser acessível pelo PHP.
- * @param {string} message - A mensagem a ser exibida.
- * @param {string} type - 'sucesso' ou 'erro'.
  */
 function showToast(message, type = 'sucesso') {
     const bar = document.getElementById('toast-notification');
     if (!bar) return;
-
     bar.textContent = message;
     bar.className = `feedback-bar ${type} show`;
-
-    // Esconde a barra após 3.5 segundos
-    setTimeout(() => {
-        bar.classList.remove('show');
-    }, 3500);
+    setTimeout(() => { bar.classList.remove('show'); }, 3500);
 }
-
 
 // --- LÓGICA PRINCIPAL DA PÁGINA ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante que as 'pontes' de dados do PHP existem
     if (typeof eventosDaPagina === 'undefined' || typeof usuario_logado === 'undefined') {
         console.error("Variáveis de dados ('eventosDaPagina' ou 'usuario_logado') não foram encontradas.");
         return;
@@ -29,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Elementos Principais ---
     const container = document.querySelector('.notificacao-container');
     const modalDetalhes = document.getElementById('modal-detalhes-evento');
-    const modalConfirmar = document.getElementById('modal-confirm-cancelar'); // O novo modal de confirmação
+    const modalConfirmar = document.getElementById('modal-confirm-cancelar');
     
     if (!container || !modalDetalhes || !modalConfirmar) {
         console.error('Elementos essenciais (container ou modais) não foram encontrados.');
@@ -41,11 +31,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnConfirmarSim = document.getElementById('btn-cancelar-sim');
     const btnConfirmarNao = document.getElementById('btn-cancelar-nao');
     
-    let eventoParaCancelar = null; // Guarda o ID do evento a ser cancelado
+    let eventoParaCancelar = null;
+
+    // --- LÓGICA DOS FILTROS (REINTRODUZIDA) ---
+    const formFiltros = document.getElementById('form-filtros');
+    if (formFiltros) {
+        // Adiciona um "escutador" para qualquer mudança nos selects
+        formFiltros.addEventListener('change', () => {
+            formFiltros.submit(); // Envia o formulário automaticamente
+        });
+    }
+    // --- FIM DA LÓGICA DOS FILTROS ---
 
     // --- "ESCUTADORES" DE CLIQUES ---
     
-    // 1. Escutador nos CARDS para abrir o modal de detalhes
     container.addEventListener('click', (e) => {
         const botaoClicado = e.target.closest('button.detalhes-btn');
         if (!botaoClicado) return;
@@ -59,32 +58,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 2. Escutador DENTRO DO MODAL DE DETALHES (para fechar e para os botões de ação)
     modalDetalhes.addEventListener('click', (e) => {
-        // Se o clique foi no fundo do modal, fecha o modal
         if (e.target === modalDetalhes) {
             modalDetalhes.style.display = 'none';
             return;
         }
 
-        const botaoClicado = e.target.closest('button');
+        const botaoClicado = e.target.closest('button, a');
         if (!botaoClicado) return;
 
-        // Ação de Aprovar/Recusar
         if (botaoClicado.classList.contains('btn-aprovar') || botaoClicado.classList.contains('btn-recusar')) {
+            e.preventDefault();
             const eventoId = botaoClicado.dataset.id;
             const decisao = botaoClicado.classList.contains('btn-aprovar') ? 'Aprovado' : 'Recusado';
             enviarResposta(eventoId, decisao, botaoClicado);
         }
         
-        // Ação de Cancelar Solicitação
         if (botaoClicado.classList.contains('btn-cancelar-solicitacao')) {
-            eventoParaCancelar = botaoClicado.dataset.id; // Guarda o ID do evento
-            modalConfirmar.style.display = 'flex'; // Abre o modal de confirmação
+            e.preventDefault();
+            eventoParaCancelar = botaoClicado.dataset.id;
+            modalConfirmar.style.display = 'flex';
         }
     });
 
-    // 3. Escutadores no MODAL DE CONFIRMAÇÃO
     btnConfirmarNao.addEventListener('click', () => {
         modalConfirmar.style.display = 'none';
         eventoParaCancelar = null;
@@ -105,11 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- FUNÇÕES ---
 
-    /**
-     * Envia o pedido de CANCELAMENTO para a API.
-     */
     async function enviarCancelamento(eventoId) {
-        btnConfirmarSim.disabled = true; // Desabilita o botão para evitar cliques duplos
+        btnConfirmarSim.disabled = true;
         btnConfirmarSim.textContent = 'Cancelando...';
         
         const formData = new FormData();
@@ -127,17 +120,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalDetalhes.style.display = 'none';
                 showToast(result.mensagem, 'sucesso');
                 
-                // Remove o card da tela
                 const card = document.querySelector(`.notificacao .detalhes-btn[data-id="${eventoId}"]`).closest('.notificacao');
                 if (card) {
                     card.style.opacity = '0';
                     setTimeout(() => card.remove(), 500);
                 }
             } else {
-                alert('Erro: ' + (result.mensagem || 'Não foi possível cancelar.'));
+                showToast(result.mensagem || 'Não foi possível cancelar.', 'erro');
             }
         } catch (error) {
-            alert('Erro de comunicação.');
+            showToast('Erro de comunicação.', 'erro');
             console.error('Erro no fetch:', error);
         }
         
@@ -146,9 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
         eventoParaCancelar = null;
     }
 
-    /**
-     * Envia a resposta (Aprovado/Recusado) do professor para a API.
-     */
     async function enviarResposta(eventoId, resposta, botao) {
         const containerBotoes = botao.parentElement;
         containerBotoes.innerHTML = '<p>Processando...</p>';
@@ -165,7 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok && result.status === 'sucesso') {
-                // SINCRONIZAÇÃO DA MEMÓRIA INTERNA
                 const indiceEvento = eventosDaPagina.findIndex(ev => ev.cd_evento === eventoId);
                 if (indiceEvento > -1) {
                     eventosDaPagina[indiceEvento].minha_resposta = resposta;
@@ -177,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     eventosDaPagina[indiceEvento].respostas_professores = JSON.stringify(respostas);
                 }
                 
-                // Atualiza a interface do card
                 const card = document.querySelector(`.notificacao .detalhes-btn[data-id="${eventoId}"]`).closest('.notificacao');
                 const opcoesRespostaDiv = card.querySelector('.opcoes-resposta');
                 if (opcoesRespostaDiv) {
@@ -191,11 +178,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalDetalhes.style.display = 'none';
 
             } else {
-                alert('Erro: ' + (result.mensagem || 'Não foi possível registrar a resposta.'));
+                showToast(result.mensagem || 'Não foi possível registrar a resposta.', 'erro');
                 containerBotoes.innerHTML = `<button class="btn-recusar" data-id="${eventoId}">Recusar</button><button class="btn-aprovar" data-id="${eventoId}">Aprovar</button>`;
             }
         } catch (error) {
-            alert('Ocorreu um erro de comunicação.');
+            showToast('Ocorreu um erro de comunicação.', 'erro');
             console.error('Erro no fetch:', error);
             containerBotoes.innerHTML = `<button class="btn-recusar" data-id="${eventoId}">Recusar</button><button class="btn-aprovar" data-id="${eventoId}">Aprovar</button>`;
         }
@@ -206,9 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${dia}/${mes}/${ano}`;
     }
 
-    /**
-     * Abre e preenche o modal com os detalhes do evento e os botões de ação.
-     */
     function abrirModalDetalhes(evento) {
         let respostas = [];
         if (evento.respostas_professores) {
@@ -238,19 +222,17 @@ document.addEventListener('DOMContentLoaded', () => {
         modalLeft.innerHTML = `<div class="coordinator-info"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg><div><h3>${evento.nm_solicitante}</h3><p>${evento.tipo_solicitante}</p></div></div><div class="responses-section"><h4>${tituloRespostas}</h4>${respostasHtml}</div>`;
         
         let botoesHtml = '';
-        // 1. Se for de outro professor e estiver pendente
         if (evento.status === 'Solicitado' && evento.cd_usuario_solicitante !== usuario_logado.cd_usuario && evento.minha_resposta === 'Pendente') {
             botoesHtml = `<div class="modal-buttons">
                             <button class="btn-recusar" data-id="${evento.cd_evento}">Recusar</button>
                             <button class="btn-aprovar" data-id="${evento.cd_evento}">Aprovar</button>
-                        </div>`;
+                          </div>`;
         }
-        // 2. Se for MEU e ainda estiver Solicitado
         else if (evento.status === 'Solicitado' && evento.cd_usuario_solicitante === usuario_logado.cd_usuario) {
             botoesHtml = `<div class="modal-buttons">
                             <button class="btn-cancelar-solicitacao recusar" data-id="${evento.cd_evento}">Cancelar Solicitação</button>
                             <a href="criarevento.php?edit=${evento.cd_evento}" class="btn-editar-evento">Editar</a>
-                        </div>`;
+                          </div>`;
         }
 
         modalRight.innerHTML = `
