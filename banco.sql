@@ -216,19 +216,36 @@ SELECT * FROM usuarios_has_turmas;
 USE escola;
 
 -- =================================================================
--- PARTE 0: LIMPEZA SEGURA (Garante que o script possa ser rodado várias vezes)
+-- PARTE 0: LIMPEZA "NUCLEAR" (Garante que o terreno esteja limpo)
 -- =================================================================
 SET FOREIGN_KEY_CHECKS=0;
--- Limpa apenas os dados que este script cria (EVT_APRESENTACAO_... e professores 1016+)
-DELETE FROM resolucao_eventos_usuarios WHERE eventos_cd_evento LIKE 'EVT_APRESENTACAO_%';
-DELETE FROM eventos_has_turmas WHERE eventos_cd_evento LIKE 'EVT_APRESENTACAO_%';
-DELETE FROM eventos WHERE cd_evento LIKE 'EVT_APRESENTACAO_%';
+
+-- 1. Limpa tabelas de ligação para os dados de teste
+DELETE FROM resolucao_eventos_usuarios WHERE eventos_cd_evento LIKE 'EVT_FINAL_%';
+DELETE FROM eventos_has_turmas WHERE eventos_cd_evento LIKE 'EVT_FINAL_%';
+
+-- 2. Limpa os eventos de teste
+DELETE FROM eventos WHERE cd_evento LIKE 'EVT_FINAL_%';
+
+-- 3. Limpa associações de turmas (Novos Professores)
 DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario >= '1016';
+
+-- 4. Limpa associações de turmas extras (Professores Antigos - Base)
+-- Isso remove apenas as turmas extras que vamos adicionar agora, mantendo as originais do banco.sql
+DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = '1001' AND turmas_cd_turma = 4;
+DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = '1011' AND turmas_cd_turma = 4;
+DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = '1012' AND turmas_cd_turma = 3;
+DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = '1013' AND turmas_cd_turma = 17;
+DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = '1014' AND turmas_cd_turma = 16;
+DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = '1015' AND turmas_cd_turma = 17;
+
+-- 5. Limpa os usuários novos
 DELETE FROM usuarios WHERE cd_usuario >= '1016' AND tipo_usuario_ic_usuario = 'Professor';
+
 SET FOREIGN_KEY_CHECKS=1;
 
 -- =================================================================
--- PARTE 1: ADICIONANDO 10 NOVOS PROFESSORES (1016 a 1025)
+-- PARTE 1: ADICIONANDO PROFESSORES (13 Novos)
 -- =================================================================
 INSERT INTO usuarios (cd_usuario, nm_usuario, cd_senha, nm_email, tipo_usuario_ic_usuario) VALUES 
 ('1016', 'Fernanda Lima', 'prof123', 'fernanda.lima@etec.com', 'Professor'),
@@ -240,81 +257,112 @@ INSERT INTO usuarios (cd_usuario, nm_usuario, cd_senha, nm_email, tipo_usuario_i
 ('1022', 'Leticia Barros', 'prof123', 'leticia.barros@etec.com', 'Professor'),
 ('1023', 'Miguel Oliveira', 'prof123', 'miguel.oliveira@etec.com', 'Professor'),
 ('1024', 'Natalia Costa', 'prof123', 'natalia.costa@etec.com', 'Professor'),
-('1025', 'Otávio Pereira', 'prof123', 'otavio.pereira@etec.com', 'Professor');
+('1025', 'Otávio Pereira', 'prof123', 'otavio.pereira@etec.com', 'Professor'),
+('1026', 'Patricia Gomes', 'prof123', 'patricia.gomes@etec.com', 'Professor'),
+('1027', 'Ricardo Alves', 'prof123', 'ricardo.alves@etec.com', 'Professor'),
+('1028', 'Simone Jesus', 'prof123', 'simone.jesus@etec.com', 'Professor');
 
 -- =================================================================
--- PARTE 2: ASSOCIANDO PROFESSORES A TURMAS (Antigos e Novos)
+-- PARTE 2: ASSOCIANDO PROFESSORES A TURMAS
 -- =================================================================
 INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES 
--- Professores antigos em mais turmas:
+-- Antigos (Novas Associações)
 ('1001', 4), ('1011', 4), ('1012', 3), ('1013', 17), ('1014', 16), ('1015', 17),
--- Professores novos:
-('1016', 1), ('1016', 2), ('1017', 4), ('1017', 5), ('1017', 6), ('1018', 16), ('1018', 17),
-('1019', 7), ('1020', 1), ('1020', 4), ('1020', 7), ('1021', 13), ('1021', 14), ('1021', 15),
-('1022', 1), ('1022', 3), ('1022', 5), ('1022', 7), ('1023', 4), ('1023', 5), ('1023', 6),
-('1024', 10), ('1024', 11), ('1024', 12), ('1025', 16), ('1025', 17), ('1025', 18);
+-- Novos
+('1016', 1), ('1016', 2), ('1017', 4), ('1017', 5), ('1017', 6), 
+('1018', 16), ('1018', 17), ('1019', 7), 
+('1020', 1), ('1020', 4), ('1020', 7), 
+('1021', 13), ('1021', 14), ('1021', 15),
+('1022', 1), ('1022', 3), ('1022', 5), ('1022', 7), 
+('1023', 4), ('1023', 5), ('1023', 6),
+('1024', 10), ('1024', 11), ('1024', 12), 
+('1025', 16), ('1025', 17), ('1025', 18),
+('1026', 2), ('1026', 8), ('1026', 9), 
+('1027', 7), ('1027', 8), ('1027', 9),
+('1028', 16), ('1028', 17), ('1028', 18);
 
 -- =================================================================
--- PARTE 3: ADICIONANDO 18 NOVOS EVENTOS (Foco: 24/11 a 12/12)
+-- PARTE 3: EVENTOS APROVADOS (Bloco A - Nov/Dez)
 -- =================================================================
--- Eventos Aprovados (Para encher a agenda na apresentação)
 INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao, cd_usuario_aprovador) VALUES 
-('EVT_APRESENTACAO_01', '2025-11-24', 'Abertura da Semana de TCCs', '08:00', '09:40', 'Palestra', 'Palestra de abertura com Coordenador André.', 'Aprovado', '0002', '2025-11-15', '0002'),
-('EVT_APRESENTACAO_02', '2025-11-25', 'Banca TCC Turma 3I1', '13:30', '16:00', 'Outro', 'Apresentação das bancas de TCC da turma 3I1.', 'Aprovado', '1001', '2025-11-15', '0002'),
-('EVT_APRESENTACAO_03', '2025-11-25', 'Banca TCC Turma 3G2', '19:20', '22:10', 'Outro', 'Apresentação das bancas de TCC da turma 3G2.', 'Aprovado', '1016', '2025-11-16', '0002'),
-('EVT_APRESENTACAO_04', '2025-11-26', 'Palestra: Mercado de Logística', '10:00', '11:40', 'Palestra', 'Palestra com convidado externo sobre o Porto de Santos.', 'Aprovado', '0001', '2025-11-16', '0002'),
-('EVT_APRESENTACAO_05', '2025-11-27', 'Visita Técnica (Porto)', '08:00', '12:30', 'Visita Técnica', 'Visita técnica das turmas de Logística ao Porto.', 'Aprovado', '0002', '2025-11-17', '0002'),
-('EVT_APRESENTACAO_06', '2025-11-28', 'Prova de Redes (1N1)', '19:20', '21:00', 'Prova', 'Prova bimestral de Redes para a turma 1N1.', 'Aprovado', '1017', '2025-11-18', '0002'),
-('EVT_APRESENTACAO_07', '2025-12-01', 'Conselho de Classe (1K2)', '08:50', '10:00', 'Conselho de Classe', 'Conselho de Classe da turma 1K2.', 'Aprovado', '0002', '2025-11-20', '0002'),
-('EVT_APRESENTACAO_08', '2025-12-02', 'Amistoso Futsal (Tarde)', '16:20', '18:00', 'Evento Esportivo', 'Jogo amistoso entre 1I1 e 1G2.', 'Aprovado', '1018', '2025-11-20', '0002'),
-('EVT_APRESENTACAO_09', '2025-12-03', 'Encerramento Semestre (Noite)', '20:10', '21:00', 'Reunião', 'Reunião geral com professores da noite.', 'Aprovado', '0002', '2025-11-21', '0002'),
-('EVT_APRESENTACAO_10', '2025-12-04', 'Feira de Projetos 1I1', '13:30', '16:00', 'Palestra', 'Apresentação da feira de projetos da 1I1.', 'Aprovado', '1022', '2025-11-22', '0002'),
-('EVT_APRESENTACAO_11', '2025-12-05', 'Entrega de Notas (Geral)', '07:10', '18:00', 'Reunião', 'Dia reservado para fechamento e entrega de notas.', 'Aprovado', '0002', '2025-11-23', '0002'),
-('EVT_APRESENTACAO_12', '2025-12-08', 'Palestra Formatação TCC (3º Anos)', '10:00', '11:40', 'Palestra', 'Palestra sobre normas ABNT para os TCCs.', 'Aprovado', '1001', '2025-11-25', '0002'),
-('EVT_APRESENTACAO_13', '2025-12-09', 'Palestra Cibersegurança', '19:20', '21:00', 'Palestra', 'Palestra com especialista em cibersegurança.', 'Aprovado', '1017', '2025-11-25', '0002'),
-('EVT_APRESENTACAO_14', '2025-12-10', 'Visita Google (Cancelada)', '08:00', '17:10', 'Visita Técnica', 'Visita à sede do Google (foi recusada pelo coordenador).', 'Recusado', '1011', '2025-11-26', '0002'),
-('EVT_APRESENTACAO_15', '2025-12-11', 'Prova Final 2G2', '14:20', '16:00', 'Prova', 'Prova final da turma 2G2.', 'Aprovado', '1016', '2025-11-27', '0002');
-
--- Eventos SOLICITADOS (Para testar filtros e aprovações)
-INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao) VALUES 
-('EVT_APRESENTACAO_16', '2025-12-15', 'Planejamento 2026', '10:00', '11:40', 'Reunião', 'Reunião de planejamento para o próximo ano letivo.', 'Solicitado', '1020', '2025-11-28'),
-('EVT_APRESENTACAO_17', '2025-12-16', 'Confraternização Professores', '19:20', '22:10', 'Outro', 'Confraternização de fim de ano dos professores.', 'Solicitado', '1011', '2025-11-29'),
-('EVT_APRESENTACAO_18', '2025-12-17', 'Teste de Exclusão de Prof (1N1)', '10:00', '10:50', 'Outro', 'Evento para testar a lógica de exclusão de professor.', 'Solicitado', '0001', '2025-11-30');
+('EVT_FINAL_01', '2025-11-24', 'Abertura TCCs', '08:00', '09:40', 'Palestra', 'Abertura oficial.', 'Aprovado', '0002', '2025-11-15', '0002'),
+('EVT_FINAL_02', '2025-11-25', 'Banca TCC 3I1-A', '13:30', '15:10', 'Outro', 'Banca TCC Grupo A.', 'Aprovado', '1001', '2025-11-15', '0002'),
+('EVT_FINAL_03', '2025-11-25', 'Banca TCC 3G2-A', '19:20', '22:10', 'Outro', 'Banca TCC Grupo A.', 'Aprovado', '1016', '2025-11-16', '0002'),
+('EVT_FINAL_04', '2025-11-26', 'Palestra: Logística', '10:00', '11:40', 'Palestra', 'Convidado externo.', 'Aprovado', '0001', '2025-11-16', '0002'),
+('EVT_FINAL_05', '2025-11-27', 'Visita Porto', '08:00', '12:30', 'Visita Técnica', 'Visita ao Porto.', 'Aprovado', '0002', '2025-11-17', '0002'),
+('EVT_FINAL_06', '2025-11-28', 'Prova Redes (1N1)', '19:20', '21:00', 'Prova', 'Prova bimestral.', 'Aprovado', '1017', '2025-11-18', '0002'),
+('EVT_FINAL_07', '2025-12-01', 'Conselho 1K2', '08:50', '10:00', 'Conselho de Classe', 'Conselho de Classe.', 'Aprovado', '0002', '2025-11-20', '0002'),
+('EVT_FINAL_08', '2025-12-02', 'Amistoso Futsal', '16:20', '18:00', 'Evento Esportivo', '1I1 x 1G2.', 'Aprovado', '1018', '2025-11-20', '0002'),
+('EVT_FINAL_09', '2025-12-03', 'Encerramento Noite', '20:10', '21:00', 'Reunião', 'Reunião geral.', 'Aprovado', '0002', '2025-11-21', '0002'),
+('EVT_FINAL_10', '2025-12-04', 'Feira Projetos 1I1', '13:30', '16:00', 'Palestra', 'Apresentação.', 'Aprovado', '1022', '2025-11-22', '0002'),
+('EVT_FINAL_11', '2025-12-05', 'Entrega Notas', '07:10', '18:00', 'Reunião', 'Fechamento de notas.', 'Aprovado', '0002', '2025-11-23', '0002'),
+('EVT_FINAL_12', '2025-12-08', 'Palestra ABNT', '10:00', '11:40', 'Palestra', 'Normas ABNT.', 'Aprovado', '1001', '2025-11-25', '0002');
 
 -- =================================================================
--- PARTE 4: ASSOCIANDO TURMAS E PROFESSORES AOS NOVOS EVENTOS
+-- PARTE 3.1: MAIS EVENTOS APROVADOS (Bloco B)
+-- =================================================================
+INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao, cd_usuario_aprovador) VALUES 
+('EVT_FINAL_13', '2025-12-09', 'Cibersegurança', '19:20', '21:00', 'Palestra', 'Especialista convidado.', 'Aprovado', '1017', '2025-11-25', '0002'),
+('EVT_FINAL_14', '2025-12-10', 'Visita Google', '08:00', '17:10', 'Visita Técnica', 'Cancelada.', 'Recusado', '1011', '2025-11-26', '0002'),
+('EVT_FINAL_15', '2025-12-11', 'Prova Final 2G2', '14:20', '16:00', 'Prova', 'Prova final.', 'Aprovado', '1016', '2025-11-27', '0002'),
+('EVT_FINAL_31', '2025-11-24', 'Prova PW 1N1', '19:20', '21:00', 'Prova', 'Prova PW III.', 'Aprovado', '1011', '2025-11-15', '0002'),
+('EVT_FINAL_32', '2025-11-26', 'Apresentação 1I1', '08:50', '10:00', 'Outro', 'Trabalhos.', 'Aprovado', '1013', '2025-11-16', '0002'),
+('EVT_FINAL_33', '2025-11-27', 'Palestra Finanças', '20:10', '22:10', 'Palestra', 'Finanças Pessoais.', 'Aprovado', '1023', '2025-11-18', '0002'),
+('EVT_FINAL_34', '2025-12-01', 'Prova BD 1N1', '21:20', '22:10', 'Prova', 'Prova Banco de Dados.', 'Aprovado', '0001', '2025-11-20', '0002'),
+('EVT_FINAL_35', '2025-12-02', 'Defesa TCC 3N1', '19:20', '21:00', 'Outro', 'Grupo C.', 'Aprovado', '1017', '2025-11-21', '0002'),
+('EVT_FINAL_36', '2025-12-04', 'Recuperação 1K2', '08:00', '09:40', 'Prova', 'Eletrônica.', 'Aprovado', '1016', '2025-11-22', '0002'),
+('EVT_FINAL_37', '2025-12-08', 'Reunião Pais Noite', '18:30', '19:20', 'Reunião', 'Pais e mestres.', 'Aprovado', '0002', '2025-11-25', '0002'),
+('EVT_FINAL_38', '2025-12-09', 'Festa 3º Anos', '08:50', '11:40', 'Outro', 'Confraternização.', 'Aprovado', '1001', '2025-11-26', '0002'),
+('EVT_FINAL_39', '2025-12-11', 'Gincana Escolar', '08:00', '11:40', 'Evento Esportivo', 'Pátio.', 'Aprovado', '1020', '2025-11-27', '0002'),
+('EVT_FINAL_40', '2025-12-12', 'Encerramento Manhã', '10:50', '11:40', 'Outro', 'Cerimônia.', 'Aprovado', '0002', '2025-11-28', '0002');
+
+-- =================================================================
+-- PARTE 3.2: EVENTOS SOLICITADOS E RECUSADOS
+-- =================================================================
+INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao) VALUES 
+('EVT_FINAL_41', '2025-12-15', 'Planejamento 2026', '10:00', '11:40', 'Reunião', 'Planejamento.', 'Solicitado', '1020', '2025-11-28'),
+('EVT_FINAL_42', '2025-12-16', 'Confraternização Profs', '19:20', '22:10', 'Outro', 'Fim de ano.', 'Solicitado', '1011', '2025-11-29'),
+('EVT_FINAL_43', '2025-12-17', 'Teste Exclusão 1N1', '10:00', '10:50', 'Outro', 'Teste.', 'Solicitado', '0001', '2025-11-30'),
+('EVT_FINAL_44', '2025-12-18', 'Viagem Formatura', '07:10', '18:00', 'Visita Técnica', 'Hopi Hari.', 'Solicitado', '1025', '2025-11-30'),
+('EVT_FINAL_45', '2025-12-19', 'Exame Final 1I1', '14:20', '16:00', 'Prova', 'Lógica.', 'Solicitado', '1013', '2025-12-01');
+
+INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao, cd_usuario_aprovador) VALUES 
+('EVT_FINAL_46', '2025-10-30', 'Festa Halloween', '19:20', '22:10', 'Outro', 'Recusado.', 'Recusado', '1012', '2025-10-15', '0002'),
+('EVT_FINAL_47', '2025-11-20', 'Visita FUTEBOL', '08:00', '17:10', 'Visita Técnica', 'Museu do futebol.', 'Recusado', '1015', '2025-11-01', '0002');
+
+-- =================================================================
+-- PARTE 4: VINCULANDO EVENTOS A TURMAS
 -- =================================================================
 INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES 
-('EVT_APRESENTACAO_01', 18), ('EVT_APRESENTACAO_01', 9), ('EVT_APRESENTACAO_01', 6), ('EVT_APRESENTACAO_01', 15), ('EVT_APRESENTACAO_01', 12), ('EVT_APRESENTACAO_01', 3),
-('EVT_APRESENTACAO_02', 18), ('EVT_APRESENTACAO_03', 9),
-('EVT_APRESENTACAO_04', 7), ('EVT_APRESENTACAO_04', 8), ('EVT_APRESENTACAO_04', 9),
-('EVT_APRESENTACAO_05', 7), ('EVT_APRESENTACAO_05', 8), ('EVT_APRESENTACAO_05', 9),
-('EVT_APRESENTACAO_06', 4), ('EVT_APRESENTACAO_07', 1), ('EVT_APRESENTACAO_08', 16), ('EVT_APRESENTACAO_08', 7),
-('EVT_APRESENTACAO_09', 4), ('EVT_APRESENTACAO_09', 5), ('EVT_APRESENTACAO_09', 6),
-('EVT_APRESENTACAO_10', 16),
-('EVT_APRESENTACAO_11', 1), ('EVT_APRESENTACAO_11', 2), ('EVT_APRESENTACAO_11', 3), ('EVT_APRESENTACAO_11', 4), ('EVT_APRESENTACAO_11', 5), ('EVT_APRESENTACAO_11', 6), 
-('EVT_APRESENTACAO_11', 7), ('EVT_APRESENTACAO_11', 8), ('EVT_APRESENTACAO_11', 9), ('EVT_APRESENTACAO_11', 10), ('EVT_APRESENTACAO_11', 11), ('EVT_APRESENTACAO_11', 12), 
-('EVT_APRESENTACAO_11', 13), ('EVT_APRESENTACAO_11', 14), ('EVT_APRESENTACAO_11', 15), ('EVT_APRESENTACAO_11', 16), ('EVT_APRESENTACAO_11', 17), ('EVT_APRESENTACAO_11', 18),
-('EVT_APRESENTACAO_12', 3), ('EVT_APRESENTACAO_12', 6), ('EVT_APRESENTACAO_12', 9), ('EVT_APRESENTACAO_12', 12), ('EVT_APRESENTACAO_12', 15), ('EVT_APRESENTACAO_12', 18),
-('EVT_APRESENTACAO_13', 4), ('EVT_APRESENTACAO_13', 5), ('EVT_APRESENTACAO_13', 6),
-('EVT_APRESENTACAO_14', 4), ('EVT_APRESENTACAO_14', 5), ('EVT_APRESENTACAO_14', 6),
-('EVT_APRESENTACAO_15', 8),
-('EVT_APRESENTACAO_16', 1), ('EVT_APRESENTACAO_16', 4), ('EVT_APRESENTACAO_16', 7),
-('EVT_APRESENTACAO_17', 4), ('EVT_APRESENTACAO_17', 5), ('EVT_APRESENTACAO_17', 6),
-('EVT_APRESENTACAO_18', 4);
+('EVT_FINAL_01', 18), ('EVT_FINAL_01', 9), ('EVT_FINAL_01', 6), ('EVT_FINAL_01', 15),
+('EVT_FINAL_02', 18), ('EVT_FINAL_03', 9), ('EVT_FINAL_04', 7), ('EVT_FINAL_04', 8),
+('EVT_FINAL_05', 7), ('EVT_FINAL_05', 8), ('EVT_FINAL_06', 4), ('EVT_FINAL_07', 1),
+('EVT_FINAL_08', 16), ('EVT_FINAL_09', 4), ('EVT_FINAL_09', 5), ('EVT_FINAL_10', 16),
+('EVT_FINAL_11', 1), ('EVT_FINAL_11', 2), ('EVT_FINAL_11', 3), ('EVT_FINAL_11', 4),
+('EVT_FINAL_12', 3), ('EVT_FINAL_12', 6), ('EVT_FINAL_13', 4), ('EVT_FINAL_13', 5),
+('EVT_FINAL_14', 4), ('EVT_FINAL_14', 5), ('EVT_FINAL_15', 8), ('EVT_FINAL_31', 4),
+('EVT_FINAL_32', 16), ('EVT_FINAL_33', 4), ('EVT_FINAL_34', 4), ('EVT_FINAL_35', 6),
+('EVT_FINAL_36', 1), ('EVT_FINAL_37', 4), ('EVT_FINAL_37', 5), ('EVT_FINAL_38', 16),
+('EVT_FINAL_38', 17), ('EVT_FINAL_39', 1), ('EVT_FINAL_39', 7), ('EVT_FINAL_40', 2),
+('EVT_FINAL_41', 1), ('EVT_FINAL_41', 4), ('EVT_FINAL_42', 4), ('EVT_FINAL_42', 5),
+('EVT_FINAL_43', 4), ('EVT_FINAL_44', 18), ('EVT_FINAL_45', 16), ('EVT_FINAL_46', 4),
+('EVT_FINAL_47', 16);
 
--- **A CORREÇÃO ESTÁ AQUI**
+-- =================================================================
+-- PARTE 5: VINCULANDO RESPOSTAS DE PROFESSORES
+-- =================================================================
 INSERT INTO resolucao_eventos_usuarios (eventos_cd_evento, usuarios_cd_usuario, status_resolucao) VALUES 
-('EVT_APRESENTACAO_16', '1001', 'Aprovado'), ('EVT_APRESENTACAO_16', '1011', 'Recusado'), ('EVT_APRESENTACAO_16', '0001', 'Pendente'),
-('EVT_APRESENTACAO_16', '1016', 'Pendente'), ('EVT_APRESENTACAO_16', '1017', 'Pendente'), ('EVT_APRESENTACAO_16', '1018', 'Pendente'),
-('EVT_APRESENTACAO_16', '1023', 'Pendente'), 
-('EVT_APRESENTACAO_16', '1022', 'Pendente'), -- CORRIGIDO: 1026 -> 1022 (Leticia Barros)
-('EVT_APRESENTACAO_16', '1019', 'Pendente'),
-
-('EVT_APRESENTACAO_17', '1001', 'Pendente'), ('EVT_APRESENTACAO_17', '0001', 'Pendente'), ('EVT_APRESENTACAO_17', '1012', 'Pendente'),
-('EVT_APRESENTACAO_17', '1017', 'Pendente'), ('EVT_APRESENTACAO_17', '1018', 'Pendente'), ('EVT_APRESENTACAO_17', '1020', 'Pendente'),
-('EVT_APRESENTACAO_17', '1023', 'Pendente'), 
-('EVT_APRESENTACAO_17', '1022', 'Pendente'), -- CORRIGIDO: 1026 -> 1022 (Leticia Barros)
-
-('EVT_APRESENTACAO_18', '1017', 'Pendente'), ('EVT_APRESENTACAO_18', '1018', 'Pendente'),
-('EVT_APRESENTACAO_18', '1020', 'Pendente'), ('EVT_APRESENTACAO_18', '1023', 'Pendente');
+-- Evento 16 (Solicitado)
+('EVT_FINAL_41', '1001', 'Aprovado'), ('EVT_FINAL_41', '1011', 'Recusado'), 
+('EVT_FINAL_41', '1016', 'Pendente'), ('EVT_FINAL_41', '1017', 'Pendente'),
+-- Evento 17 (Solicitado)
+('EVT_FINAL_42', '1001', 'Pendente'), ('EVT_FINAL_42', '0001', 'Pendente'), 
+('EVT_FINAL_42', '1012', 'Pendente'), ('EVT_FINAL_42', '1017', 'Pendente'),
+-- Evento 43 (Solicitado - Teste de Exclusão)
+('EVT_FINAL_43', '1017', 'Pendente'), ('EVT_FINAL_43', '1020', 'Pendente'), 
+('EVT_FINAL_43', '1023', 'Pendente'),
+-- Evento 44 (Solicitado)
+('EVT_FINAL_44', '1028', 'Pendente'),
+-- Evento 45 (Solicitado)
+('EVT_FINAL_45', '1014', 'Aprovado'), ('EVT_FINAL_45', '1018', 'Pendente'), 
+('EVT_FINAL_45', '1025', 'Pendente');
