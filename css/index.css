@@ -377,18 +377,11 @@
     border: 1px solid #0d102b;
 }
 
-.navegacao-calendario .nav-btn.today {
-    background-color: #f8f9fa;
-    color: #0d102b;
-    border: 1px solid #0d102b;
-}
+
 
 .navegacao-calendario .nav-btn:hover {
     background-color: #0479F9;
     border-color: #0479F9;
-}
-.navegacao-calendario .nav-btn.today:hover {
-    background-color: #e2e6ea;
 }
 
 /* Ajusta o H3 para não ficar em cima dos botões */

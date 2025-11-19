@@ -1,8 +1,5 @@
 <?php
-    // =================================================================
-    // BLOCO DE CONTROLE E DADOS - AGENDA DO COORDENADOR (v3 com Navegação)
-    // =================================================================
-
+    
     // 1. CONFIGURAÇÃO E SEGURANÇA
     require_once '../api/config.php';
     require_once '../api/verifica_sessao.php';
@@ -194,7 +191,7 @@
                     </div>
                     
                     <div class="filtro-botoes">
-                        <a href="agendacoord.php" class="botao-limpar-filtro">Limpar</a>
+                        <a href="agendacoord.php" class="botao-limpar-filtro">Limpar</a>        
                         <button type="submit" class="botao-filtrar">Filtrar</button>
                     </div>
                 </section>
@@ -206,7 +203,6 @@
                 <div class="header-parte-de-cima">
                     <div class="navegacao-calendario">
                         <a href="<?php echo $link_semana_anterior; ?>" class="nav-btn" title="Semana Anterior">&lt;</a>
-                        <a href="<?php echo $link_hoje; ?>" class="nav-btn today">Hoje</a>
                         <a href="<?php echo $link_proxima_semana; ?>" class="nav-btn" title="Próxima Semana">&gt;</a>
                     </div>
                     <h3><?php echo $mes_ano_atual; ?></h3>
