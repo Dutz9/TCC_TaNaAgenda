@@ -147,58 +147,58 @@ SELECT * FROM cursos;
 
 
 INSERT INTO turmas ( nm_turma, ic_serie, qt_alunos, cd_sala, cursos_cd_curso) VALUES 
-('1K2', '1', 30, 1, 1),   -- Automação Industrial, 1ª Série
-('2K2', '2', 30, 2, 1),   -- Automação Industrial, 2ª Série
-('3K2', '3', 30, 3, 1),   -- Automação Industrial, 3ª Série
-('1N1', '1', 30, 4, 2),   -- Desenvolvimento de Sistemas, 1ª Série
-('2N1', '2', 30, 4, 2),   -- Desenvolvimento de Sistemas, 2ª Série
-('3N1', '3', 30, 4, 2),   -- Desenvolvimento de Sistemas, 3ª Série
-('1G2', '1', 30, 5, 3),   -- Edificações, 1ª Série
-('2G2', '2', 30, 6, 3),   -- Edificações, 2ª Série
-('3G2', '3', 30, 7, 3),   -- Edificações, 3ª Série
-('1P1', '1', 30, 8, 4),   -- Eletrônica, 1ª Série
-('2P1', '2', 30, 9, 4),   -- Eletrônica, 2ª Série
-('3P1', '3', 30, 10, 4),  -- Eletrônica, 3ª Série
-('1R1', '1', 30, 11, 5),  -- Eletrotécnica, 1ª Série
-('2R1', '2', 30, 11, 5),  -- Eletrotécnica, 2ª Série
-('3R1', '3', 30, 11, 5),  -- Eletrotécnica, 3ª Série
-('1I1', '1', 30, 12, 6),  -- Informática para Internet, 1ª Série
-('2I1', '2', 30, 13, 6),  -- Informática para Internet, 2ª Série
-('3I1', '3', 30, 14, 6),  -- Informática para Internet, 3ª Série
-('1S2', '1', 30, 15, 7),  -- Programação de Jogos Digitais, 1ª Série
-('2S2', '2', 30, 16, 7),  -- Programação de Jogos Digitais, 2ª Série
-('3S2', '3', 30, 17, 7),  -- Programação de Jogos Digitais, 3ª Série
-('GT3', '1', 30, 18, 8),  -- Guia de Turismo Internacional, 1º Módulo
-('MDS3', '1', 30, 19, 9), -- M-TEC AMS Desenvolvimento de Sistemas, 1ª Série
-('MDS3', '2', 30, 20, 9), -- M-TEC AMS Desenvolvimento de Sistemas, 2ª Série
-('MET3', '1', 30, 21, 10), -- M-TEC Eletrotécnica, 1ª Série
-('MET3', '2', 30, 22, 10), -- M-TEC Eletrotécnica, 2ª Série
-('MM3', '1', 30, 23, 11), -- M-TEC Mecânica, 1ª Série
-('AV3', '2', 30, 24, 12), -- Agenciamento de Viagem, 2º Módulo
-('AV3', '3', 30, 25, 12), -- Agenciamento de Viagem, 3º Módulo
-('DC3', '1', 30, 26, 13), -- Desenho de Construção Civil, 1º Módulo
-('DC3', '2', 30, 27, 13), -- Desenho de Construção Civil, 2º Módulo
-('DC3', '3', 30, 28, 13), -- Desenho de Construção Civil, 3º Módulo
-('ED3', '1', 30, 29, 3),  -- Técnico em Edificações, 1º Módulo
-('ED3', '2', 30, 30, 3),  -- Técnico em Edificações, 2º Módulo
-('ED3', '3', 30, 31, 3),  -- Técnico em Edificações, 3º Módulo
-('EL3', '3', 30, 32, 4),  -- Técnico em Eletrônica, 3º Módulo
-('EAN3', '1', 30, 33, 14), -- Eletrônica ANP, 1º Módulo
-('EAN3', '2', 30, 34, 14), -- Eletrônica ANP, 2º Módulo
-('ET3', '1', 30, 35, 5),  -- Técnico em Eletrotécnica, 1º Módulo
-('ET3', '2', 30, 36, 5),  -- Técnico em Eletrotécnica, 2º Módulo
-('ET3', '3', 30, 37, 5),  -- Técnico em Eletrotécnica, 3º Módulo
-('INF', '1', 30, 38, 15), -- Técnico em Informática, 1º Módulo
-('INF', '2', 30, 39, 15), -- Técnico em Informática, 2º Módulo
-('INF', '3', 30, 40, 15), -- Técnico em Informática, 3º Módulo
-('MEC', '1', 30, 41, 16), -- Técnico em Mecânica, 1º Módulo
-('MEC', '2', 30, 42, 16), -- Técnico em Mecânica, 2º Módulo
-('MEC', '3', 30, 43, 16), -- Técnico em Mecânica, 3º Módulo
-('MT', '1', 30, 44, 17),  -- Técnico em Mecatrônica, 1º Módulo
-('MT', '2', 30, 45, 17),  -- Técnico em Mecatrônica, 2º Módulo
-('ML', '1', 30, 46, 18),  -- Técnico em Metalurgia, 1º Módulo
-('SO', '2', 30, 47, 19),  -- Técnico em Soldagem, 2º Módulo
-('SO', '3', 30, 48, 19);  -- Técnico em Soldagem, 3º Módulo
+('1K2', '1', 36, 1, 1),   -- Automação Industrial, 1ª Série
+('2K2', '2', 33, 2, 1),   -- Automação Industrial, 2ª Série
+('3K2', '3', 32, 3, 1),   -- Automação Industrial, 3ª Série
+('1N1', '1', 36, 4, 2),   -- Desenvolvimento de Sistemas, 1ª Série
+('2N1', '2', 34, 4, 2),   -- Desenvolvimento de Sistemas, 2ª Série
+('3N1', '3', 32, 4, 2),   -- Desenvolvimento de Sistemas, 3ª Série
+('1G2', '1', 36, 5, 3),   -- Edificações, 1ª Série
+('2G2', '2', 35, 6, 3),   -- Edificações, 2ª Série
+('3G2', '3', 35, 7, 3),   -- Edificações, 3ª Série
+('1P1', '1', 36, 8, 4),   -- Eletrônica, 1ª Série
+('2P1', '2', 34, 9, 4),   -- Eletrônica, 2ª Série
+('3P1', '3', 31, 10, 4),  -- Eletrônica, 3ª Série
+('1R1', '1', 36, 11, 5),  -- Eletrotécnica, 1ª Série
+('2R1', '2', 34, 11, 5),  -- Eletrotécnica, 2ª Série
+('3R1', '3', 35, 11, 5),  -- Eletrotécnica, 3ª Série
+('1I1', '1', 36, 12, 6),  -- Informática para Internet, 1ª Série
+('2I1', '2', 35, 13, 6),  -- Informática para Internet, 2ª Série
+('3I1', '3', 31, 14, 6),  -- Informática para Internet, 3ª Série
+('1S2', '1', 36, 15, 7),  -- Programação de Jogos Digitais, 1ª Série
+('2S2', '2', 35, 16, 7),  -- Programação de Jogos Digitais, 2ª Série
+('3S2', '3', 32, 17, 7),  -- Programação de Jogos Digitais, 3ª Série
+('GT3', '1', 36, 18, 8),  -- Guia de Turismo Internacional, 1º Módulo
+('1MDS3', '1', 34, 19, 9), -- M-TEC AMS Desenvolvimento de Sistemas, 1ª Série
+('2MDS3', '2', 33, 20, 9), -- M-TEC AMS Desenvolvimento de Sistemas, 2ª Série
+('1MET1', '1', 36, 21, 10), -- M-TEC Eletrotécnica, 1ª Série
+('2MET2', '2', 34, 22, 10), -- M-TEC Eletrotécnica, 2ª Série
+('1MM3', '1', 34, 23, 11), -- M-TEC Mecânica, 1ª Série
+('2AV3', '2', 36, 24, 12), -- Agenciamento de Viagem, 2º Módulo
+('3AV3', '3', 32, 25, 12), -- Agenciamento de Viagem, 3º Módulo
+('1DC3', '1', 20, 26, 13), -- Desenho de Construção Civil, 1º Módulo
+('2DC3', '2', 18, 27, 13), -- Desenho de Construção Civil, 2º Módulo
+('3DC3', '3', 22, 28, 13), -- Desenho de Construção Civil, 3º Módulo
+('1ED3', '1', 15, 29, 3),  -- Técnico em Edificações, 1º Módulo
+('2ED3', '2', 23, 30, 3),  -- Técnico em Edificações, 2º Módulo
+('3ED3', '3', 22, 31, 3),  -- Técnico em Edificações, 3º Módulo
+('3EL3', '3', 29, 32, 4),  -- Técnico em Eletrônica, 3º Módulo
+('1EAN3', '1', 14, 33, 14), -- Eletrônica ANP, 1º Módulo
+('2EAN3', '2', 13, 34, 14), -- Eletrônica ANP, 2º Módulo
+('1ET3', '1', 30, 35, 5),  -- Técnico em Eletrotécnica, 1º Módulo
+('2ET3', '2', 26, 36, 5),  -- Técnico em Eletrotécnica, 2º Módulo
+('3ET3', '3', 20, 37, 5),  -- Técnico em Eletrotécnica, 3º Módulo
+('1INF', '1', 30, 38, 15), -- Técnico em Informática, 1º Módulo
+('2INF', '2', 29, 39, 15), -- Técnico em Informática, 2º Módulo
+('3INF', '3', 28, 40, 15), -- Técnico em Informática, 3º Módulo
+('1MEC', '1', 15, 41, 16), -- Técnico em Mecânica, 1º Módulo
+('2MEC', '2', 16, 42, 16), -- Técnico em Mecânica, 2º Módulo
+('3MEC', '3', 18, 43, 16), -- Técnico em Mecânica, 3º Módulo
+('1MT', '1',24, 44, 17),  -- Técnico em Mecatrônica, 1º Módulo
+('2MT', '2', 23, 45, 17),  -- Técnico em Mecatrônica, 2º Módulo
+('1ML', '1', 21, 46, 18),  -- Técnico em Metalurgia, 1º Módulo
+('2SO', '2', 13, 47, 19),  -- Técnico em Soldagem, 2º Módulo
+('3SO', '3', 10, 48, 19);  -- Técnico em Soldagem, 3º Módulo
 SELECT * FROM turmas;
 
 INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES 
