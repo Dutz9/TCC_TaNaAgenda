@@ -203,10 +203,7 @@
                 <div class="header-parte-de-cima">
                     <div class="navegacao-calendario">
                         <a href="<?php echo $link_semana_anterior; ?>" class="nav-btn" title="Semana Anterior">&lt;</a>
-<<<<<<< HEAD
                         <!-- <a href="<?php echo $link_hoje; ?>" class="nav-btn today">Hoje</a> -->
-=======
->>>>>>> 342ee2c90732e417b14ee9b134cb7b3d8e27d174
                         <a href="<?php echo $link_proxima_semana; ?>" class="nav-btn" title="Próxima Semana">&gt;</a>
                     </div>
                     <h3><?php echo $mes_ano_atual; ?></h3>
