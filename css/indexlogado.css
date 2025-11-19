@@ -598,6 +598,8 @@
     left: 20px; /* Alinha à esquerda */
     top: 50%;
     transform: translateY(-50%);
+    justify-content: space-between;
+    width: calc(100% - 40px);
 }
 
 .navegacao-calendario .nav-btn {
