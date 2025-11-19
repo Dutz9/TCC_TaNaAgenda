@@ -1,5 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- VERIFICAÇÃO INICIAL ---
+    // --- LÓGICA DOS FILTROS ACORDEÃO ---
+    const formFiltrosAgenda = document.getElementById('form-filtros-agenda');
+    if (formFiltrosAgenda) {
+        document.querySelectorAll('.filtro-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const item = header.parentElement;
+                item.classList.toggle('aberto');
+            });
+        });
+    }
+
     if (typeof eventosDoBanco === 'undefined') {
         console.error("A variável 'eventosDoBanco' não foi encontrada. Verifique o script PHP.");
         return;
@@ -12,25 +22,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const dayModalContent = dayModalOverlay.querySelector('.modal-content');
     const selectedDaySpan = document.getElementById('selected-day');
     const rightCalendarDays = document.querySelector('.dias-calendario-lado-direito');
-    const miniCalHeaderMonth = document.querySelector('.header-calendario-lado-direito h3:nth-child(1)');
-    const miniCalHeaderYear = document.querySelector('.header-calendario-lado-direito h3:nth-child(2)');
+    
+    // --- Seletores do Mini-Calendário ATUALIZADOS ---
+    const miniCalHeaderMonth = document.querySelector('.header-calendario-lado-direito h3:nth-of-type(1)');
+    const miniCalHeaderYear = document.querySelector('.header-calendario-lado-direito h3:nth-of-type(2)');
+    const miniCalPrevBtn = document.getElementById('mini-cal-prev');
+    const miniCalNextBtn = document.getElementById('mini-cal-next');
 
     // --- FUNÇÕES AUXILIARES ---
-
-     /**
-     * Formata uma data local para 'YYYY-MM-DD' sem bugs de fuso horário.
-     * @param {Date} dateObject - O objeto de data.
-     * @returns {string} - A data formatada.
-     */
     function formatarDataParaFiltro(dateObject) {
         const dia = String(dateObject.getDate()).padStart(2, '0');
-        const mes = String(dateObject.getMonth() + 1).padStart(2, '0'); // +1 pois meses começam em 0
+        const mes = String(dateObject.getMonth() + 1).padStart(2, '0');
         const ano = dateObject.getFullYear();
         return `${ano}-${mes}-${dia}`;
     }
 
     const getEventsForDate = (dateObject) => {
-        const targetDate = formatarDataParaFiltro(dateObject); // <-- CORRIGIDO
+        const targetDate = formatarDataParaFiltro(dateObject);
         return eventosDoBanco.filter(event => event.dt_evento === targetDate);
     };
     
@@ -44,22 +52,17 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'tipo-' + eventType.toLowerCase().replace(/ /g, '-');
     };
 
-    // --- LÓGICA DOS FILTROS ACORDEÃO ---
-    const formFiltrosAgenda = document.getElementById('form-filtros-agenda');
-    if (formFiltrosAgenda) {
-        // 1. Controla a abertura/fechamento do acordeão
-        document.querySelectorAll('.filtro-header').forEach(header => {
-            header.addEventListener('click', () => {
-                const item = header.parentElement;
-                item.classList.toggle('aberto');
-            });
-        });
-        
-        // (O auto-submit 'change' listener foi removido)
+    function getMondayString(date) {
+        const d = new Date(date);
+        const dayOfWeek = d.getDay();
+        const diff = d.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+        const monday = new Date(d.setDate(diff));
+        return formatarDataParaFiltro(monday);
     }
-    
+
     // --- LÓGICA DO MODAL DE EVENTO INDIVIDUAL ---
     function showEventModal(eventData) {
+        // (Esta função continua 100% igual à da última vez)
         modalContent.innerHTML = `
             <h3>${eventData.nome}</h3>
             <p><strong>Data:</strong> ${new Date(eventData.data + 'T00:00:00').toLocaleDateString('pt-BR')}</p>
@@ -90,15 +93,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- LÓGICA DO PAINEL DIREITO (MINI-CALENDÁRIO E RESUMOS) ---
+    
+    // Pega a data da URL (se existir) para o mini-calendário
+    const urlParams = new URLSearchParams(window.location.search);
+    const weekParam = urlParams.get('week');
+    let dataInicial = new Date();
+    if (weekParam) {
+        dataInicial = new Date(weekParam + 'T12:00:00'); // Adiciona T12:00 para evitar bugs de fuso
+    }
+    
+    // Variável de estado para o mês do mini-calendário
+    let dataAtualMiniCal = new Date(dataInicial);
+
+    // --- NOVOS EVENT LISTENERS PARA AS SETAS ---
+    miniCalPrevBtn.addEventListener('click', () => {
+        dataAtualMiniCal.setMonth(dataAtualMiniCal.getMonth() - 1);
+        updateRightPanel(dataAtualMiniCal);
+    });
+
+    miniCalNextBtn.addEventListener('click', () => {
+        dataAtualMiniCal.setMonth(dataAtualMiniCal.getMonth() + 1);
+        updateRightPanel(dataAtualMiniCal);
+    });
+    // --- FIM DOS NOVOS LISTENERS ---
+
     function updateSummaries(date) {
+        // (Esta função continua 100% igual à da última vez)
         const todayEvents = getEventsForDate(date);
         const tomorrowDate = new Date(date);
         tomorrowDate.setDate(date.getDate() + 1);
         const tomorrowEvents = getEventsForDate(tomorrowDate);
-
         const todaySummaryContainer = document.querySelector(".resumo-geral-lado-direito:nth-of-type(1) .container-scroll-eventos");
         const tomorrowSummaryContainer = document.querySelector(".resumo-geral-lado-direito:nth-of-type(2) .container-scroll-eventos");
-        
         todaySummaryContainer.innerHTML = '';
         if (todayEvents.length > 0) {
             todayEvents.forEach(evt => {
@@ -110,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             todaySummaryContainer.innerHTML = '<div class="area-escrita-resumo-geral"><p>Nenhum evento hoje.</p></div>';
         }
-        
         tomorrowSummaryContainer.innerHTML = '';
         if (tomorrowEvents.length > 0) {
             tomorrowEvents.forEach(evt => {
@@ -128,6 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const month = date.getMonth();
         const year = date.getFullYear();
         const dayOfWeek = date.getDay();
+        const today = new Date();
+        const todayDate = today.getDate();
+        const todayMonth = today.getMonth();
+        const todayYear = today.getFullYear();
+        
         const monthsPt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         miniCalHeaderMonth.innerText = monthsPt[month];
@@ -135,10 +165,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const diasSemanaMini = document.querySelectorAll('.dia-semana');
         diasSemanaMini.forEach(dia => dia.classList.remove('atual'));
-        if (dayOfWeek >= 1 && dayOfWeek <= 6) {
-            diasSemanaMini[dayOfWeek - 1].classList.add('atual');
-        } else if (dayOfWeek === 0) {
-            diasSemanaMini[6].classList.add('atual');
+        
+        // Destaque do dia da semana (Seg, Ter, Qua...)
+        // Só destaca se o mês/ano do mini-calendário for o mesmo do "hoje"
+        if (month === todayMonth && year === todayYear) {
+            if (dayOfWeek >= 1 && dayOfWeek <= 6) {
+                diasSemanaMini[dayOfWeek - 1].classList.add('atual');
+            } else if (dayOfWeek === 0) {
+                diasSemanaMini[6].classList.add('atual');
+            }
         }
 
         rightCalendarDays.innerHTML = '';
@@ -150,39 +185,33 @@ document.addEventListener('DOMContentLoaded', () => {
             rightCalendarDays.appendChild(document.createElement('p'));
         }
 
-        for (let d = 1; d <= daysInMonth; d++) {
-            const dayP = document.createElement('p');
-            dayP.innerText = d < 10 ? `0${d}` : d;
-            dayP.classList.add('calendar-day');
+        const filtrosQueryString = window.location.search.split('?')[1] || '';
+        const params = new URLSearchParams(filtrosQueryString);
+        params.delete('week');
+        const filtrosAtuais = params.toString();
 
-            if (d === date.getDate() && month === date.getMonth() && year === date.getFullYear()) {
-                dayP.style.backgroundColor = '#022E5E';
-                dayP.style.color = 'white';
-                dayP.style.borderRadius = '10px';
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dayLink = document.createElement('a');
+            dayLink.innerText = d < 10 ? `0${d}` : d;
+            dayLink.className = 'calendar-day-link';
+
+            const clickedDate = new Date(year, month, d);
+            const mondayString = getMondayString(clickedDate);
+            
+            dayLink.href = `?week=${mondayString}&${filtrosAtuais}`; // O link de navegação continua o mesmo
+
+            // Destaque do dia atual (número)
+            if (d === todayDate && month === todayMonth && year === todayYear) {
+                dayLink.classList.add('today');
             }
 
-            dayP.addEventListener('click', () => {
-                const clickedDate = new Date(year, month, d);
-                const eventsOfTheDay = getEventsForDate(clickedDate);
-                
-                selectedDaySpan.innerText = formatarData(`${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
-                
-                let eventsHtml = '';
-                if (eventsOfTheDay.length > 0) {
-                    eventsOfTheDay.forEach(evt => {
-                        eventsHtml += `<p>${evt.nm_evento} às ${evt.horario_inicio.substr(0, 5)}</p>`;
-                    });
-                } else {
-                    eventsHtml = '<p>Nenhum evento para este dia.</p>';
-                }
-                dayModalContent.querySelector('div').innerHTML = eventsHtml;
-                dayModalOverlay.style.display = 'flex';
-            });
-            rightCalendarDays.appendChild(dayP);
+            rightCalendarDays.appendChild(dayLink);
         }
-        updateSummaries(date);
+        
+        // Atualiza os resumos para a data da AGENDA PRINCIPAL, não do mini-calendário
+        updateSummaries(dataInicial);
     }
 
     // --- INICIALIZAÇÃO ---
-    updateRightPanel(new Date());
+    updateRightPanel(dataInicial);
 });
