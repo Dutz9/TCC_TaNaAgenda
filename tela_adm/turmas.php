@@ -45,6 +45,7 @@
 <body>
 <script src="../js/favicon.js"></script>
     <header class="header">
+        <button class="menu-toggle" id="menu-toggle">☰</button>
         <a href="perfiladm.php">
             <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
         </a>

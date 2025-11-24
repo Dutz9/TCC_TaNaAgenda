@@ -56,6 +56,7 @@
 <body>
 <script src="../js/favicon.js"></script>
     <header class="header">
+        <button class="menu-toggle" id="menu-toggle">☰</button>
         <a href="perfil.php">
             <p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></p>
         </a>
@@ -124,5 +125,6 @@
             </div>
         </section>
     </section>
+    <div class="menu-overlay" id="menu-overlay"></div>
 </body>
 </html>

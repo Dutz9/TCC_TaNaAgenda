@@ -122,5 +122,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="esqueciMinhaSenha.php">Esqueci minha senha</a>
         </h3>
     </div>
+    <div class="menu-overlay" id="menu-overlay"></div>
 </body>
 </html>

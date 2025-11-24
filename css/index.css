@@ -413,3 +413,50 @@
 .mini-cal-nav:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
+
+/* --- RESPONSIVIDADE DA AGENDA --- */
+@media (max-width: 768px) {
+    
+    /* Oculta a barra direita em mobile para dar espaço */
+    .area-lado-direito {
+        display: none;
+    }
+
+    /* Expande o calendário */
+    .calendario {
+        width: 100%;
+        margin-left: 0;
+        height: auto;
+        min-height: calc(100vh - 80px);
+    }
+
+    /* Ajuste do Header do Calendário */
+    .header-parte-de-cima {
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: 15px;
+    }
+    .header-parte-de-cima h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+    .navegacao-calendario {
+        position: static; /* Remove posição absoluta */
+        transform: none;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 10px;
+    }
+    .header-turmas {
+        position: static;
+        margin-top: 5px;
+    }
+
+    /* Grade com Rolagem Horizontal */
+    .fundo-grid {
+        overflow-x: auto; /* Permite rolar para o lado */
+    }
+    .calendario-grid, .header-divisoes-semanas {
+        min-width: 600px; /* Força uma largura mínima para não espremer */
+    }
+}
