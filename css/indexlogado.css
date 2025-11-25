@@ -292,7 +292,7 @@
 
 /* Destaque para o dia atual (adicionado via JS) */
 .dia-semana.atual {
-    color: #0479F9 !important; /* Azul claro para destaque no dia atual */
+    color: #022E5E !important; /* Azul claro para destaque no dia atual */
 }
 
 /* --- ESTILO DOS DIAS CLICÁVEIS DO MINI-CALENDÁRIO --- */

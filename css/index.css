@@ -239,7 +239,7 @@
     flex: 1;
 }
 .dia-semana.dom { color: #DD2B2B; }
-.dia-semana.atual { color: #0479F9 !important; }
+.dia-semana.atual { color: #022E5E !important; }
 
 /* --- ESTILO DOS DIAS CLICÁVEIS DO MINI-CALENDÁRIO --- */
 .dias-calendario-lado-direito {
