@@ -120,6 +120,9 @@ foreach ($lista_eventos as $evento) {
     <link id="favicon" rel="shortcut icon" href="image/Favicon-light.png">
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 </head>
 <body>
     <script src="js/favicon.js"></script>
@@ -195,11 +198,12 @@ foreach ($lista_eventos as $evento) {
         <section class="calendario">
             <div class="header-calendario">
                 <div class="header-parte-de-cima">
+                   
+                    <h3><?php echo $mes_ano_atual; ?></h3>
                     <div class="navegacao-calendario">
                         <a href="<?php echo $link_semana_anterior; ?>" id="nav-prev" class="nav-btn" title="Anterior">&lt;</a>
                         <a href="<?php echo $link_proxima_semana; ?>" id="nav-next" class="nav-btn" title="Próxima">&gt;</a>
                     </div>
-                    <h3><?php echo $mes_ano_atual; ?></h3>
                 </div>
                 <div class="header-divisoes-semanas">
                     <div class="header-spacer"></div> 

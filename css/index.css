@@ -363,6 +363,8 @@
     left: 20px; /* Alinha à esquerda */
     top: 50%;
     transform: translateY(-50%);
+    justify-content: space-between;
+    width: calc(100% - 40px);
 }
 
 .navegacao-calendario .nav-btn {
@@ -486,8 +488,7 @@
     /* --- HEADER AJUSTES --- */
     .header-parte-de-cima {
         flex-direction: column;
-        gap: 10px;
-        padding-bottom: 15px;
+        padding-top: 10px;
     }
     .header-parte-de-cima h3 {
         margin: 0;
@@ -499,8 +500,10 @@
         transform: none;
         width: 100%;
         justify-content: center;
-        margin-bottom: 10px;
+        margin-bottom: 5px;
         gap: 10px;
+        justify-content: space-between;
+        width: calc(100% - 40px);
     }
 
     .header-turmas {
@@ -515,6 +518,7 @@
         /* 50px fixos para a hora, 1fr (o resto) para o dia */
         grid-template-columns: 50px 1fr !important; 
         min-width: auto; 
+        margin-top: 5px;
     }
 
     /* --- CORREÇÃO DE ALINHAMENTO NO HEADER --- */
