@@ -286,7 +286,7 @@ INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES
 -- =================================================================
 INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao, cd_usuario_aprovador) VALUES 
 ('EVT_FINAL_01', '2025-11-24', 'Abertura TCCs', '08:00', '09:40', 'Palestra', 'Abertura oficial.', 'Aprovado', '0002', '2025-11-15', '0002'),
-('EVT_FINAL_02', '2025-11-25', 'Banca TCC 3I1-A', '13:30', '15:10', 'Outro', 'Banca TCC Grupo A.', 'Aprovado', '1001', '2025-11-15', '0002'),
+('EVT_FINAL_02', '2025-11-28', 'Banca TCC 3I1-A', '08:00', '12:30', 'Outro', 'Banca TCC Grupo A.', 'Aprovado', '1001', '2025-11-15', '0002'),
 ('EVT_FINAL_03', '2025-11-25', 'Banca TCC 3G2-A', '19:20', '22:10', 'Outro', 'Banca TCC Grupo A.', 'Aprovado', '1016', '2025-11-16', '0002'),
 ('EVT_FINAL_04', '2025-11-26', 'Palestra: Logística', '10:00', '11:40', 'Palestra', 'Convidado externo.', 'Aprovado', '0001', '2025-11-16', '0002'),
 ('EVT_FINAL_05', '2025-11-27', 'Visita Porto', '08:00', '12:30', 'Visita Técnica', 'Visita ao Porto.', 'Aprovado', '0002', '2025-11-17', '0002'),

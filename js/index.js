@@ -214,4 +214,69 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INICIALIZAÇÃO ---
     updateRightPanel(dataInicial);
+
+    // ============================================================
+    // LÓGICA DE NAVEGAÇÃO MOBILE (DIA A DIA)
+    // ============================================================
+    
+    const navPrev = document.getElementById('nav-prev');
+    const navNext = document.getElementById('nav-next');
+    const navToday = document.getElementById('nav-today');
+    
+    // Variável global para controlar o dia atual no mobile (0 a 5)
+    // Pega o valor inicial do PHP ou começa em 0
+    let currentMobileIndex = (typeof mobileActiveIndexInicial !== 'undefined') ? mobileActiveIndexInicial : 0;
+
+    function updateMobileView() {
+        // Só roda se estiver em tela pequena
+        if (window.innerWidth > 768) return;
+
+        // Remove a classe ativa de todos
+        for (let i = 0; i < 6; i++) {
+            document.querySelectorAll(`.col-dia-${i}`).forEach(el => el.classList.remove('mobile-active'));
+        }
+
+        // Adiciona a classe ativa apenas no índice atual
+        document.querySelectorAll(`.col-dia-${currentMobileIndex}`).forEach(el => el.classList.add('mobile-active'));
+    }
+
+    // Inicializa a visão
+    updateMobileView();
+    
+    // Atualiza se a tela for redimensionada
+    window.addEventListener('resize', updateMobileView);
+
+    // Intercepta o clique no botão "Anterior"
+    if (navPrev) {
+        navPrev.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (currentMobileIndex > 0) {
+                    // Se ainda tem dias na semana anterior (ex: estou na Terça, vou pra Segunda)
+                    e.preventDefault(); // Impede o recarregamento da página
+                    currentMobileIndex--;
+                    updateMobileView();
+                }
+                // Se currentMobileIndex == 0 (Segunda), deixa o link funcionar e carregar a semana anterior
+            }
+        });
+    }
+
+    // Intercepta o clique no botão "Próximo"
+    if (navNext) {
+        navNext.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (currentMobileIndex < 5) { // 5 é Sábado (0 a 5)
+                    // Se ainda tem dias na semana seguinte
+                    e.preventDefault();
+                    currentMobileIndex++;
+                    updateMobileView();
+                }
+                // Se currentMobileIndex == 5 (Sábado), deixa o link funcionar e carregar a próxima semana
+            }
+        });
+    }
+    
+    // O botão "Hoje" sempre recarrega a página, o que é correto, 
+    // pois o PHP vai calcular o índice correto do dia de hoje.
+
 });

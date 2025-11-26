@@ -325,4 +325,61 @@ a > img {
     .modal-right {
         width: 100%;
     }
+
+}
+
+/* --- RESPONSIVIDADE DO MENU E FILTROS --- */
+@media (max-width: 1024px) {
+    
+    /* ... (suas regras anteriores de header e menu-toggle mantêm-se) ... */
+
+    /* SIDEBAR (AREA-LADO) */
+    .area-lado {
+        width: 280px; /* Um pouco mais largo para caber os filtros */
+        left: -290px;
+        transition: left 0.3s ease-in-out;
+        position: fixed;
+        height: 100vh;
+        background-color: #0d102b;
+        z-index: 2000;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        
+        /* CORREÇÃO: Habilita scroll e dá espaço no final */
+        overflow-y: auto;
+        padding-bottom: 100px; 
+    }
+
+    .area-lado.active {
+        left: 0;
+    }
+
+    /* AJUSTE DOS FILTROS NO MOBILE */
+    .filtrar-calendario {
+        margin: 15px; /* Margem segura */
+        margin-bottom: 30px;
+    }
+
+    /* CORREÇÃO DOS BOTÕES DE FILTRO */
+    /* Empilha os botões para não ficarem espremidos */
+    .filtro-botoes {
+        flex-direction: column; 
+        gap: 10px;
+    }
+    
+    .botao-limpar-filtro, 
+    .botao-filtrar {
+        width: 100%; /* Ocupa a largura toda */
+        margin: 0;
+        padding: 12px; /* Botões maiores para toque */
+    }
+    
+    /* Overlay escuro */
+    .menu-overlay {
+        position: fixed;
+        top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.5);
+        z-index: 1999;
+        display: none;
+    }
+    .menu-overlay.active { display: block; }
 }
