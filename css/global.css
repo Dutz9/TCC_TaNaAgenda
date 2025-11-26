@@ -204,3 +204,77 @@ a > img {
 .area-lado::-webkit-scrollbar-thumb:hover {
     background-color: #5a6268;
 }
+
+/* =================================================================
+   RESPONSIVIDADE GERAL (MENU E HEADER)
+   ================================================================= */
+
+/* Botão Menu (Hambúrguer) - Padrão é oculto */
+.menu-toggle { display: none; }
+
+@media (max-width: 1024px) {
+    
+    /* HEADER MOBILE */
+    .header {
+        justify-content: space-between; 
+        padding-left: 20px;
+        width: 100%;
+        position: fixed; /* Fixa o header no topo */
+        top: 0;
+        z-index: 1500;
+    }
+    
+    /* Botão Hambúrguer Visível */
+    .menu-toggle {
+        display: block;
+        font-size: 24px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: white;
+    }
+
+    /* SIDEBAR MOBILE (Escondida por padrão) */
+    .area-lado {
+        width: 85vw; /* Largura relativa */
+        max-width: 300px;
+        left: -100%; /* Fora da tela */
+        transition: left 0.3s ease-in-out;
+        position: fixed;
+        height: 100vh;
+        z-index: 2000;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        padding-bottom: 100px; 
+    }
+
+    /* Classe para abrir o menu */
+    .area-lado.active {
+        left: 0;
+    }
+
+    /* Overlay escuro de fundo */
+    .menu-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.5); z-index: 1999; display: none;
+    }
+    .menu-overlay.active { display: block; }
+
+    /* Ajustes de Conteúdo (para não ficar embaixo do header fixo) */
+    .calendario, .area-notificacoes, .conteudo-principal {
+        width: 100% !important; 
+        margin-left: 0 !important; 
+        padding: 15px;
+        padding-top: 95px; 
+    }
+    
+    /* Ajuste dos Filtros no Mobile */
+    .filtrar-calendario {
+        margin: 15px; margin-bottom: 30px;
+    }
+    .filtro-botoes {
+        flex-direction: column; gap: 10px;
+    }
+    .botao-limpar-filtro, .botao-filtrar {
+        width: 100%; margin: 0; padding: 12px;
+    }
+}

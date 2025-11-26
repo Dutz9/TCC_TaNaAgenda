@@ -197,11 +197,9 @@ foreach ($lista_eventos as $evento) {
                 <div class="header-parte-de-cima">
                     <div class="navegacao-calendario">
                         <a href="<?php echo $link_semana_anterior; ?>" id="nav-prev" class="nav-btn" title="Anterior">&lt;</a>
-                        <a href="<?php echo $link_hoje; ?>" id="nav-today" class="nav-btn today">Hoje</a>
                         <a href="<?php echo $link_proxima_semana; ?>" id="nav-next" class="nav-btn" title="Próxima">&gt;</a>
                     </div>
                     <h3><?php echo $mes_ano_atual; ?></h3>
-                    <div class="header-turmas"><h4>Todas as turmas</h4></div>
                 </div>
                 <div class="header-divisoes-semanas">
                     <div class="header-spacer"></div> 

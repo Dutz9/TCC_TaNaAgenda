@@ -418,3 +418,222 @@
 .mini-cal-nav:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
+
+.link-perfil-header {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espaço entre texto e ícone */
+    color: white;
+    text-decoration: none;
+}
+
+.link-perfil-header p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.link-perfil-header svg {
+    height: 24px; /* Tamanho fixo para o ícone não ficar gigante */
+    width: auto;
+}
+
+/* =================================================================
+   RESPONSIVIDADE DA AGENDA (MOBILE - MODO DIA ÚNICO)
+   ================================================================= */
+   @media (max-width: 768px) {
+    
+    /* --- FIX 1: HABILITAR SCROLL NA PÁGINA --- */
+    /* Sobrescreve o 'overflow: hidden' do global.css para permitir rolar a página no celular */
+    body {
+        overflow-y: auto !important;
+    }
+
+    /* --- FIX 2: ESTILO DO BOTÃO LOGIN/PERFIL --- */
+    .header .link-perfil-header {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Espaço entre texto e ícone */
+        color: white;
+        text-decoration: none;
+    }
+    
+    .header .link-perfil-header p {
+        margin: 0;
+        font-size: 16px;
+        font-weight: 500;
+    }
+    
+    .header .link-perfil-header svg {
+        height: 24px; /* Tamanho fixo para o ícone não ficar gigante */
+        width: auto;
+    }
+
+    /* --- ESCONDE BARRA DIREITA --- */
+    .area-lado-direito {
+        display: none;
+    }
+
+    /* --- LAYOUT PRINCIPAL --- */
+    .calendario {
+        width: 100%;
+        margin-left: 0;
+        height: auto !important; /* Altura automática para crescer com o conteúdo */
+        min-height: calc(100vh - 80px);
+        overflow: visible !important; /* Deixa o conteúdo vazar para o body rolar */
+    }
+
+    /* --- HEADER AJUSTES --- */
+    .header-parte-de-cima {
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: 15px;
+    }
+    .header-parte-de-cima h3 {
+        margin: 0;
+        font-size: 18px;
+    }
+    .navegacao-calendario {
+        position: static;
+        display: flex;
+        transform: none;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 10px;
+        gap: 10px;
+    }
+
+    .header-turmas {
+        position: static;
+        margin-top: 5px;
+    }
+
+    /* --- GRID DE 2 COLUNAS (Hora + Dia) --- */
+    .calendario-grid, 
+    .header-divisoes-semanas {
+        display: grid;
+        /* 50px fixos para a hora, 1fr (o resto) para o dia */
+        grid-template-columns: 50px 1fr !important; 
+        min-width: auto; 
+    }
+
+    /* --- CORREÇÃO DE ALINHAMENTO NO HEADER --- */
+    /* Esconde a div espaçadora para alinhar o dia com a coluna certa */
+    .header-divisoes-semanas .header-spacer {
+        display: none;
+    }
+    
+    /* O dia da semana ativo vai para a segunda coluna */
+    .header-divisoes-semanas .dias-da-semana.mobile-active {
+        grid-column: 2;
+        display: flex; /* Centraliza o texto */
+    }
+
+    /* --- LÓGICA DE EXIBIÇÃO (Esconde tudo, mostra só o ativo) --- */
+    /* Esconde as colunas de 0 a 6 (Seg-Dom) */
+    .col-dia-0, .col-dia-1, .col-dia-2, .col-dia-3, .col-dia-4, .col-dia-5, .col-dia-6 {
+        display: none;
+    }
+
+    /* Mostra apenas a coluna que tem a classe .mobile-active */
+    .col-dia-0.mobile-active, 
+    .col-dia-1.mobile-active, 
+    .col-dia-2.mobile-active, 
+    .col-dia-3.mobile-active, 
+    .col-dia-4.mobile-active, 
+    .col-dia-5.mobile-active,
+    .col-dia-6.mobile-active {
+        display: block; 
+    }
+    
+    /* Garante que a célula do evento seja block e vá para a coluna 2 */
+    .time-slot.mobile-active {
+        display: block;
+        grid-column: 2;
+    }
+
+    /* --- AJUSTES FINAIS DE GRID --- */
+    .fundo-grid {
+        background-color: white;
+        overflow: visible !important; /* Remove scroll interno */
+        max-height: none !important; /* Remove limite de altura */
+    }
+    
+    .calendario-grid {
+        padding-bottom: 10px; /* Espaço extra no final */
+    }
+}
+
+/* =================================================================
+   RESPONSIVIDADE GERAL (MENU E HEADER)
+   ================================================================= */
+
+/* Botão Menu (Hambúrguer) - Padrão é oculto */
+.menu-toggle { display: none; }
+
+@media (max-width: 1024px) {
+    
+    /* HEADER MOBILE */
+    .header {
+        justify-content: space-between; 
+        padding-left: 20px;
+        width: 100%;
+        position: fixed; /* Fixa o header no topo */
+        top: 0;
+        z-index: 1500;
+    }
+    
+    /* Botão Hambúrguer Visível */
+    .menu-toggle {
+        display: block;
+        font-size: 24px;
+        cursor: pointer;
+        background: none;
+        border: none;
+        color: white;
+    }
+
+    /* SIDEBAR MOBILE (Escondida por padrão) */
+    .area-lado {
+        width: 85vw; /* Largura relativa */
+        max-width: 300px;
+        left: -100%; /* Fora da tela */
+        transition: left 0.3s ease-in-out;
+        position: fixed;
+        height: 100vh;
+        z-index: 2000;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.5);
+        padding-bottom: 100px; 
+    }
+
+    /* Classe para abrir o menu */
+    .area-lado.active {
+        left: 0;
+    }
+
+    /* Overlay escuro de fundo */
+    .menu-overlay {
+        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+        background: rgba(0,0,0,0.5); z-index: 1999; display: none;
+    }
+    .menu-overlay.active { display: block; }
+
+    /* Ajustes de Conteúdo (para não ficar embaixo do header fixo) */
+    .calendario, .area-notificacoes, .conteudo-principal {
+        width: 100% !important; 
+        margin-left: 0 !important; 
+        padding: 15px;
+        padding-top: 95px; 
+    }
+    
+    /* Ajuste dos Filtros no Mobile */
+    .filtrar-calendario {
+        margin: 15px; margin-bottom: 30px;
+    }
+    .filtro-botoes {
+        flex-direction: column; gap: 10px;
+    }
+    .botao-limpar-filtro, .botao-filtrar {
+        width: 100%; margin: 0; padding: 12px;
+    }
+}
