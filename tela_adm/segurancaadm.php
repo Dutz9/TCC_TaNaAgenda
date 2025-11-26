@@ -91,10 +91,7 @@
                 <img src="../image/icones/professores.png" alt="">
                     <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
-                <div class="menu-administradores">
-                <img src="../image/icones/administradores.png" alt="">
-                    <a href="administradores.php"><p>Administradores</p></a>
-                </div>
+                
                 <div class="menu-cursos">
                 <img src="../image/icones/cursos.png" alt="">
                     <a href="cursos.php"><p>Cursos</p></a>
