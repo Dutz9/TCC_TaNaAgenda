@@ -1,115 +1,114 @@
 <?php
-    // =================================================================
-    // BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX) (v4 - Mobile Ready)
-    // =================================================================
+// =================================================================
+// BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX) (v6 - Final Sem Domingo)
+// =================================================================
 
-    require_once 'config_local.php';
+require_once 'config_local.php';
 
-    // 2. LEITURA DOS FILTROS
-    $filtros = [
-        'periodo' => $_GET['periodo'] ?? [],
-        'turma' => $_GET['turma'] ?? [],
-        'tipo' => $_GET['tipo'] ?? []
-    ];
-    foreach ($filtros as $chave => $valor) {
-        if (empty($valor)) { $filtros[$chave] = []; }
-    }
-    $filtros_url = http_build_query($filtros);
+// 2. LEITURA DOS FILTROS
+$filtros = [
+    'periodo' => $_GET['periodo'] ?? [],
+    'turma' => $_GET['turma'] ?? [],
+    'tipo' => $_GET['tipo'] ?? []
+];
+foreach ($filtros as $chave => $valor) {
+    if (empty($valor)) { $filtros[$chave] = []; }
+}
+$filtros_url = http_build_query($filtros);
 
-    // 3. CONFIGURAÇÃO DE DATAS
-    date_default_timezone_set('America/Sao_Paulo');
-    $hoje = new DateTime(); 
+// 3. CONFIGURAÇÃO DE DATAS
+date_default_timezone_set('America/Sao_Paulo');
+$hoje = new DateTime(); 
 
-    if (isset($_GET['week']) && !empty($_GET['week'])) {
-        try { $data_base = new DateTime($_GET['week']); } 
-        catch (Exception $e) { $data_base = new DateTime(); }
+if (isset($_GET['week']) && !empty($_GET['week'])) {
+    try { $data_base = new DateTime($_GET['week']); } 
+    catch (Exception $e) { $data_base = new DateTime(); }
+} else {
+    $data_base = new DateTime();
+}
+
+$dia_da_semana_num = (int)$data_base->format('N');
+$inicio_semana = clone $data_base;
+if ($dia_da_semana_num != 1) {
+     $inicio_semana->modify('-' . ($dia_da_semana_num - 1) . ' days');
+}
+
+// --- CÁLCULO DOS LINKS DE NAVEGAÇÃO ---
+$link_semana_anterior = 'index.php?week=' . (clone $inicio_semana)->modify('-7 days')->format('Y-m-d') . '&' . $filtros_url;
+$link_proxima_semana = 'index.php?week=' . (clone $inicio_semana)->modify('+7 days')->format('Y-m-d') . '&' . $filtros_url;
+$link_hoje = 'index.php?' . $filtros_url;
+
+$dias_desta_semana = [];
+for ($i = 0; $i < 6; $i++) { // MUDANÇA: 6 DIAS (SEG-SÁB)
+    $dia_atual = clone $inicio_semana;
+    $dia_atual->modify("+$i days");
+    $dias_desta_semana[] = $dia_atual;
+}
+
+$meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+$dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']; // MUDANÇA: SEM DOMINGO
+
+$mes_ano_inicio = $meses_pt[(int)$dias_desta_semana[0]->format('n') - 1] . ' ' . $dias_desta_semana[0]->format('Y');
+$mes_ano_fim = $meses_pt[(int)$dias_desta_semana[5]->format('n') - 1] . ' ' . $dias_desta_semana[5]->format('Y'); // MUDANÇA: ÍNDICE 5
+
+if ($mes_ano_inicio == $mes_ano_fim) {
+    $mes_ano_atual = $mes_ano_inicio;
+} else {
+    if ($dias_desta_semana[0]->format('Y') != $dias_desta_semana[5]->format('Y')) { // MUDANÇA: ÍNDICE 5
+        $mes_ano_atual = $mes_ano_inicio . ' / ' . $mes_ano_fim;
     } else {
-        $data_base = new DateTime();
+        $mes_ano_atual = $meses_pt[(int)$dias_desta_semana[0]->format('n') - 1] . ' / ' . $meses_pt[(int)$dias_desta_semana[5]->format('n') - 1] . ' ' . $dias_desta_semana[5]->format('Y');
     }
+}
 
-    $dia_da_semana_num = (int)$data_base->format('N');
-    $inicio_semana = clone $data_base;
-    if ($dia_da_semana_num != 1) {
-        $inicio_semana->modify('-' . ($dia_da_semana_num - 1) . ' days');
+// Mobile Active Index
+$mobile_active_index = 0;
+$hoje_str = $hoje->format('Y-m-d');
+foreach ($dias_desta_semana as $idx => $dia) {
+    if ($dia->format('Y-m-d') === $hoje_str) {
+        $mobile_active_index = $idx;
+        break;
     }
+}
 
-    // --- CÁLCULO DOS LINKS DE NAVEGAÇÃO ---
-    // Adicionamos um parâmetro extra 'mobile_day' para controlar qual dia abre no mobile se recarregar
-    $link_semana_anterior = 'index.php?week=' . (clone $inicio_semana)->modify('-7 days')->format('Y-m-d') . '&' . $filtros_url;
-    $link_proxima_semana = 'index.php?week=' . (clone $inicio_semana)->modify('+7 days')->format('Y-m-d') . '&' . $filtros_url;
-    $link_hoje = 'index.php?' . $filtros_url;
+// 4. BUSCA DE DADOS
+$turmaController = new TurmaController();
+$lista_turmas_filtro = $turmaController->listar();
+$tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
 
-    $dias_desta_semana = [];
-    for ($i = 0; $i < 6; $i++) {
-        $dia_atual = clone $inicio_semana;
-        $dia_atual->modify("+$i days");
-        $dias_desta_semana[] = $dia_atual;
+$eventoController = new EventoController();
+// MUDANÇA: DATA FINAL É O ÍNDICE 5 (SÁBADO)
+$lista_eventos = $eventoController->listarAprovados($dias_desta_semana[0]->format('Y-m-d'), $dias_desta_semana[5]->format('Y-m-d'), $filtros);
+
+// 5. PROCESSAMENTO DO GRID
+$horarios_todos = [ "07:10", "08:00", "08:50", "10:00", "10:50", "11:40", "13:30", "14:20", "15:10", "16:20", "17:10", "18:00", "18:30", "19:20", "20:10", "21:20", "22:10" ];
+if (!empty($filtros['periodo'])) {
+    $horarios_semana = [];
+    if (in_array('Manha', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40"]); }
+    if (in_array('Tarde', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["13:30", "14:20", "15:10", "16:20", "17:10", "18:00"]); }
+    if (in_array('Noite', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["18:30", "19:20", "20:10", "21:20", "22:10"]); }
+    if (empty($horarios_semana)) $horarios_semana = [];
+} else {
+    $horarios_semana = $horarios_todos;
+}
+$calendario_grid = [];
+$dias_para_grid = [];
+foreach ($dias_desta_semana as $dia) { $dias_para_grid[] = $dia->format('Y-m-d'); }
+foreach ($horarios_semana as $horario) {
+    foreach ($dias_para_grid as $data_chave) { $calendario_grid[$horario][$data_chave] = []; }
+}
+foreach ($lista_eventos as $evento) {
+    $data_evento_chave = $evento['dt_evento'];
+    $horario_inicio = substr($evento['horario_inicio'], 0, 5);
+    if (isset($calendario_grid[$horario_inicio][$data_evento_chave])) {
+        $calendario_grid[$horario_inicio][$data_evento_chave][] = $evento;
     }
-
-    $meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-    $dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-
-    $mes_ano_inicio = $meses_pt[(int)$dias_desta_semana[0]->format('n') - 1] . ' ' . $dias_desta_semana[0]->format('Y');
-    $mes_ano_fim = $meses_pt[(int)$dias_desta_semana[5]->format('n') - 1] . ' ' . $dias_desta_semana[5]->format('Y');
-
-    if ($mes_ano_inicio == $mes_ano_fim) {
-        $mes_ano_atual = $mes_ano_inicio;
-    } else {
-        if ($dias_desta_semana[0]->format('Y') != $dias_desta_semana[5]->format('Y')) {
-            $mes_ano_atual = $mes_ano_inicio . ' / ' . $mes_ano_fim;
-        } else {
-            $mes_ano_atual = $meses_pt[(int)$dias_desta_semana[0]->format('n') - 1] . ' / ' . $meses_pt[(int)$dias_desta_semana[5]->format('n') - 1] . ' ' . $dias_desta_semana[5]->format('Y');
-        }
-    }
-
-    // Determina qual dia deve estar ativo no mobile (0 a 5)
-    // Se hoje estiver na semana exibida, ativa o índice de hoje. Se não, ativa 0 (segunda).
-    $mobile_active_index = 0;
-    $hoje_str = $hoje->format('Y-m-d');
-    foreach ($dias_desta_semana as $idx => $dia) {
-        if ($dia->format('Y-m-d') === $hoje_str) {
-            $mobile_active_index = $idx;
-            break;
-        }
-    }
-
-    // 4. BUSCA DE DADOS
-    $turmaController = new TurmaController();
-    $lista_turmas_filtro = $turmaController->listar();
-    $tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
-
-    $eventoController = new EventoController();
-    $lista_eventos = $eventoController->listarAprovados($dias_desta_semana[0]->format('Y-m-d'), $dias_desta_semana[5]->format('Y-m-d'), $filtros);
-
-    // 5. PROCESSAMENTO DO GRID
-    $horarios_todos = [ "07:10", "08:00", "08:50", "10:00", "10:50", "11:40", "13:30", "14:20", "15:10", "16:20", "17:10", "18:00", "18:30", "19:20", "20:10", "21:20", "22:10" ];
-    if (!empty($filtros['periodo'])) {
-        $horarios_semana = [];
-        if (in_array('Manha', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["07:10", "08:00", "08:50", "10:00", "10:50", "11:40"]); }
-        if (in_array('Tarde', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["13:30", "14:20", "15:10", "16:20", "17:10", "18:00"]); }
-        if (in_array('Noite', $filtros['periodo'])) { $horarios_semana = array_merge($horarios_semana, ["18:30", "19:20", "20:10", "21:20", "22:10"]); }
-        if (empty($horarios_semana)) $horarios_semana = [];
-    } else {
-        $horarios_semana = $horarios_todos;
-    }
-    $calendario_grid = [];
-    $dias_para_grid = [];
-    foreach ($dias_desta_semana as $dia) { $dias_para_grid[] = $dia->format('Y-m-d'); }
-    foreach ($horarios_semana as $horario) {
-        foreach ($dias_para_grid as $data_chave) { $calendario_grid[$horario][$data_chave] = []; }
-    }
-    foreach ($lista_eventos as $evento) {
-        $data_evento_chave = $evento['dt_evento'];
-        $horario_inicio = substr($evento['horario_inicio'], 0, 5);
-        if (isset($calendario_grid[$horario_inicio][$data_evento_chave])) {
-            $calendario_grid[$horario_inicio][$data_evento_chave][] = $evento;
-        }
-    }
+}
 ?>
 
 <script>
     const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
-    const mobileActiveIndexInicial = <?php echo $mobile_active_index; ?>; // Passa para o JS qual dia abrir
+    const mobileActiveIndexInicial = <?php echo $mobile_active_index; ?>;
 </script>
 
 <!DOCTYPE html>
@@ -131,11 +130,10 @@
             <p>Login</p>
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffffff" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
         </a>
-        
     </header>
 
     <main>
-        <section class="area-lado">
+    <section class="area-lado">
             <a class="area-lado-logo" href="index.php"><img src="image/logotipo fundo azul.png" alt="Logotipo TáNaAgenda"></a>
             
             <form id="form-filtros-agenda" action="index.php" method="GET">
@@ -147,7 +145,10 @@
                     <h2>Filtrar Calendário</h2>
                     
                     <div class="filtro-item">
-                        <div class="filtro-header"><h3>Período</h3><svg class="filtro-seta">...</svg></div>
+                        <div class="filtro-header">
+                            <h3>Período</h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="filtro-seta"><path fill="#ffffff" d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
+                        </div>
                         <div class="filtro-opcoes">
                             <label><input type="checkbox" name="periodo[]" value="Manha" <?php if(in_array('Manha', $filtros['periodo'])) echo 'checked'; ?>> Manhã</label>
                             <label><input type="checkbox" name="periodo[]" value="Tarde" <?php if(in_array('Tarde', $filtros['periodo'])) echo 'checked'; ?>> Tarde</label>
@@ -156,7 +157,10 @@
                     </div>
                     
                     <div class="filtro-item">
-                        <div class="filtro-header"><h3>Turma</h3><svg class="filtro-seta">...</svg></div>
+                        <div class="filtro-header">
+                            <h3>Turma</h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="filtro-seta"><path fill="#ffffff" d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
+                        </div>
                         <div class="filtro-opcoes" id="filtro-opcoes-turmas">
                             <?php foreach($lista_turmas_filtro as $turma): ?>
                                 <label><input type="checkbox" name="turma[]" value="<?php echo $turma['cd_turma']; ?>" <?php if(in_array($turma['cd_turma'], $filtros['turma'])) echo 'checked'; ?>>
@@ -167,7 +171,10 @@
                     </div>
 
                     <div class="filtro-item">
-                        <div class="filtro-header"><h3>Tipo de Evento</h3><svg class="filtro-seta">...</svg></div>
+                        <div class="filtro-header">
+                            <h3>Tipo de Evento</h3>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="filtro-seta"><path fill="#ffffff" d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
+                        </div>
                         <div class="filtro-opcoes">
                              <?php foreach($tipos_evento as $tipo): ?>
                                 <label><input type="checkbox" name="tipo[]" value="<?php echo $tipo; ?>" <?php if(in_array($tipo, $filtros['tipo'])) echo 'checked'; ?>>
@@ -190,12 +197,16 @@
                 <div class="header-parte-de-cima">
                     <div class="navegacao-calendario">
                         <a href="<?php echo $link_semana_anterior; ?>" id="nav-prev" class="nav-btn" title="Anterior">&lt;</a>
+                        <a href="<?php echo $link_hoje; ?>" id="nav-today" class="nav-btn today">Hoje</a>
                         <a href="<?php echo $link_proxima_semana; ?>" id="nav-next" class="nav-btn" title="Próxima">&gt;</a>
                     </div>
                     <h3><?php echo $mes_ano_atual; ?></h3>
+                    <div class="header-turmas"><h4>Todas as turmas</h4></div>
                 </div>
                 <div class="header-divisoes-semanas">
-                    <div></div> <?php foreach ($dias_desta_semana as $index => $dia): ?>
+                    <div class="header-spacer"></div> 
+                    
+                    <?php foreach ($dias_desta_semana as $index => $dia): ?>
                         <div class="dias-da-semana col-dia-<?php echo $index; ?>" style="background-color: <?php echo ($hoje->format('Y-m-d') == $dia->format('Y-m-d')) ? '#0479F9' : '#0d102b'; ?>;">
                             <h2><?php $dia_semana_num = (int)$dia->format('N') - 1; echo $dias_semana_pt[$dia_semana_num] . " " . $dia->format('d'); ?></h2>
                         </div>

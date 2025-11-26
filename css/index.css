@@ -239,7 +239,7 @@
     flex: 1;
 }
 .dia-semana.dom { color: #DD2B2B; }
-.dia-semana.atual { color: #022E5E !important; }
+.dia-semana.atual { color: #0479F9 !important; }
 
 /* --- ESTILO DOS DIAS CLICÁVEIS DO MINI-CALENDÁRIO --- */
 .dias-calendario-lado-direito {
@@ -363,8 +363,6 @@
     left: 20px; /* Alinha à esquerda */
     top: 50%;
     transform: translateY(-50%);
-    justify-content: space-between;
-    width: calc(100% - 40px);
 }
 
 .navegacao-calendario .nav-btn {
@@ -379,11 +377,18 @@
     border: 1px solid #0d102b;
 }
 
-
+.navegacao-calendario .nav-btn.today {
+    background-color: #f8f9fa;
+    color: #0d102b;
+    border: 1px solid #0d102b;
+}
 
 .navegacao-calendario .nav-btn:hover {
     background-color: #0479F9;
     border-color: #0479F9;
+}
+.navegacao-calendario .nav-btn.today:hover {
+    background-color: #e2e6ea;
 }
 
 /* Ajusta o H3 para não ficar em cima dos botões */
@@ -412,100 +417,4 @@
 
 .mini-cal-nav:hover {
     background-color: rgba(255, 255, 255, 0.2);
-}
-
-/* =================================================================
-   RESPONSIVIDADE DA AGENDA (MOBILE - MODO DIA ÚNICO)
-   ================================================================= */
-@media (max-width: 768px) {
-    
-    /* --- ESCONDE BARRA DIREITA --- */
-    .area-lado-direito {
-        display: none;
-    }
-
-    /* --- LAYOUT PRINCIPAL --- */
-    .calendario {
-        width: 100%;
-        margin-left: 0;
-        height: auto !important; /* Remove altura fixa para permitir scroll da página */
-        min-height: calc(100vh - 80px);
-        overflow: visible !important; /* Deixa o scroll ser nativo da página */
-    }
-
-    /* --- AJUSTES DO CABEÇALHO --- */
-    .header-parte-de-cima {
-        flex-direction: column;
-        gap: 10px;
-        padding-bottom: 15px;
-    }
-    .header-parte-de-cima h3 {
-        margin: 0;
-        font-size: 18px;
-    }
-    .navegacao-calendario {
-        position: static;
-        transform: none;
-        width: 100%;
-        justify-content: center;
-        margin-bottom: 10px;
-    }
-    .header-turmas {
-        position: static;
-        margin-top: 5px;
-    }
-
-    /* --- GRID DE 1 COLUNA (HORA + DIA) --- */
-    .calendario-grid, 
-    .header-divisoes-semanas {
-        display: grid;
-        /* 50px para a hora, 1fr para o dia atual */
-        grid-template-columns: 50px 1fr !important; 
-        min-width: auto; 
-    }
-
-    /* --- CORREÇÃO DO ALINHAMENTO DO HEADER --- */
-    /* Esconde a primeira div vazia do header que causava o desalinhamento */
-    .header-divisoes-semanas > div:first-child {
-        display: none;
-    }
-    
-    /* Força o dia da semana ativo a ocupar a segunda coluna */
-    .header-divisoes-semanas .dias-da-semana.mobile-active {
-        grid-column: 2;
-        display: flex; /* Mantém o flex para centralizar o texto */
-    }
-
-    /* --- LÓGICA DE ESCONDER/MOSTRAR DIAS --- */
-    /* Esconde todas as colunas de dias por padrão */
-    .col-dia-0, .col-dia-1, .col-dia-2, .col-dia-3, .col-dia-4, .col-dia-5 {
-        display: none;
-    }
-
-    /* Mostra apenas a coluna ativa */
-    .col-dia-0.mobile-active, 
-    .col-dia-1.mobile-active, 
-    .col-dia-2.mobile-active, 
-    .col-dia-3.mobile-active, 
-    .col-dia-4.mobile-active, 
-    .col-dia-5.mobile-active {
-        display: block; 
-    }
-    
-    /* Garante que a célula da grade apareça como bloco */
-    .time-slot.mobile-active {
-        display: block;
-    }
-
-    /* --- CORREÇÃO DO SCROLL --- */
-    .fundo-grid {
-        background-color: white;
-        overflow: visible !important; /* Remove scroll interno */
-        max-height: none !important; /* Remove limite de altura */
-    }
-    
-    .calendario-grid {
-        /* Adiciona espaço extra no final para o último horário não ser cortado */
-        padding-bottom: 80px; 
-    }
 }
