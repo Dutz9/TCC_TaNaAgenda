@@ -8,10 +8,11 @@
   // Define a resposta como JSON
   header('Content-Type: application/json');
 
-  // 2. VERIFICAÇÃO DE PERMISSÃO (SÓ COORDENADOR PODE VER)
-  if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
+  // 2. CHAVE: Permitir Coordenador OU Administrador
+  $tipo_usuario_logado = $usuario_logado['tipo_usuario_ic_usuario'];
+  if ($tipo_usuario_logado !== 'Coordenador' && $tipo_usuario_logado !== 'Administrador') {
       http_response_code(403); // Proibido (Forbidden)
-      echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado.']);
+      echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas Coordenadores ou Administradores.']);
       exit();
   }
 
@@ -34,11 +35,9 @@
 
       // 5. EXECUÇÃO DA LÓGICA
       $usuarioController = new UsuarioController();
-      // Chama o método que criamos, passando o ID da turma
       $lista_professores = $usuarioController->listarProfessoresPorTurma($cd_turma);
 
       // 6. RESPOSTA DE SUCESSO
-      // Envia a lista de professores (array de objetos) de volta como JSON
       echo json_encode($lista_professores);
 
   } catch (Exception $e) {

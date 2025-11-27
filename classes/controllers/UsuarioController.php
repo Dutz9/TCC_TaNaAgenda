@@ -27,6 +27,18 @@
         }
 
         /**
+     * Lista todos os usuários com o perfil de Coordenador.
+     */
+    public function listarCoordenadores() {
+        try {
+            // A Stored Procedure listarCoordenadores é a que está faltando no seu Controller
+            return $this->Consultar('listarCoordenadores', []);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+        /**
          * Cria um novo usuário (para admin, por exemplo)
          */
         public function Criar($usuario) {

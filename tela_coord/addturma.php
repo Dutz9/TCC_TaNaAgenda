@@ -128,7 +128,7 @@
                     <div class="linha-form">
                         <div class="campo">
                             <label for="cd_sala">Sala:</label>
-                            <input type="text" id="cd_sala" name="cd_sala" placeholder="Ex: Sala 04" required>
+                            <input type="number" id="cd_sala" name="cd_sala" placeholder="Ex: 04" required>
                         </div>
                         <div class="campo">
                             <label for="qt_alunos">Quantidade de Alunos:</label>

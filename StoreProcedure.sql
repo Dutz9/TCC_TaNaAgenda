@@ -845,5 +845,106 @@ BEGIN
     ORDER BY nm_curso;
 END$$
 
+-- =================================================================
+-- SPs para CURSOS
+-- =================================================================
+
+-- 1. SP: Listar Cursos com Contagem de Turmas e Coordenadores
+-- (Adaptada da SP de Turmas - listarTurmasComContagem)
+DROP PROCEDURE IF EXISTS `listarCursosComContagem`$$
+CREATE PROCEDURE `listarCursosComContagem`()
+BEGIN
+    SELECT 
+        c.cd_curso,
+        c.nm_curso,
+        c.ic_periodo,
+        -- Conta quantas turmas estão ligadas a este curso
+        (SELECT COUNT(t.cd_turma) 
+         FROM turmas t 
+         WHERE t.cursos_cd_curso = c.cd_curso
+        ) AS contagem_turmas,
+        -- Esta sub-consulta junta todos os coordenadores deste curso em uma string
+        (SELECT GROUP_CONCAT(u.nm_usuario SEPARATOR ', ') 
+         FROM usuarios u
+         WHERE u.tipo_usuario_ic_usuario = 'Coordenador'
+           -- Presumindo que você terá uma tabela de ligação curso-coordenador
+           -- Por enquanto, simulamos com os coordenadores de DS (cd_usuario 0002 e 2001) para fins de teste.
+           -- No futuro: Adicionar a tabela `cursos_has_coordenadores`
+           AND (c.cd_curso = 2 AND u.cd_usuario IN ('0002', '2001')) 
+        ) AS coordenadores_associados
+    FROM cursos c
+    ORDER BY c.nm_curso;
+END$$
+
+-- 2. SP: Criar Curso
+DROP PROCEDURE IF EXISTS `criarCurso`$$
+CREATE PROCEDURE `criarCurso`(
+    IN pNmCurso VARCHAR(45),
+    IN pIcPeriodo ENUM('Manha', 'Tarde', 'Noite')
+    -- Futuramente, adicione duração
+)
+BEGIN
+    DECLARE nomeCount INT DEFAULT 0;
+
+    -- 1. Verifica se o nome do curso já existe
+    SELECT COUNT(*) INTO nomeCount FROM cursos
+    WHERE nm_curso = pNmCurso;
+
+    IF (nomeCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este curso já está cadastrado.';
+    ELSE
+        -- 2. Insere o novo curso
+        INSERT INTO cursos (nm_curso, ic_periodo)
+        VALUES (pNmCurso, pIcPeriodo);
+    END IF;
+END$$
+
+-- 3. SP: Atualizar Curso
+DROP PROCEDURE IF EXISTS `atualizarCurso`$$
+CREATE PROCEDURE `atualizarCurso`(
+    IN pCdCurso INT,
+    IN pNmCurso VARCHAR(45),
+    IN pIcPeriodo ENUM('Manha', 'Tarde', 'Noite')
+)
+BEGIN
+    DECLARE nomeCount INT DEFAULT 0;
+
+    -- 1. Verifica se o novo nome já existe em OUTRO curso
+    SELECT COUNT(*) INTO nomeCount FROM cursos
+    WHERE nm_curso = pNmCurso AND cd_curso != pCdCurso;
+
+    IF (nomeCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: O nome deste curso já está em uso.';
+    ELSE
+        UPDATE cursos SET
+            nm_curso = pNmCurso,
+            ic_periodo = pIcPeriodo
+        WHERE
+            cd_curso = pCdCurso;
+    END IF;
+END$$
+
+-- 4. SP: Excluir Curso (Com segurança)
+DROP PROCEDURE IF EXISTS `excluirCurso`$$
+CREATE PROCEDURE `excluirCurso`(
+    IN pCdCurso INT
+)
+BEGIN
+    DECLARE turmaCount INT DEFAULT 0;
+
+    -- 1. Verifica se existem turmas ligadas a este curso
+    SELECT COUNT(*) INTO turmaCount FROM turmas
+    WHERE cursos_cd_curso = pCdCurso;
+
+    IF (turmaCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Não é possível excluir o curso pois ele possui turmas vinculadas.';
+    ELSE
+        -- 2. Apaga o curso
+        DELETE FROM cursos WHERE cd_curso = pCdCurso;
+    END IF;
+END$$
+
+-- (MANTER A SP listarCursos para o dropdown de Turmas - Não precisa alterar)
+
 
 DELIMITER ;

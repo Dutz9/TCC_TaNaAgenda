@@ -6,10 +6,11 @@
 
   header('Content-Type: application/json');
 
-  // 1. VERIFICAÇÃO DE PERMISSÃO
-  if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
+  // 1. CHAVE: Permitir Coordenador OU Administrador
+  $tipo_usuario_logado = $usuario_logado['tipo_usuario_ic_usuario'];
+  if ($tipo_usuario_logado !== 'Coordenador' && $tipo_usuario_logado !== 'Administrador') {
       http_response_code(403); // Proibido
-      echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado.']);
+      echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas Coordenadores ou Administradores podem excluir turmas.']);
       exit();
   }
 
@@ -42,7 +43,7 @@
       http_response_code(500);
       
       $mensagemErro = $e->getMessage();
-      // (Não precisamos "traduzir" erros aqui, pois a procedure já apaga as associações)
+      // Não há "tradução" aqui pois a SP já remove as associações de professores/eventos
       
       echo json_encode(['status' => 'erro', 'mensagem' => $mensagemErro]);
   }

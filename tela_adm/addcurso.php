@@ -1,11 +1,70 @@
 <?php 
+    require_once '../api/config.php'; 
+    require_once '../api/verifica_sessao.php'; 
 
-// 1. Gire a chave: Carrega o autoloader para que o PHP encontre as classes.
-require_once '../config_local.php'; 
+    // Garante que apenas administradores acessem
+    if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Administrador') {
+        header('Location: ../tela_prof/agendaprof.php');
+        exit();
+    }
 
-// 2. Chame o guardião: Ele verifica a sessão E cria a variável $usuario_logado para nós.
-require_once '../api/verifica_sessao.php'; 
+    $mensagem = '';
+    $tipo_mensagem = '';
+    
+    // Instancia o Controller (presume-se que CursoController.php foi atualizado)
+    $cursoController = new CursoController();
 
+    // --- PROCESSAMENTO DO FORMULÁRIO (POST) ---
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        try {
+            // CAPTURA DOS DADOS DO FORMULÁRIO ESTÁTICO:
+            // O campo "Nome do curso" usa name="titulo" no HTML (vamos capturar como nm_curso)
+            $nm_curso = $_POST['titulo'] ?? null; 
+            // O campo "Período" usa id/name="periodo" no HTML (vamos capturar como ic_periodo)
+            $ic_periodo = $_POST['periodo'] ?? null; 
+            
+            // --- VALIDAÇÕES BÁSICAS ---
+            if (empty($nm_curso) || empty($ic_periodo)) {
+                throw new Exception("O nome do curso e o período são obrigatórios.");
+            }
+            // Mapeamento dos valores do SELECT (manha/tarde/noite) para os ENUMs do BD (Manha/Tarde/Noite)
+            $mapa_periodo = [
+                'manha' => 'Manha',
+                'tarde' => 'Tarde',
+                'noite' => 'Noite'
+            ];
+            $periodo_db = $mapa_periodo[$ic_periodo] ?? null;
+
+            if (empty($periodo_db)) {
+                throw new Exception("Período inválido selecionado.");
+            }
+            
+            $dadosCurso = [
+                'nm_curso' => $nm_curso,
+                'ic_periodo' => $periodo_db // Usa o valor do ENUM corrigido
+            ];
+
+            // 4. EXECUÇÃO DA LÓGICA (cria o curso)
+            $cursoController->criarCurso($dadosCurso);
+            
+            // 5. REDIRECIONA COM MENSAGEM DE SUCESSO
+            $_SESSION['mensagem_sucesso'] = "Curso '".htmlspecialchars($nm_curso)."' adicionado com sucesso!";
+            header('Location: cursos.php');
+            exit();
+
+        } catch (Exception $e) {
+            $erro = $e->getMessage();
+            // "Traduz" o erro do banco de dados (da SP)
+            if (strpos($erro, 'Erro: Este curso já está cadastrado.') !== false) {
+                $mensagem = 'Erro: Este curso já está cadastrado.';
+            } else {
+                $mensagem = $erro;
+            }
+            $tipo_mensagem = 'erro';
+            
+            // É útil reter os valores em caso de erro, mas neste formulário simples não o faremos.
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -30,7 +89,7 @@ require_once '../api/verifica_sessao.php';
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
     </header>
 
-    <main></main>
+    <main>
         
     <section class="area-lado">
             <a class="area-lado-logo" href="agendaadm.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
@@ -60,44 +119,64 @@ require_once '../api/verifica_sessao.php';
                 <img src="../image/icones/perfil.png" alt="">
                     <a href="perfiladm.php"><p>Perfil</p></a>
                 </div>  
-                <a href="../login.php"><div class="menu-sair"><p>SAIR</p></div></a> 
+                <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
             </div>
         </section>
 
         <section class="formulario-turma" >
-            <h2 >Adicionar Curso</h2>
-            <div class="linha-form">
-                <div  class="campo">
-                    <label  for="titulo">Nome do curso</label>
-                    <input  type="text" id="titulo" name="titulo" placeholder="Turma">
-                </div>
-                <div class="campo">
-                <label for="duracao-curso">Duração do curso</label>
-                <select id="duracao-curso">
-                    <option value="1-ano">1 ano</option>
-                    <option value="2-anos">2 anos</option>
-                    <option value="3-anos">3 anos</option>
-                    <option value="3-anos">4 anos</option>
-                    <option value="3-anos">5 anos</option>
-                    <option value="3-anos">6 anos</option>
-                </select>
-                </div>
-            </div>
+            <h2>Adicionar Curso</h2>
 
-            <div class="linha-form">
-                <div class="campo">
-                <label for="periodo">Período</label>
-                <select id="periodo">
-                    <option value="manha">Manhã</option>
-                    <option value="tarde">Tarde</option>
-                    <option value="noite">Noite</option>
-                </select>
+            <!-- Exibe a mensagem de erro/sucesso do PHP -->
+            <?php if (!empty($mensagem)): ?>
+                <div class="mensagem <?php echo $tipo_mensagem; ?>" style="width: 80%; margin: 0 auto 20px auto; padding: 10px; border-radius: 5px; text-align: center; color: white; background-color: <?php echo ($tipo_mensagem == 'erro') ? '#dc3545' : '#28a745'; ?>;">
+                    <?php echo htmlspecialchars($mensagem); ?>
                 </div>
-                <div class="botoes">
-                    <a href="cursos.php"><button type="button" class="botao-cancelar">Cancelar</button></a>
-                    <a href="cursos.php"><button type="submit" class="botao-enviar">Adicionar Turma</button></a>
+            <?php endif; ?>
+            
+            <form action="addcurso.php" method="POST">
+                <div class="linha-form">
+                    <div  class="campo">
+                        <label  for="titulo">Nome do curso</label>
+                        <!-- ATENÇÃO: Adicionado o atributo name="titulo" para o PHP capturar -->
+                        <input  type="text" id="titulo" name="titulo" placeholder="Curso" required>
+                    </div>
+                    <div class="campo">
+                        <label for="duracao-curso">Duração do curso</label>
+                        <!-- Este campo é apenas informativo e não é enviado -->
+                        <select id="duracao-curso" disabled>
+                            <option value="3-anos" selected>3 anos (Padrão)</option>
+                            <option value="1-ano">1 ano</option>
+                            <option value="2-anos">2 anos</option>
+                            <option value="4-anos">4 anos</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
+
+                <div class="linha-form">
+                    <div class="campo">
+                        <label for="periodo">Período</label>
+                        <!-- ATENÇÃO: Adicionado o atributo name="periodo" para o PHP capturar -->
+                        <select id="periodo" name="periodo" required>
+                            <option value="" disabled selected>Selecione</option>
+                            <option value="manha">Manhã</option>
+                            <option value="tarde">Tarde</option>
+                            <option value="noite">Noite</option>
+                        </select>
+                    </div>
+                    <!-- Campo em branco para manter o alinhamento de 2 colunas -->
+                    <div class="campo"></div> 
+                </div>
+
+                <div class="linha-botoes">
+                    <div class="botoes">
+                        <!-- Botão Cancelar (volta sem enviar) -->
+                        <a href="cursos.php" class="botao-cancelar">Cancelar</a>
+                        <!-- Botão Enviar (submete o formulário) -->
+                        <button type="submit" class="botao-enviar">Adicionar Curso</button>
+                    </div>
+                </div>
+            </form>
         </section>
+    </main>
 </body>
 </html>

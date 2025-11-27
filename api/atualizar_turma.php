@@ -6,10 +6,11 @@
 
   header('Content-Type: application/json');
 
-  // 1. VERIFICAÇÃO DE PERMISSÃO (SÓ COORDENADOR PODE ATUALIZAR)
-  if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
+  // 1. CHAVE: Permitir Coordenador OU Administrador
+  $tipo_usuario_logado = $usuario_logado['tipo_usuario_ic_usuario'];
+  if ($tipo_usuario_logado !== 'Coordenador' && $tipo_usuario_logado !== 'Administrador') {
       http_response_code(403); // Proibido
-      echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado.']);
+      echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas Coordenadores ou Administradores podem atualizar turmas.']);
       exit();
   }
 

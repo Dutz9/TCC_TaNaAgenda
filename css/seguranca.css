@@ -33,3 +33,9 @@
     margin-right: 10px;
     margin-left: 10px;
 }
+
+#Alterar{
+    display: flex;
+    width: 90%;
+    align-items: end;
+}
