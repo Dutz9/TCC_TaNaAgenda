@@ -75,6 +75,8 @@
     <title>Adicionar Curso - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
+    <!-- CHAVE: Importamos criarevento.css para as regras de layout de 2 colunas -->
+    <link rel="stylesheet" href="../css/criarevento.css"> 
     <link rel="stylesheet" href="../css/addcurso.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -122,61 +124,64 @@
                 <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
             </div>
         </section>
+        
+        <!-- CHAVE 1: Adicione o wrapper conteudo-principal para herdar o layout base -->
+        <div class="conteudo-principal">
+            <!-- CHAVE 2: Use a classe formulario-evento para herdar as regras de linha e campo do criarevento.css -->
+            <section class="formulario-evento"> 
+                
+                <h2>Adicionar Curso</h2>
 
-        <section class="formulario-turma" >
-            <h2>Adicionar Curso</h2>
-
-            <!-- Exibe a mensagem de erro/sucesso do PHP -->
-            <?php if (!empty($mensagem)): ?>
-                <div class="mensagem <?php echo $tipo_mensagem; ?>" style="width: 80%; margin: 0 auto 20px auto; padding: 10px; border-radius: 5px; text-align: center; color: white; background-color: <?php echo ($tipo_mensagem == 'erro') ? '#dc3545' : '#28a745'; ?>;">
-                    <?php echo htmlspecialchars($mensagem); ?>
-                </div>
-            <?php endif; ?>
-            
-            <form action="addcurso.php" method="POST">
-                <div class="linha-form">
-                    <div  class="campo">
-                        <label  for="titulo">Nome do curso</label>
-                        <!-- ATENÇÃO: Adicionado o atributo name="titulo" para o PHP capturar -->
-                        <input  type="text" id="titulo" name="titulo" placeholder="Curso" required>
+                <!-- Exibe a mensagem de erro/sucesso do PHP -->
+                <?php if (!empty($mensagem)): ?>
+                    <div class="mensagem <?php echo $tipo_mensagem; ?>">
+                        <?php echo htmlspecialchars($mensagem); ?>
                     </div>
-                    <div class="campo">
-                        <label for="duracao-curso">Duração do curso</label>
-                        <!-- Este campo é apenas informativo e não é enviado -->
-                        <select id="duracao-curso" disabled>
-                            <option value="3-anos" selected>3 anos (Padrão)</option>
-                            <option value="1-ano">1 ano</option>
-                            <option value="2-anos">2 anos</option>
-                            <option value="4-anos">4 anos</option>
-                        </select>
+                <?php endif; ?>
+                
+                <form action="addcurso.php" method="POST">
+                    <div class="linha-form">
+                        <div  class="campo">
+                            <label  for="titulo">Nome do curso</label>
+                            <!-- ATENÇÃO: name="titulo" para o PHP capturar -->
+                            <input  type="text" id="titulo" name="titulo" placeholder="Curso" required>
+                        </div>
+                        <div class="campo">
+                            <label for="duracao-curso">Duração do curso</label>
+                            <!-- Este campo é apenas informativo e não é enviado -->
+                            <select id="duracao-curso" disabled>
+                                <option value="3-anos" selected>3 anos (Padrão)</option>
+                                <option value="1-ano">1 ano</option>
+                                <option value="2-anos">2 anos</option>
+                                <option value="4-anos">4 anos</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
 
-                <div class="linha-form">
-                    <div class="campo">
-                        <label for="periodo">Período</label>
-                        <!-- ATENÇÃO: Adicionado o atributo name="periodo" para o PHP capturar -->
-                        <select id="periodo" name="periodo" required>
-                            <option value="" disabled selected>Selecione</option>
-                            <option value="manha">Manhã</option>
-                            <option value="tarde">Tarde</option>
-                            <option value="noite">Noite</option>
-                        </select>
+                    <div class="linha-form">
+                        <div class="campo">
+                            <label for="periodo">Período</label>
+                            <!-- ATENÇÃO: name="periodo" para o PHP capturar -->
+                            <select id="periodo" name="periodo" required>
+                                <option value="" disabled selected>Selecione</option>
+                                <option value="manha">Manhã</option>
+                                <option value="tarde">Tarde</option>
+                                <option value="noite">Noite</option>
+                            </select>
+                        </div>
+                        <!-- Campo em branco para manter o alinhamento de 2 colunas -->
+                        <div class="campo"></div> 
                     </div>
-                    <!-- Campo em branco para manter o alinhamento de 2 colunas -->
-                    <div class="campo"></div> 
-                </div>
 
-                <div class="linha-botoes">
                     <div class="botoes">
                         <!-- Botão Cancelar (volta sem enviar) -->
                         <a href="cursos.php" class="botao-cancelar">Cancelar</a>
                         <!-- Botão Enviar (submete o formulário) -->
                         <button type="submit" class="botao-enviar">Adicionar Curso</button>
                     </div>
-                </div>
-            </form>
-        </section>
+                </form>
+            </section>
+        </div>
     </main>
 </body>
 </html>

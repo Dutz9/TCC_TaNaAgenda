@@ -19,12 +19,13 @@
        * (Usado na página de administração de cursos)
        */
       public function listarComContagem() {
-          try {
-              return $this->Consultar('listarCursosComContagem', []);
-          } catch (\Throwable $th) {
-              throw $th;
-          }
-      }
+        try {
+            // CHAVE: Chamando a SP atualizada com a contagem de coordenadores
+            return $this->Consultar('listarCursosComContagem', []);
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 
       /**
        * Cria um novo curso.

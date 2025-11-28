@@ -1,9 +1,10 @@
--- Stored Procedures para TCC (Versão Corrigida)
--- Melhorias: Nomes/colunas atualizados para matching com schema (usuarios, cd_senha, etc.); 
--- senhas plain-text (comentado para futuro hash); novas procs para eventos/aprovações; 
--- tratamento de erros consistente; listagem de coordenadores adicionada; comentários em todas.
+-- Stored Procedures para TCC (Versão Final para Admin/Prof/Coord)
 
 DELIMITER $$
+
+-- =================================================================
+-- SPs GERAIS (EXISTENTES)
+-- =================================================================
 
 -- Procedure para listar todos os usuários (corrigida: nomes de tabelas/colunas atualizados)
 DROP PROCEDURE IF EXISTS listarUsuarios$$
@@ -51,11 +52,11 @@ BEGIN
     ORDER BY u.nm_usuario;
 END$$
 
--- Procedure para listar coordenadores (nova: similar a profs, mas para coords)
+-- Procedure para listar coordenadores
 DROP PROCEDURE IF EXISTS listarCoordenadores$$
 CREATE PROCEDURE listarCoordenadores()
 BEGIN
-    SELECT u.nm_email, u.nm_usuario, u.tipo_usuario_ic_usuario AS tipo_usuario
+    SELECT u.cd_usuario, u.nm_email, u.nm_usuario, u.cd_telefone, u.tipo_usuario_ic_usuario AS tipo_usuario
     FROM usuarios u
     WHERE u.tipo_usuario_ic_usuario = 'Coordenador'
     ORDER BY u.nm_usuario;
@@ -171,17 +172,14 @@ BEGIN
 END$$
 
 -- Procedure para registrar aprovação de professor (nova: para fluxo paralelo, via N:N)
-
--- 1. Garante que a TABELA aceita 'Pendente' (pode já ter sido feito)
 ALTER TABLE resolucao_eventos_usuarios 
 MODIFY COLUMN status_resolucao ENUM('Aprovado', 'Recusado', 'Pendente') NULL DEFAULT 'Pendente';
 
--- 2. Atualiza a PROCEDURE para aceitar 'Pendente'
 DROP PROCEDURE IF EXISTS `registrarAprovacaoProfessor`$$
 CREATE PROCEDURE `registrarAprovacaoProfessor`(
     IN pCdEvento VARCHAR(45),
     IN pCdUsuario VARCHAR(45),
-    IN pStatus ENUM('Aprovado', 'Recusado', 'Pendente') -- <-- CORREÇÃO AQUI
+    IN pStatus ENUM('Aprovado', 'Recusado', 'Pendente') 
 )
 BEGIN
     DECLARE qtd INT DEFAULT 0;
@@ -286,78 +284,6 @@ BEGIN
     VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Aprovado', pCdUsuarioSolicitante, CURDATE());
 END$$
 
-DROP PROCEDURE IF EXISTS `listarEventosParaProfessor`$$
-CREATE PROCEDURE `listarEventosParaProfessor`(
-    IN pCdUsuario VARCHAR(25),
-    IN pStatus ENUM('Solicitado', 'Aprovado', 'Recusado'),
-    -- 1. ATUALIZAÇÃO AQUI: Mudamos 'Pendente' para 'OutrosProfessores'
-    IN pSolicitante ENUM('Todos', 'Eu', 'OutrosProfessores', 'Coordenador'), 
-    IN pCdTurma INT,
-    IN pTipoEvento ENUM('Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
-    IN pDataFiltro ENUM('Todos', 'Proximos7Dias', 'EsteMes', 'MesPassado', 'ProximoMes')
-)
-BEGIN
-    SELECT
-        e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
-        e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
-        solicitante.nm_usuario AS nm_solicitante,
-        solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
-        (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
-        (SELECT SUM(t_inner.qt_alunos) FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
-        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']') FROM resolucao_eventos_usuarios reu JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario WHERE reu.eventos_cd_evento = e.cd_evento AND u.cd_usuario != e.cd_usuario_solicitante) AS respostas_professores,
-        (SELECT status_resolucao FROM resolucao_eventos_usuarios WHERE eventos_cd_evento = e.cd_evento AND usuarios_cd_usuario = pCdUsuario) AS minha_resposta
-        
-    FROM eventos e
-    JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
-    LEFT JOIN eventos_has_turmas eht_filtro ON e.cd_evento = eht_filtro.eventos_cd_evento
-        
-    WHERE 
-        ( -- A regra de relevância principal está correta e não muda
-            e.cd_usuario_solicitante = pCdUsuario 
-            OR EXISTS (SELECT 1 FROM resolucao_eventos_usuarios reu_check WHERE reu_check.eventos_cd_evento = e.cd_evento AND reu_check.usuarios_cd_usuario = pCdUsuario)
-            OR (solicitante.tipo_usuario_ic_usuario = 'Coordenador' AND EXISTS (SELECT 1 FROM eventos_has_turmas eht_check JOIN usuarios_has_turmas uht_check ON eht_check.turmas_cd_turma = uht_check.turmas_cd_turma WHERE eht_check.eventos_cd_evento = e.cd_evento AND uht_check.usuarios_cd_usuario = pCdUsuario))
-        )
-        AND (pStatus IS NULL OR e.status = pStatus)
-        AND (pTipoEvento IS NULL OR e.tipo_evento = pTipoEvento)
-        AND (pCdTurma IS NULL OR eht_filtro.turmas_cd_turma = pCdTurma)
-        
-        -- 2. LÓGICA DE FILTRO ATUALIZADA
-        AND (pSolicitante IS NULL OR pSolicitante = 'Todos'
-            OR (pSolicitante = 'Eu' AND e.cd_usuario_solicitante = pCdUsuario)
-            -- Esta é a nova lógica:
-            OR (pSolicitante = 'OutrosProfessores' 
-                AND e.cd_usuario_solicitante != pCdUsuario
-                AND solicitante.tipo_usuario_ic_usuario = 'Professor')
-            OR (pSolicitante = 'Coordenador' 
-                AND solicitante.tipo_usuario_ic_usuario = 'Coordenador')
-        )
-        
-        AND (pDataFiltro IS NULL OR pDataFiltro = 'Todos' OR
-            (pDataFiltro = 'Proximos7Dias' AND e.dt_evento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)) OR
-            (pDataFiltro = 'EsteMes' AND MONTH(e.dt_evento) = MONTH(CURDATE()) AND YEAR(e.dt_evento) = YEAR(CURDATE())) OR
-            (pDataFiltro = 'MesPassado' AND MONTH(e.dt_evento) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(e.dt_evento) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) OR
-            (pDataFiltro = 'ProximoMes' AND MONTH(e.dt_evento) = MONTH(DATE_ADD(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(e.dt_evento) = YEAR(DATE_ADD(CURDATE(), INTERVAL 1 MONTH)))
-        )
-        
-    GROUP BY e.cd_evento
-    ORDER BY dt_solicitacao DESC;
-
-END$$
-
-CREATE PROCEDURE `listarRelacaoProfessorTurma`()
-BEGIN
-    SELECT 
-        uht.turmas_cd_turma,
-        u.cd_usuario,
-        u.nm_usuario
-    FROM 
-        usuarios_has_turmas uht
-    JOIN 
-        usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
-    WHERE 
-        u.tipo_usuario_ic_usuario = 'Professor';
-END$$
-
 DROP PROCEDURE IF EXISTS `listarEventosParaCoordenador`$$
 CREATE PROCEDURE `listarEventosParaCoordenador`(
     IN pCdUsuario VARCHAR(25),
@@ -396,6 +322,7 @@ BEGIN
             e.status = 'Solicitado' -- Eventos pendentes de professores
             OR e.cd_usuario_solicitante = pCdUsuario -- Eventos que eu criei
             OR e.cd_usuario_aprovador = pCdUsuario -- Eventos que eu julguei
+            OR e.status IN ('Aprovado', 'Recusado')
         )
         
         -- 2. FILTROS
@@ -696,6 +623,7 @@ BEGIN
     DELETE FROM usuarios WHERE cd_usuario = pCdUsuario;
 END$$
 
+-- Procedure para criar professor (adaptada para a nova SP)
 DROP PROCEDURE IF EXISTS `criarProfessor`$$
 CREATE PROCEDURE `criarProfessor`(
     IN pCdUsuario VARCHAR(10),  -- Este é o RM
@@ -705,26 +633,37 @@ CREATE PROCEDURE `criarProfessor`(
     IN pTelefone VARCHAR(45)
 )
 BEGIN
+    -- CHAMA O NOVO COM TIPO FIXO: 'Professor'
+    CALL criarProfessorCompleto(pCdUsuario, pNome, pEmail, pSenha, pTelefone, 'Professor');
+END$$
+
+-- NOVO: SP UNIFICADA DE CRIAÇÃO (Permite Professor/Coordenador)
+DROP PROCEDURE IF EXISTS `criarProfessorCompleto`$$
+CREATE PROCEDURE `criarProfessorCompleto`(
+    IN pCdUsuario VARCHAR(10),
+    IN pNome VARCHAR(45),
+    IN pEmail VARCHAR(45),
+    IN pSenha VARCHAR(255),
+    IN pTelefone VARCHAR(45),
+    IN pTipo ENUM('Coordenador', 'Professor', 'Administrador')
+)
+BEGIN
     DECLARE emailCount INT DEFAULT 0;
     DECLARE rmCount INT DEFAULT 0;
 
-    -- 1. Verifica se o RM (cd_usuario) já existe
     SELECT COUNT(*) INTO rmCount FROM usuarios 
     WHERE cd_usuario = pCdUsuario;
     
-    -- 2. Verifica se o E-mail já existe
     SELECT COUNT(*) INTO emailCount FROM usuarios 
     WHERE nm_email = pEmail;
 
-    -- 3. Se um dos dois já existir, retorna um erro
     IF (rmCount > 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este RM já está cadastrado.';
     ELSEIF (emailCount > 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este e-mail já está em uso.';
     ELSE
-        -- 4. Se tudo estiver limpo, insere o novo professor
         INSERT INTO usuarios (cd_usuario, nm_usuario, nm_email, cd_senha, cd_telefone, tipo_usuario_ic_usuario)
-        VALUES (pCdUsuario, pNome, pEmail, pSenha, pTelefone, 'Professor');
+        VALUES (pCdUsuario, pNome, pEmail, pSenha, pTelefone, pTipo); 
     END IF;
 END$$
 
@@ -804,7 +743,7 @@ BEGIN
     DELETE FROM usuarios_has_turmas WHERE turmas_cd_turma = pCdTurma;
     
     -- 2. Remove as associações da turma com eventos
-    DELETE FROM eventos_has_turmas WHERE turmas_cd_turma = pCdTurma;
+    DELETE FROM eventos_has_turmas WHERE eventos_cd_evento = pCdTurma;
     
     -- 3. Finalmente, apaga a turma
     -- NOTA: Se a turma for chave primária em 'cursos' (o que não deve ser),
@@ -863,15 +802,20 @@ BEGIN
          FROM turmas t 
          WHERE t.cursos_cd_curso = c.cd_curso
         ) AS contagem_turmas,
-        -- Esta sub-consulta junta todos os coordenadores deste curso em uma string
-        (SELECT GROUP_CONCAT(u.nm_usuario SEPARATOR ', ') 
-         FROM usuarios u
-         WHERE u.tipo_usuario_ic_usuario = 'Coordenador'
-           -- Presumindo que você terá uma tabela de ligação curso-coordenador
-           -- Por enquanto, simulamos com os coordenadores de DS (cd_usuario 0002 e 2001) para fins de teste.
-           -- No futuro: Adicionar a tabela `cursos_has_coordenadores`
-           AND (c.cd_curso = 2 AND u.cd_usuario IN ('0002', '2001')) 
-        ) AS coordenadores_associados
+        
+        -- CHAVE 1: Retorna a CONTAGEM de coordenadores para o CARD
+        (SELECT COUNT(uhc.usuarios_cd_usuario)
+         FROM usuarios_has_cursos uhc
+         WHERE uhc.cursos_cd_curso = c.cd_curso
+        ) AS contagem_coordenadores,
+        
+        -- CHAVE 2: Retorna a LISTA de nomes de coordenadores para o MODAL
+        IFNULL((SELECT GROUP_CONCAT(u.nm_usuario SEPARATOR ', ')
+         FROM usuarios_has_cursos uhc
+         JOIN usuarios u ON uhc.usuarios_cd_usuario = u.cd_usuario
+         WHERE uhc.cursos_cd_curso = c.cd_curso
+        ), '') AS coordenadores_associados
+        
     FROM cursos c
     ORDER BY c.nm_curso;
 END$$
@@ -946,5 +890,230 @@ END$$
 
 -- (MANTER A SP listarCursos para o dropdown de Turmas - Não precisa alterar)
 
+
+-- 1. SP: Listar TODOS Professores E Coordenadores com suas Associações
+-- (Para ser usada pela página professoresadm.php)
+DROP PROCEDURE IF EXISTS `listarFuncionariosComAssociacoes`$$
+CREATE PROCEDURE `listarFuncionariosComAssociacoes`()
+BEGIN
+    SELECT 
+        u.cd_usuario, 
+        u.nm_usuario, 
+        u.nm_email, 
+        u.cd_telefone,
+        u.tipo_usuario_ic_usuario AS tipo_usuario,
+        
+        -- Associações de TURMAS (Apenas para PROFESSORES) - Retorna a string de nomes separados por ' | '
+        (SELECT GROUP_CONCAT(t.nm_turma SEPARATOR ' | ') 
+         FROM usuarios_has_turmas uht
+         JOIN turmas t ON uht.turmas_cd_turma = t.cd_turma
+         WHERE uht.usuarios_cd_usuario = u.cd_usuario
+        ) AS turmas_associadas_nomes,
+        
+        -- Associações de CURSOS (Apenas para COORDENADORES) - Retorna a string de nomes separados por ' | '
+        (SELECT GROUP_CONCAT(c.nm_curso SEPARATOR ' | ')
+         FROM usuarios_has_cursos uhc
+         JOIN cursos c ON uhc.cursos_cd_curso = c.cd_curso
+         WHERE uhc.usuarios_cd_usuario = u.cd_usuario
+        ) AS cursos_associados_nomes
+        
+    FROM usuarios u
+    WHERE u.tipo_usuario_ic_usuario IN ('Professor', 'Coordenador')
+    ORDER BY FIELD(u.tipo_usuario_ic_usuario, 'Coordenador', 'Professor'), u.nm_usuario;
+END$$
+
+-- 2. SP: Atualizar Coordenador (Dados e Associações de Cursos)
+DROP PROCEDURE IF EXISTS `atualizarCoordenador`$$
+CREATE PROCEDURE `atualizarCoordenador`(
+    IN pCdUsuario VARCHAR(10),
+    IN pNome VARCHAR(45),
+    IN pEmail VARCHAR(45),
+    IN pTelefone VARCHAR(45),
+    IN pCursosIDs VARCHAR(255) -- IDs de Cursos (ex: "1,4,5")
+)
+BEGIN
+    DECLARE emailCount INT DEFAULT 0;
+    
+    SELECT COUNT(*) INTO emailCount FROM usuarios 
+    WHERE nm_email = pEmail AND cd_usuario != pCdUsuario;
+
+    IF (emailCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este e-mail já está em uso por outro usuário.';
+    ELSE
+        -- 1. Atualiza os dados do usuário (Nome, Email, Telefone)
+        UPDATE usuarios SET
+            nm_usuario = pNome,
+            nm_email = pEmail,
+            cd_telefone = pTelefone
+        WHERE
+            cd_usuario = pCdUsuario;
+            
+        -- 2. ATUALIZA AS ASSOCIAÇÕES DE CURSOS
+        DELETE FROM usuarios_has_cursos WHERE usuarios_cd_usuario = pCdUsuario;
+        
+        IF pCursosIDs IS NOT NULL AND pCursosIDs != '' THEN
+        
+            SET @sql = NULL;
+            SELECT
+                GROUP_CONCAT(
+                    CONCAT('(', QUOTE(pCdUsuario), ',', QUOTE(curso_id), ')')
+                )
+            INTO @sql
+            FROM
+                JSON_TABLE(
+                    CONCAT('[', pCursosIDs, ']'),
+                    '$[*]' COLUMNS (curso_id INT PATH '$')
+                ) AS jt;
+
+            IF @sql IS NOT NULL THEN
+                SET @sql = CONCAT('INSERT INTO usuarios_has_cursos (usuarios_cd_usuario, cursos_cd_curso) VALUES ', @sql);
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+            END IF;
+        END IF;
+    END IF;
+END$$
+
+-- 3. Atualizar Professor (reusada, mas aqui para referência)
+DROP PROCEDURE IF EXISTS `atualizarProfessor`$$
+CREATE PROCEDURE `atualizarProfessor`(
+    IN pCdUsuario VARCHAR(10),
+    IN pNome VARCHAR(45),
+    IN pEmail VARCHAR(45),
+    IN pTelefone VARCHAR(45),
+    IN pTurmasIDs VARCHAR(255) -- IDs de Turmas (ex: "1,4,5")
+)
+BEGIN
+    DECLARE emailCount INT DEFAULT 0;
+    
+    SELECT COUNT(*) INTO emailCount FROM usuarios 
+    WHERE nm_email = pEmail AND cd_usuario != pCdUsuario;
+
+    IF (emailCount > 0) THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este e-mail já está em uso por outro usuário.';
+    ELSE
+        UPDATE usuarios SET
+            nm_usuario = pNome,
+            nm_email = pEmail,
+            cd_telefone = pTelefone
+        WHERE
+            cd_usuario = pCdUsuario;
+            
+        DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = pCdUsuario;
+        
+        IF pTurmasIDs IS NOT NULL AND pTurmasIDs != '' THEN
+        
+            SET @sql = NULL;
+            SELECT
+                GROUP_CONCAT(
+                    CONCAT('(', QUOTE(pCdUsuario), ',', QUOTE(turma_id), ')')
+                )
+            INTO @sql
+            FROM
+                JSON_TABLE(
+                    CONCAT('[', pTurmasIDs, ']'),
+                    '$[*]' COLUMNS (turma_id INT PATH '$')
+                ) AS jt;
+
+            IF @sql IS NOT NULL THEN
+                SET @sql = CONCAT('INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES ', @sql);
+                PREPARE stmt FROM @sql;
+                EXECUTE stmt;
+                DEALLOCATE PREPARE stmt;
+            END IF;
+            
+        END IF;
+    END IF;
+END$$
+
+DROP PROCEDURE IF EXISTS `listarRelacaoProfessorTurma`$$
+CREATE PROCEDURE `listarRelacaoProfessorTurma`()
+BEGIN
+    SELECT 
+        uht.turmas_cd_turma,
+        u.cd_usuario,
+        u.nm_usuario
+    FROM 
+        usuarios_has_turmas uht
+    JOIN 
+        usuarios u ON uht.usuarios_cd_usuario = u.cd_usuario
+    WHERE 
+        u.tipo_usuario_ic_usuario = 'Professor';
+END$$
+
+-- Procedure para listar eventos relevantes para o PROFESSOR
+DROP PROCEDURE IF EXISTS `listarEventosParaProfessor`$$
+CREATE PROCEDURE `listarEventosParaProfessor`(
+    IN pCdUsuario VARCHAR(25),
+    IN pStatus ENUM('Solicitado', 'Aprovado', 'Recusado'),
+    -- Filtro de quem solicitou: 'Todos', 'Eu', 'OutrosProfessores', 'Coordenador'
+    IN pSolicitante ENUM('Todos', 'Eu', 'OutrosProfessores', 'Coordenador'), 
+    IN pCdTurma INT,
+    IN pTipoEvento ENUM('Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
+    IN pDataFiltro ENUM('Todos', 'Proximos7Dias', 'EsteMes', 'MesPassado', 'ProximoMes')
+)
+BEGIN
+    SELECT
+        e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
+        e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
+        solicitante.nm_usuario AS nm_solicitante,
+        solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
+        (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
+        (SELECT SUM(t_inner.qt_alunos) FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
+        -- Respostas de outros professores (se o evento for do tipo que requer aprovação)
+        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']') 
+         FROM resolucao_eventos_usuarios reu JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario 
+         WHERE reu.eventos_cd_evento = e.cd_evento AND u.cd_usuario != e.cd_usuario_solicitante
+        ) AS respostas_professores,
+        -- A resposta do próprio usuário logado para este evento
+        (SELECT status_resolucao FROM resolucao_eventos_usuarios WHERE eventos_cd_evento = e.cd_evento AND usuarios_cd_usuario = pCdUsuario) AS minha_resposta
+        
+    FROM eventos e
+    JOIN usuarios solicitante ON e.cd_usuario_solicitante = solicitante.cd_usuario
+    LEFT JOIN eventos_has_turmas eht_filtro ON e.cd_evento = eht_filtro.eventos_cd_evento
+        
+    WHERE 
+        -- 1. Regra de Relevância (O que me interessa ver)
+        (
+            -- Eventos que EU solicitei
+            e.cd_usuario_solicitante = pCdUsuario 
+            -- OU eventos que eu preciso responder (estou na lista de resolucao)
+            OR EXISTS (SELECT 1 FROM resolucao_eventos_usuarios reu_check WHERE reu_check.eventos_cd_evento = e.cd_evento AND reu_check.usuarios_cd_usuario = pCdUsuario)
+            -- OU eventos criados por Coordenador que afetam alguma das MINHAS turmas
+            OR (solicitante.tipo_usuario_ic_usuario = 'Coordenador' 
+                AND EXISTS (SELECT 1 
+                            FROM eventos_has_turmas eht_check 
+                            JOIN usuarios_has_turmas uht_check ON eht_check.turmas_cd_turma = uht_check.turmas_cd_turma 
+                            WHERE eht_check.eventos_cd_evento = e.cd_evento AND uht_check.usuarios_cd_usuario = pCdUsuario)
+            )
+        )
+        
+        -- 2. FILTROS DE TIPO E STATUS
+        AND (pStatus IS NULL OR e.status = pStatus)
+        AND (pTipoEvento IS NULL OR e.tipo_evento = pTipoEvento)
+        AND (pCdTurma IS NULL OR eht_filtro.turmas_cd_turma = pCdTurma)
+        
+        -- 3. LÓGICA DO FILTRO DE SOLICITANTE
+        AND (pSolicitante IS NULL OR pSolicitante = 'Todos'
+            OR (pSolicitante = 'Eu' AND e.cd_usuario_solicitante = pCdUsuario)
+            OR (pSolicitante = 'OutrosProfessores' 
+                AND e.cd_usuario_solicitante != pCdUsuario
+                AND solicitante.tipo_usuario_ic_usuario = 'Professor')
+            OR (pSolicitante = 'Coordenador' 
+                AND solicitante.tipo_usuario_ic_usuario = 'Coordenador')
+        )
+        
+        -- 4. LÓGICA DE DATA
+        AND (pDataFiltro IS NULL OR pDataFiltro = 'Todos' OR
+            (pDataFiltro = 'Proximos7Dias' AND e.dt_evento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)) OR
+            (pDataFiltro = 'EsteMes' AND MONTH(e.dt_evento) = MONTH(CURDATE()) AND YEAR(e.dt_evento) = YEAR(CURDATE())) OR
+            (pDataFiltro = 'MesPassado' AND MONTH(e.dt_evento) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(e.dt_evento) = YEAR(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) OR
+            (pDataFiltro = 'ProximoMes' AND MONTH(e.dt_evento) = MONTH(DATE_ADD(CURDATE(), INTERVAL 1 MONTH)) AND YEAR(e.dt_evento) = YEAR(DATE_ADD(CURDATE(), INTERVAL 1 MONTH)))
+        )
+        
+    GROUP BY e.cd_evento
+    ORDER BY FIELD(e.status, 'Solicitado', 'Aprovado', 'Recusado'), e.dt_solicitacao DESC;
+END$$
 
 DELIMITER ;
