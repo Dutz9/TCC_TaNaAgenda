@@ -72,6 +72,15 @@ CREATE TABLE usuarios_has_turmas (
     FOREIGN KEY (turmas_cd_turma) REFERENCES turmas(cd_turma)
 ) ;
 
+-- NOVO: Tabela de ligação entre usuários (Coordenadores) e Cursos
+DROP TABLE IF EXISTS usuarios_has_cursos;
+CREATE TABLE usuarios_has_cursos (
+    usuarios_cd_usuario VARCHAR(10) NOT NULL,
+    cursos_cd_curso INT NOT NULL,
+    PRIMARY KEY (usuarios_cd_usuario, cursos_cd_curso),
+    FOREIGN KEY (usuarios_cd_usuario) REFERENCES usuarios(cd_usuario),
+    FOREIGN KEY (cursos_cd_curso) REFERENCES cursos(cd_curso)
+);
 
 
 DROP TABLE IF EXISTS eventos_has_turmas;
@@ -120,8 +129,6 @@ INSERT INTO usuarios (cd_usuario, nm_usuario, cd_senha, cd_telefone, nm_email, t
 SELECT * FROM usuarios;
 
 
-
-
 INSERT INTO cursos (cd_curso, nm_curso, ic_periodo) VALUES 
 (1,'Automação Industrial', 'Tarde'),
 (2,'Desenvolvimento de Sistemas', 'Manha'),
@@ -144,6 +151,14 @@ INSERT INTO cursos (cd_curso, nm_curso, ic_periodo) VALUES
 (19,'Soldagem', 'Noite');
 SELECT * FROM cursos;
 
+
+-- ASSOCIAÇÕES DE COORDENADORES A CURSOS (DADOS DE TESTE) - CORRIGIDO
+INSERT INTO usuarios_has_cursos (usuarios_cd_usuario, cursos_cd_curso) VALUES
+('0002', 2), -- André (Coord) -> Desenvolv. Sistemas
+('2001', 2), -- Karen (Coord) -> Desenvolv. Sistemas
+('2011', 1), -- Beatriz (Coord) -> Automação Industrial
+('2012', 4), -- Carlos (Coord) -> Eletrônica
+('2013', 3); -- Daniela (Coord) -> Edificações
 
 
 INSERT INTO turmas ( nm_turma, ic_serie, qt_alunos, cd_sala, cursos_cd_curso) VALUES 
@@ -299,10 +314,10 @@ INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fi
 ('EVT_FINAL_12', '2025-12-08', 'Palestra ABNT', '10:00', '11:40', 'Palestra', 'Normas ABNT.', 'Aprovado', '1001', '2025-11-25', '0002');
 
 -- =================================================================
--- PARTE 3.1: MAIS EVENTOS APROVADOS (Bloco B)
+-- PARTE 3.1: MAIS EVENTOS APROVADOS (Bloco B) - CORRIGIDO
 -- =================================================================
 INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fim, tipo_evento, ds_descricao, status, cd_usuario_solicitante, dt_solicitacao, cd_usuario_aprovador) VALUES 
-('EVT_FINAL_13', '2025-12-09', 'Cibersegurança', '19:20', '21:00', 'Palestra', 'Especialista convidado.', 'Aprovado', '1017', '2025-11-25', '0002'),
+('EVT_FINAL_13', '2025-12-09', 'Cibersegurança', '19:20', '21:00', 'Palestra', 'Especialista convidado.', 'Aprovado', '1017', '2025-11-25', '0002'), -- ds_descricao estava faltando
 ('EVT_FINAL_14', '2025-12-10', 'Visita Google', '08:00', '17:10', 'Visita Técnica', 'Cancelada.', 'Recusado', '1011', '2025-11-26', '0002'),
 ('EVT_FINAL_15', '2025-12-11', 'Prova Final 2G2', '14:20', '16:00', 'Prova', 'Prova final.', 'Aprovado', '1016', '2025-11-27', '0002'),
 ('EVT_FINAL_31', '2025-11-24', 'Prova PW 1N1', '19:20', '21:00', 'Prova', 'Prova PW III.', 'Aprovado', '1011', '2025-11-15', '0002'),

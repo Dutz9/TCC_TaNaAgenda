@@ -3,6 +3,91 @@
     class UsuarioController extends Banco {
 
         /**
+         * NOVO: Lista TODOS os Professores e Coordenadores com suas associações (Turmas/Cursos).
+         */
+        public function listarFuncionariosComAssociacoes() {
+            try {
+                // Chama a nova Stored Procedure
+                return $this->Consultar('listarFuncionariosComAssociacoes', []);
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+        
+        /**
+         * NOVO: Atualiza os dados de um COORDENADOR (Nome, Email, Telefone) E seus cursos.
+         */
+        public function atualizarCoordenador($cdUsuario, $nome, $email, $telefone, $cursos = []) {
+            try {
+                // Converte o array de cursos [1, 4, 5] em uma string "1,4,5" (será NULL se vazio)
+                $cursosString = !empty($cursos) ? implode(',', $cursos) : null;
+                
+                $this->Executar('atualizarCoordenador', [
+                    'pCdUsuario' => $cdUsuario,
+                    'pNome' => $nome,
+                    'pEmail' => $email,
+                    'pTelefone' => $telefone,
+                    'pCursosIDs' => $cursosString 
+                ]);
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+
+        /**
+         * CHAVE: Cria um novo usuário (Professor ou Coordenador) e o associa a Turmas ou Cursos.
+         * Esta é uma operação transacional.
+         *
+         * @param array $dadosUsuario Array com os dados (cd_usuario, nome, email, senha, telefone, tipo)
+         * @param array $associacoes Array com os IDs de turmas (para Professor) ou cursos (para Coordenador)
+         */
+        public function criarUsuarioCompleto($dadosUsuario, $associacoes = []) {
+            $this->iniciarTransacao(); // <-- INICIA A TRANSAÇÃO
+            try {
+                $tipoUsuario = $dadosUsuario['tipo']; // 'Professor' ou 'Coordenador'
+
+                // 1. Cria o usuário - Chama a SP que lida com o tipo de usuário
+                $this->Executar('criarProfessorCompleto', [ 
+                    'pCdUsuario' => $dadosUsuario['cd_usuario'],
+                    'pNome' => $dadosUsuario['nome'],
+                    'pEmail' => $dadosUsuario['email'],
+                    'pSenha' => $dadosUsuario['senha'],
+                    'pTelefone' => $dadosUsuario['telefone'],
+                    'pTipo' => $tipoUsuario 
+                ]);
+                
+                $cdUsuario = $dadosUsuario['cd_usuario'];
+
+                // 2. Associa o usuário
+                if (!empty($associacoes)) {
+                    if ($tipoUsuario === 'Professor') {
+                        // Associa a TURMAS
+                        foreach ($associacoes as $cdTurma) {
+                            $this->ExecutarSQL(
+                                'INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES (:cd_usuario, :cd_turma)',
+                                ['cd_usuario' => $cdUsuario, 'cd_turma' => $cdTurma]
+                            );
+                        }
+                    } elseif ($tipoUsuario === 'Coordenador') {
+                        // Associa a CURSOS
+                        foreach ($associacoes as $cdCurso) {
+                            $this->ExecutarSQL(
+                                'INSERT INTO usuarios_has_cursos (usuarios_cd_usuario, cursos_cd_curso) VALUES (:cd_usuario, :cd_curso)',
+                                ['cd_usuario' => $cdUsuario, 'cd_curso' => $cdCurso]
+                            );
+                        }
+                    }
+                }
+
+                $this->commitTransacao(); // <-- SUCESSO: Confirma tudo
+
+            } catch (\Throwable $th) {
+                $this->rollbackTransacao(); // <-- FALHA: Desfaz tudo
+                throw $th; 
+            }
+        }
+        
+        /**
          * Lista todos os usuários (para admin, por exemplo)
          */
         public function Listar() {
@@ -27,16 +112,16 @@
         }
 
         /**
-     * Lista todos os usuários com o perfil de Coordenador.
-     */
-    public function listarCoordenadores() {
-        try {
-            // A Stored Procedure listarCoordenadores é a que está faltando no seu Controller
-            return $this->Consultar('listarCoordenadores', []);
-        } catch (\Throwable $th) {
-            throw $th;
+         * Lista todos os usuários com o perfil de Coordenador.
+         */
+        public function listarCoordenadores() {
+            try {
+                // A SP listarCoordenadores agora retorna cd_usuario
+                return $this->Consultar('listarCoordenadores', []);
+            } catch (\Throwable $th) {
+                throw $th;
+            }
         }
-    }
 
         /**
          * Cria um novo usuário (para admin, por exemplo)
@@ -57,43 +142,12 @@
 
         /**
          * Cria um novo professor e o associa às turmas selecionadas.
-         * Esta é uma operação transacional.
-         *
-         * @param array $dadosProfessor Array com os dados (cd_usuario, nome, email, senha, telefone)
-         * @param array $turmas Array com os IDs das turmas para associar
+         * (Antiga função, agora adaptada para chamar a nova)
          */
         public function criarProfessor($dadosProfessor, $turmas = []) {
-            $this->iniciarTransacao(); // <-- INICIA A TRANSAÇÃO
-            try {
-                // 1. Cria o usuário professor
-                $this->Executar('criarProfessor', [
-                    'pCdUsuario' => $dadosProfessor['cd_usuario'],
-                    'pNome' => $dadosProfessor['nome'],
-                    'pEmail' => $dadosProfessor['email'],
-                    'pSenha' => $dadosProfessor['senha'],
-                    'pTelefone' => $dadosProfessor['telefone']
-                ]);
-                
-                // 2. Associa o professor às turmas selecionadas
-                if (!empty($turmas)) {
-                    foreach ($turmas as $cdTurma) {
-                        $this->ExecutarSQL(
-                            'INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES (:cd_usuario, :cd_turma)',
-                            [
-                                'cd_usuario' => $dadosProfessor['cd_usuario'],
-                                'cd_turma' => $cdTurma
-                            ]
-                        );
-                    }
-                }
-
-                $this->commitTransacao(); // <-- SUCESSO: Confirma tudo
-
-            } catch (\Throwable $th) {
-                $this->rollbackTransacao(); // <-- FALHA: Desfaz tudo
-                // Joga o erro (ex: "RM já existe") para o formulário
-                throw $th; 
-            }
+            // Adaptação para a nova função unificada
+            $dadosProfessor['tipo'] = 'Professor';
+            return $this->criarUsuarioCompleto($dadosProfessor, $turmas);
         }
 
         /**

@@ -1,8 +1,5 @@
 <?php
-    // =================================================================
-    // BLOCO DE CONTROLE E DADOS - AGENDA DO Administrador (v3 com Navegação)
-    // =================================================================
-
+    
     // 1. CONFIGURAÇÃO E SEGURANÇA
     require_once '../api/config.php';
     require_once '../api/verifica_sessao.php';
@@ -116,7 +113,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda (ADM.) - TáNaAgenda</title>
+    <title>Agenda (Adm.) - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/indexlogado.css">
@@ -127,6 +124,7 @@
 <body>
     <script src="../js/favicon.js"></script>
     <header class="header">
+        <button class="menu-toggle" id="menu-toggle">☰</button>
         <a href="perfiladm.php">
             <p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></p>
         </a>
@@ -149,8 +147,7 @@
                 <img src="../image/icones/professores.png" alt="">
                     <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
-                
-                <div class="menu-cursos">
+                <div class="menu-cursos"> <!-- ATIVO AQUI -->
                 <img src="../image/icones/cursos.png" alt="">
                     <a href="cursos.php"><p>Cursos</p></a>
                 </div> 
@@ -162,7 +159,7 @@
                 <img src="../image/icones/perfil.png" alt="">
                     <a href="perfiladm.php"><p>Perfil</p></a>
                 </div>  
-                <a href="../login.php"><div class="menu-sair"><p>SAIR</p></div></a> 
+                <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
             </div>
 
             <form id="form-filtros-agenda" action="agendaadm.php" method="GET">
@@ -214,7 +211,7 @@
                     </div>
                     
                     <div class="filtro-botoes">
-                        <a href="agendaadm.php" class="botao-limpar-filtro">Limpar</a>
+                        <a href="agendaadm.php" class="botao-limpar-filtro">Limpar</a>        
                         <button type="submit" class="botao-filtrar">Filtrar</button>
                     </div>
                 </section>
@@ -291,5 +288,6 @@
         
         <script src="../js/agendaadm.js"></script>
     </main>
+    <div class="menu-overlay" id="menu-overlay"></div>
 </body>
 </html>

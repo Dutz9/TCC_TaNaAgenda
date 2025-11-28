@@ -2,7 +2,7 @@
 require_once '../api/config.php'; 
 require_once '../api/verifica_sessao.php'; 
 
-// 1. GARANTE QUE É ADMINISTRADOR
+// 1. CHAVE: GARANTE QUE É ADMINISTRADOR
 if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Administrador') {
     header('Location: ../tela_prof/agendaprof.php');
     exit();
@@ -14,18 +14,21 @@ if (isset($_SESSION['mensagem_sucesso'])) {
     unset($_SESSION['mensagem_sucesso']);
 }
 
-// 2. BUSCA OS DADOS DOS PROFESSORES
+// 2. BUSCA OS DADOS UNIFICADOS (Professores E Coordenadores)
 $usuarioController = new UsuarioController();
-$lista_professores = $usuarioController->listarProfessores(); // Chama 'listarProfessoresComTurmas'
+$lista_funcionarios = $usuarioController->listarFuncionariosComAssociacoes(); 
 
-// 3. BUSCA A LISTA DE TODAS AS TURMAS (PARA O MODAL)
+// 3. BUSCA AS LISTAS COMPLETAS PARA OS DROPDOWNS DO MODAL
 $turmaController = new TurmaController();
 $lista_todas_turmas = $turmaController->listar();
+$cursoController = new CursoController();
+$lista_todos_cursos = $cursoController->listar(); // Lista de Cursos para Coordenador
 ?>
 <script>
     // 4. CRIA A "PONTE DE DADOS" PARA O JAVASCRIPT
-    const professoresDaPagina = <?php echo json_encode($lista_professores); ?>;
+    const funcionariosDaPagina = <?php echo json_encode($lista_funcionarios); ?>;
     const todasAsTurmas = <?php echo json_encode($lista_todas_turmas); ?>;
+    const todosOsCursos = <?php echo json_encode($lista_todos_cursos); ?>;
 </script>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -41,6 +44,7 @@ $lista_todas_turmas = $turmaController->listar();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/professores.css">
 </head>
 <body>
 <script src="../js/favicon.js"></script>
@@ -53,6 +57,7 @@ $lista_todas_turmas = $turmaController->listar();
 
     <main>
     <section class="area-lado">
+            <!-- Navegação ADM -->
             <a class="area-lado-logo" href="agendaadm.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu">
                 <div class="menu-agenda">
@@ -67,7 +72,6 @@ $lista_todas_turmas = $turmaController->listar();
                 <img src="../image/icones/professores.png" alt="">
                     <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
-                
                 <div class="menu-cursos">
                 <img src="../image/icones/cursos.png" alt="">
                     <a href="cursos.php"><p>Cursos</p></a>
@@ -80,9 +84,9 @@ $lista_todas_turmas = $turmaController->listar();
                 <img src="../image/icones/perfil.png" alt="">
                     <a href="perfiladm.php"><p>Perfil</p></a>
                 </div>  
-                <a href="../login.php"><div class="menu-sair"><p>SAIR</p></div></a> 
+                <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
             </div>
-        </section>
+    </section>
 
     <section class="area-notificacoes"> 
         <div id="feedback-bar" class="feedback-bar"></div>
@@ -91,59 +95,66 @@ $lista_todas_turmas = $turmaController->listar();
         <div class="barra-de-pesquisa">
             <div class="barra">
                 <label for="search-prof">Pesquisar:</label>
-                <input type="text" id="search-prof" placeholder="Nome, RM ou Turma">
+                <input type="text" id="search-prof" placeholder="Nome, RM, Cargo, Turma ou Curso">
             </div>
         </div>
     
         <div id="admin-card-container" class="admin-card-container">
             
-            <a href="addprofessor.php" class="admin-card card-adicionar">
+            <a href="addprofessoradm.php" class="admin-card card-adicionar">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
             </a>
 
-            <?php if (empty($lista_professores)): ?>
-                <p class="sem-eventos" style="grid-column: 1 / -1; text-align: center;">Nenhum professor cadastrado.</p>
+            <?php if (empty($lista_funcionarios)): ?>
+                <p class="sem-eventos" style="grid-column: 1 / -1; text-align: center;">Nenhum funcionário cadastrado.</p>
             <?php endif; ?>
         </div>
     </section>
 
+    <!-- MODAL DE EDIÇÃO UNIFICADO -->
     <div id="modal-overlay" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="modal-left">
                 <div class="coordinator-info">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
                     <div>
-                        <h3 id="modal-coord-nome"><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></h3>
+                        <h3 id="modal-adm-nome"><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></h3>
                         <p>Administrador</p>
                     </div>
                 </div>
             </div>
             <div class="modal-right">
-                <h3>Editar Professor</h3>
-                <input type="hidden" id="modal-prof-id" value="">
+                <h3 id="modal-titulo-edicao">Editar Funcionário</h3>
+                <input type="hidden" id="modal-user-id" value="">
                 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="modal-prof-nome">Nome do Professor:</label>
-                        <input type="text" id="modal-prof-nome" value="">
+                        <label for="modal-user-nome">Nome:</label>
+                        <input type="text" id="modal-user-nome" value="">
                     </div>
                     <div class="form-group">
-                        <label for="modal-prof-rm">RM:</label>
-                        <input type="text" id="modal-prof-rm" value="" readonly>
+                        <label for="modal-user-rm">RM:</label>
+                        <input type="text" id="modal-user-rm" value="" readonly>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="modal-prof-email">Email:</label>
-                    <input type="email" id="modal-prof-email" value="">
+                    <label for="modal-user-email">Email:</label>
+                    <input type="email" id="modal-user-email" value="">
                 </div>
                 <div class="form-group">
-                    <label for="modal-prof-telefone">Telefone:</label>
-                    <input type="tel" id="modal-prof-telefone" value="">
+                    <label for="modal-user-telefone">Telefone:</label>
+                    <input type="tel" id="modal-user-telefone" value="">
                 </div>
                 
-                <div class="form-group">
-                    <label for="modal-prof-turmas">Turmas:</label>
-                    <select id="modal-prof-turmas" name="turmas[]" multiple></select>
+                <!-- DROPDOWNS DINÂMICOS -->
+                <div id="dropdown-turmas-container" class="form-group" style="display:none;">
+                    <label for="modal-user-turmas">Turmas Associadas:</label>
+                    <select id="modal-user-turmas" name="turmas[]" multiple></select>
+                </div>
+
+                <div id="dropdown-cursos-container" class="form-group" style="display:none;">
+                    <label for="modal-user-cursos">Cursos Coordenados:</label>
+                    <select id="modal-user-cursos" name="cursos[]" multiple></select>
                 </div>
                 
                 <div class="form-group">
@@ -151,7 +162,7 @@ $lista_todas_turmas = $turmaController->listar();
                     <input type="text" value="********" readonly>
                 </div>
                 <div class="modal-buttons">
-                    <button class="excluir">Excluir Professor</button>
+                    <button class="excluir">Excluir Funcionário</button>
                     <button class="salvar">Salvar Alterações</button>
                 </div>
             </div>
@@ -160,7 +171,8 @@ $lista_todas_turmas = $turmaController->listar();
         
     <div id="confirmation-modal" class="confirmation-modal" style="display: none;">
         <div class="confirmation-content">
-            <h3>Realmente deseja excluir o professor?</h3>
+            <h3>Realmente deseja excluir o funcionário?</h3>
+            <p>Se o usuário for solicitante de eventos, a exclusão será bloqueada.</p>
             <div class="confirmation-buttons">
                 <button class="cancelar">Cancelar</button>
                 <button class="excluir-confirm">Excluir</button>

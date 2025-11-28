@@ -326,6 +326,28 @@ class EventoController extends Banco {
         }
     }
 
+    /**
+     * NOVO: Lista eventos relevantes para o ADM (pendentes + todos Aprovados/Recusados).
+     * @param string $cdUsuario O código do usuário logado.
+     * @param array $filtros Filtros de busca.
+     * @return array A lista de eventos filtrada.
+     */
+    public function listarParaAdministrador($cdUsuario, $filtros = []) {
+        // CHAVE: Para o ADM, a lógica do Coordenador funciona bem, pois ele vê:
+        // 1. Eventos Solicitados por outros (PENDENTES)
+        // 2. Eventos criados por ele (EU)
+        // 3. Eventos que ele aprovou/recusou (APROVADOS/RECUSADOS)
+        
+        // Se o ADM precisa ver *TODOS* os eventos (incluindo os de outros Coordenadores), 
+        // a SP de Coordenador é a mais próxima, mas pode não cobrir 100% dos eventos.
+        // Por hora, usaremos a lógica do Coordenador para manter a filtragem funcional, 
+        // e ele fará o filtro principal por Status.
+        
+        // Reutilizamos a SP do coordenador:
+        return $this->listarParaCoordenador($cdUsuario, $filtros); 
+    }
+
+
     // Adicione esta nova função dentro da classe EventoController
     
     /**

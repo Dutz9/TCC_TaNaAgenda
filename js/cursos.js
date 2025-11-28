@@ -34,13 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCursoNome = document.getElementById('modal-curso-nome');
     const modalCursoTurmas = document.getElementById('modal-curso-turmas');
     const modalCursoPeriodo = document.getElementById('modal-curso-periodo');
-    const modalCursoDuracao = document.getElementById('modal-curso-duracao'); // Deve existir no HTML
+    const modalCursoDuracao = document.getElementById('modal-curso-duracao'); 
     const modalListaCoords = document.getElementById('coordenadores-vinculados-lista');
     
     let cursoEmEdicao = null;
 
     /**
-     * Função para "desenhar" os cards na tela (ADAPTADA para o novo HTML/CSS)
+     * Função para "desenhar" os cards na tela (CORRIGIDA)
      */
     function renderizarCursos(listaCursos) {
         // Remove todos os cards, exceto o de adicionar
@@ -52,7 +52,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const p = document.createElement('p');
                 p.className = 'sem-eventos';
                 p.textContent = 'Nenhum curso encontrado com esse filtro.';
-                // Garante que a mensagem ocupe a largura total da grid de 2 colunas
                 p.style.gridColumn = '1 / -1'; 
                 cardContainer.appendChild(p);
             }
@@ -60,19 +59,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         for (const curso of listaCursos) {
             const card = document.createElement('div');
-            // CHAVE: Usar a classe padrão 'admin-card'
             card.className = 'admin-card'; 
             card.id = `curso-card-${curso.cd_curso}`;
+            
+            // CHAVE DE CORREÇÃO 1: USAR contagem_coordenadores (retornada pela SP)
+            const numCoords = parseInt(curso.contagem_coordenadores, 10);
+            const coordDisplay = `<b>Coordenadores:</b> ${numCoords === 0 || isNaN(numCoords) ? 'N/A' : numCoords}`;
             
             // Renderiza as informações do curso
             card.innerHTML = `
                 <div class="curso-infos">
-                    <!-- Usa h3 e p para herdar o estilo de cor/fonte base de coordenador.css -->
                     <h3>${curso.nm_curso} (${curso.ic_periodo})</h3>
                     <p><b>Turmas:</b> ${curso.contagem_turmas || '0'}</p>
-                    <p><b>Coordenadores:</b> ${curso.coordenadores_associados || 'N/A'}</p>
+                    <p>${coordDisplay}</p> <!-- CHAVE: AGORA EXIBE A CONTAGEM -->
                 </div>
-                <!-- CHAVE: Usa a classe padrão 'admin-btn btn-editar' -->
                 <button class="admin-btn btn-editar" data-id="${curso.cd_curso}">Editar</button>
             `;
             cardContainer.appendChild(card);
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const cursosFiltrados = cursosDaPagina.filter(curso => {
             const nome = curso.nm_curso.toLowerCase();
             const periodo = (curso.ic_periodo || '').toLowerCase();
-            const coordenadores = (curso.coordenadores_associados || '').toLowerCase();
+            const coordenadores = (curso.coordenadores_associados || '').toLowerCase(); // Filtra por nome no modal
             
             return nome.includes(termoBusca) || periodo.includes(termoBusca) || coordenadores.includes(termoBusca);
         });
@@ -102,39 +102,38 @@ document.addEventListener('DOMContentLoaded', () => {
         cursoEmEdicao = null;
     }
 
-    // --- FUNÇÃO AJAX (para buscar Coordenadores) ---
-    async function buscarCoordenadores(cursoId) {
-        modalListaCoords.innerHTML = '<p>Carregando...</p>';
-        try {
-            const response = await fetch(`../api/get_coordenadores_curso.php?curso_id=${cursoId}`);
-            const coordenadores = await response.json(); 
-
-            if (response.ok) {
-                modalListaCoords.innerHTML = '';
-                if (coordenadores.length > 0) {
-                    coordenadores.forEach(coord => {
-                        const item = document.createElement('div');
-                        item.className = 'response-item';
-                        item.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                                <path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
-                            </svg>
-                            <div><p>${coord.nm_usuario}</p></div>
-                        `;
-                        modalListaCoords.appendChild(item);
-                    });
-                } else {
-                    modalListaCoords.innerHTML = '<p>Nenhum coordenador vinculado a este curso.</p>';
-                }
-            } else {
-                modalListaCoords.innerHTML = `<p style="color: red;">Erro: ${coordenadores.mensagem || 'Não foi possível buscar.'}</p>`;
-            }
-        } catch (error) {
-            console.error('Erro ao buscar coordenadores:', error);
-            modalListaCoords.innerHTML = '<p style="color: red;">Erro de conexão.</p>';
+    /**
+     * NOVO: Função para exibir a lista de coordenadores no modal
+     */
+    function exibirCoordenadoresModal(curso) { 
+        // CHAVE: Usa o dado que já está na memória (coordenadores_associados)
+        const coordenadoresNomes = curso.coordenadores_associados;
+        modalListaCoords.innerHTML = '';
+        
+        // 1. Verifica se a string de nomes está vazia
+        if (!coordenadoresNomes || coordenadoresNomes.trim() === '') {
+            modalListaCoords.innerHTML = '<p>Nenhum coordenador vinculado a este curso.</p>';
+            return;
         }
+        
+        // 2. Divide a string pelo separador padrão de GROUP_CONCAT (", ")
+        const listaNomes = coordenadoresNomes.split(', ');
+        
+        // 3. Renderiza cada nome
+        listaNomes.forEach(nome => {
+            if (nome.trim() !== '') { // Filtra entradas vazias
+                const item = document.createElement('div');
+                item.className = 'response-item';
+                item.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+                        <path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+                    </svg>
+                    <div><p>${nome}</p></div>
+                `;
+                modalListaCoords.appendChild(item);
+            }
+        });
     }
-
 
     // --- LÓGICA DOS EVENT LISTENERS ---
 
@@ -156,8 +155,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Simulação da Duração
             if (modalCursoDuracao) modalCursoDuracao.value = '3 Módulos/Anos'; 
             
-            // Busca os coordenadores associados (com a função AJAX adaptada)
-            buscarCoordenadores(cursoEmEdicao.cd_curso); 
+            // CHAVE: Chamamos a função de exibição do modal
+            exibirCoordenadoresModal(cursoEmEdicao); 
             
             modalOverlay.style.display = 'flex';
         }
@@ -181,20 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok && result.status === 'sucesso') {
-                // Atualiza a "memória" do JS
-                cursoEmEdicao.nm_curso = modalCursoNome.value;
-                cursoEmEdicao.ic_periodo = modalCursoPeriodo.value;
                 
-                // Atualiza a lista na tela (re-renderiza para ser mais simples)
-                const index = cursosDaPagina.findIndex(c => String(c.cd_curso) === cursoEmEdicao.cd_curso);
-                if (index > -1) {
-                     // Atualiza o objeto no array
-                     cursosDaPagina[index] = { ...cursosDaPagina[index], ...cursoEmEdicao };
-                }
-                renderizarCursos(cursosDaPagina);
-                
+                // CHAVE: RECARREGA A PÁGINA APÓS O SUCESSO
                 showFeedback(result.mensagem, 'sucesso');
-                fecharModais();
+                setTimeout(() => {
+                    window.location.reload(); 
+                }, 500); 
+
             } else {
                 showFeedback(result.mensagem || 'Não foi possível salvar.', 'erro');
             }
@@ -235,13 +227,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok && result.status === 'sucesso') {
-                const index = cursosDaPagina.findIndex(c => String(c.cd_curso) === id);
-                if (index > -1) {
-                    cursosDaPagina.splice(index, 1);
-                }
-                document.getElementById(`curso-card-${id}`)?.remove();
+                
+                // CHAVE: RECARREGA A PÁGINA APÓS O SUCESSO
                 showFeedback(result.mensagem, 'sucesso');
-                fecharModais();
+                 setTimeout(() => {
+                    window.location.reload(); 
+                }, 500); 
+                
             } else {
                 showFeedback(result.mensagem || 'Não foi possível excluir.', 'erro');
             }

@@ -1,452 +1,59 @@
-.areaprof{
-    margin-left: 250px;
-    padding: 0px;
-    height: calc(100vh - 80px);
-    overflow: hidden;
-    overflow-y: auto; 
-    overflow-x: hidden;
-    padding-bottom: 20px;
-    background-color: white;
-}
-
-.areaprof h2 {
-    font-size: 24px;
-    display: flex;
-    justify-content: center;
-    color: #000000;
-    padding-top: 20px;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 0;
-}
-
-
-.barra-de-pesquisa {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    margin-bottom: 20px;
-    padding: 0 30px;
-}
-
-.barra {
-    display: flex;
-    align-items: center;
-}
-
-.barra-de-pesquisa label {
-    font-size: 16px;
-    color: #000000;
-    font-weight: bold;
-    margin-right: 10px;
-}
-
-.barra-de-pesquisa input {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    width: calc(100vw / 4 - 95px);
+/* 
+    professores.css - Estilos específicos para a listagem de Professores e Coordenadores
     
-}
+    A maioria dos estilos de card (.admin-card, .admin-btn, .card-adicionar) 
+    é herdada do ../css/coordenador.css. 
+*/
 
-.gridprof {
+
+/* 
+    CHAVE: ESTRUTURA DA GRID (2 COLUNAS)
+    A classe .admin-card-container é usada no HTML.
+    O CSS do .admin-card (o card individual) é pego de coordenador.css.
+*/
+.admin-card-container {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    /* Manteremos as 2 colunas, já que você gostou */
+    grid-template-columns: repeat(3, 1fr);
     gap: 20px;
-    padding: 0 30px;
 }
 
-.cardprof {
-    background-color: #fff;
-    border: rgb(145, 145, 145) 2px solid;
-    border-radius: 6px;
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    text-align: left;
-}
 
-.prof-infos{
+/* 
+    SOBRESCREVE O ESTILO INTERNO DO CARD PARA AS INFORMAÇÕES
+    (Estas regras definem o layout do conteúdo DENTRO do .admin-card)
+*/
+.prof-infos {
+    /* Herda o estilo do .admin-card, mas organiza o conteúdo em coluna */
     display: flex;
     flex-direction: column;
     margin-right: 10px;
-    flex: 1;
+    flex: 1; /* Ocupa o espaço restante */
+    min-width: 0; 
+}
+
+.prof-infos h3 {
+    /* Estilo do RM e Nome */
+    font-size: 16px; 
+    font-weight: 600; 
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 4px;
 }
 
 .prof-infos p {
-    color: rgb(44, 44, 44);
-    display: flex;
-    justify-content: flex-start;
-    line-height: 1.3;
+    /* Estilo do Cargo/Turmas/Cursos */
     font-size: 14px;
-    word-break: break-word;
-    margin: 0px;
-}
-
-.cardprof > p {
-    flex: 1;
-    font-size: 14px;
-    color: #555;
-    margin: 0 10px;
-    line-height: 1.3;
-    word-break: break-word;
-}
-
-.adicionar-btn {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    font-size: 14px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
+    color: #666; /* Cor cinza/padrão */
     white-space: nowrap;
-    width: 115px;
-}
-
-.adicionar-btn svg {
-    min-height: 15px;
-    margin-left: 10px;
-}
-
-.adicionar-btn:hover {
-    background-color: #0056b3;
-}
-
-.Editar-btn {
-    background-color: #0d102b;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 5px 10px;
-    font-size: 14px;
-    cursor: pointer;
-    white-space: nowrap;
-    width: 115px;
-}
-
-.Editar-btn:hover {
-    background-color: #03093f;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 2px 0;
 }
 
 
 
-
-
-
-
-
-
-
-
-.excluir {
-    background-color: #ff0000;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
- 
-.excluir:hover {
-    background-color: #cc0000;
-}
- 
-.salvar {
-    background-color: #666;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
- 
-.salvar:hover {
-    background-color: #0479F9;
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
- 
-.modal-content {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    width: 90%;
-    max-width: 1000px;
-    min-width: 60vw;
-    display: flex;
-    gap: 20px;
-    margin-left: 200px;
-}
-
-
-.modal-left {
-    width: 30%;
-    border-right: 1px solid #ccc;
-    padding-right: 20px;
-}
- 
-.coordinator-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
-}
- 
-.coordinator-info svg {
-    width: 40px;
-    height: 40px;
-}
- 
-.coordinator-info h3 {
-    margin: 0;
-    font-size: 18px;
-}
- 
-.coordinator-info p {
-    margin: 0;
-    font-size: 14px;
-    color: #666;
-}
- 
-.responses-section h4 {
-    font-size: 16px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: center;
-}
- 
-.response-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 5px;
-    border: #858585 2px solid;
-    border-radius: 10px;
-}
- 
-.response-item svg {
-    width: 30px;
-    height: 30px;
-}
- 
-.response-item div {
-    display: flex;
-    flex-direction: column;
-}
- 
-.response-item p {
-    margin: 0;
-    font-size: 14px;
-    font-weight: bold;
-}
- 
-.response-item span {
-    font-size: 12px;
-}
- 
-.modal-right {
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-}
- 
-.modal-right h3 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
- 
-.modal-right label {
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #333;
-}
- 
-.modal-right input,
-.modal-right textarea,
-.modal-right select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-top: 5px;
-    background: #ffffff;
-}
- 
-.modal-right textarea {
-    height: 60px;
-    resize: none;
-}
- 
-.form-row {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-}
- 
-.form-group {
-    width: 48%;
-}
- 
-.modal-buttons {
-    display: flex;
-    justify-content: flex-end;
-    justify-self: flex-end;
-    gap: 15px;
-    margin-top: 15px;
-    width: 100%;
-    max-height: 55%;
-}
- 
-.excluir {
-    background-color: #ff0000;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
- 
-.excluir:hover {
-    background-color: #cc0000;
-}
- 
-.salvar {
-    background-color: #666;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
- 
-.salvar:hover {
-    background-color: #0479F9;
-}
-
-.confirmation-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1100;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.confirmation-content {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    text-align: start;
-}
-
-.confirmation-content h3 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
-
-.confirmation-content label {
-    display: flex;
-    margin-top: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #000000;
-}
-
-.confirmation-content p {
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
-}
-
-.confirmation-buttons {
-    display: flex;
-    justify-content: flex-end;
-    align-self: end;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.cancelar {
-    background-color: #666;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.cancelar:hover {
-    background-color: #555;
-}
-
-.excluir-confirm {
-    background-color: #ff0000;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.excluir-confirm:hover {
-    background-color: #cc0000;
-}
-
-.confirmation-content {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    width: 90%;
-    max-width: 400px;
-    text-align: start;
-}
-
-.confirmation-content h3 {
-    font-size: 18px;
-    margin-bottom: 15px;
-}
-
-.confirmation-content label {
-    display: flex;
-    margin-top: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #000000;
-}
-
-.confirmation-content p {
-    font-size: 12px;
-    color: #666;
-    margin-top: 5px;
-}
-
-.confirmation-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-}
+/* REMOVEMOS REGRAS DE CARD DUPLICADAS/OBSOLETAS (Ex: .cardprof, .gridprof) */
+/* E as regras de modal duplicadas */

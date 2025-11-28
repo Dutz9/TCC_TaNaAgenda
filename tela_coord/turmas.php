@@ -2,13 +2,11 @@
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // CHAVE: Permitir Coordenador OU Administrador
-    $tipo_usuario_logado = $usuario_logado['tipo_usuario_ic_usuario'];
-    if ($tipo_usuario_logado !== 'Coordenador' && $tipo_usuario_logado !== 'Administrador') {
+    if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
         header('Location: ../tela_prof/agendaprof.php');
         exit();
     }
-    
+
     // --- LÓGICA DE FEEDBACK (TOAST) ---
     if (isset($_SESSION['mensagem_sucesso'])) {
         $mensagem_toast = $_SESSION['mensagem_sucesso'];
@@ -47,7 +45,8 @@
 <body>
 <script src="../js/favicon.js"></script>
     <header class="header">
-        <a href="perfiladm.php"> <!-- ATENÇÃO: Link para perfiladm.php -->
+        <button class="menu-toggle" id="menu-toggle">☰</button>
+        <a href="perfilcoord.php">
             <p> <?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?> </p>
         </a>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
@@ -55,39 +54,15 @@
 
     <main>
     <section class="area-lado">
-            <!-- Navegação ADM -->
-            <a class="area-lado-logo" href="agendaadm.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
-            <div class="area-menu">
-                <div class="menu-agenda">
-                <img src="../image/icones/agenda.png" alt="">
-                    <a href="agendaadm.php"><p>Agenda</p></a>
-                </div>
-                <div class="menu-meus-eventos">
-                <img src="../image/icones/eventos.png" alt="">
-                    <a href="eventosadm.php"><p>Eventos</p></a>
-                </div>
-                <div class="menu-professores">
-                <img src="../image/icones/professores.png" alt="">
-                    <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
-                </div> 
-                <div class="menu-administradores">
-                <img src="../image/icones/administradores.png" alt="">
-                    <a href="administradores.php"><p>Administradores</p></a>
-                </div>
-                <div class="menu-cursos">
-                <img src="../image/icones/cursos.png" alt="">
-                    <a href="cursos.php"><p>Cursos</p></a>
-                </div> 
-                <div class="menu-turmas ativo">
-                <img src="../image/icones/turmas.png" alt="">
-                    <a href="turmas.php"><p>Turmas</p></a>
-                </div>
-                <div class="menu-perfil">
-                <img src="../image/icones/perfil.png" alt="">
-                    <a href="perfiladm.php"><p>Perfil</p></a>
-                </div>  
-                <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
-            </div>
+        <a class="area-lado-logo" href="agendacoord.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
+        <div class="area-menu">
+            <div class="menu-agenda"><img src="../image/icones/agenda.png" alt=""><a href="agendacoord.php"><p>Agenda</p></a></div>
+            <div class="menu-meus-eventos"><img src="../image/icones/eventos.png" alt=""><a href="eventoscoord.php"><p>Eventos</p></a></div>
+            <div class="menu-professores"><img src="../image/icones/professores.png" alt=""><a href="professores.php"><p>Professores</p></a></div> 
+            <div class="menu-turmas ativo"><img src="../image/icones/turmas.png" alt=""><a href="turmas.php"><p>Turmas</p></a></div> 
+            <div class="menu-perfil"><img src="../image/icones/perfil.png" alt=""><a href="perfilcoord.php"><p>Perfil</p></a></div> 
+            <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
+        </div>
     </section>
 
     <section class="area-notificacoes"> 
@@ -118,9 +93,8 @@
                 <div class="coordinator-info">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
                     <div>
-                        <!-- ATENÇÃO: Mudando o perfil exibido no modal para ADM -->
                         <h3 id="modal-coord-nome-turma"><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></h3>
-                        <p>Administrador</p> 
+                        <p>Coordenador</p>
                     </div>
                 </div>
                 <div class="responses-section">
@@ -193,5 +167,6 @@
         setTimeout(() => { showFeedback("<?php echo addslashes($mensagem_toast); ?>", 'sucesso'); }, 100);
     </script>
     <?php endif; ?>
+    <div class="menu-overlay" id="menu-overlay"></div>
 </body> 
 </html>

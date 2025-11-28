@@ -6,10 +6,11 @@
   header('Content-Type: application/json');
 
   // --- CAMADA DE SEGURANÇA EXTRA ---
-  // Garante que apenas um coordenador pode executar esta ação
-  if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
+  // CHAVE: Garante que um coordenador OU Administrador pode executar esta ação
+  $tipo_usuario_logado = $usuario_logado['tipo_usuario_ic_usuario'];
+  if ($tipo_usuario_logado !== 'Coordenador' && $tipo_usuario_logado !== 'Administrador') {
       http_response_code(403); // Proibido
-      echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas coordenadores podem executar esta ação.']);
+      echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas Coordenadores ou Administradores podem executar esta ação.']);
       exit();
   }
 
