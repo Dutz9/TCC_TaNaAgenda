@@ -1,209 +1,13 @@
-.body{
-    background-color: #0d102b;
-}
-
-.filtrar-calendario {
-    border: 2px solid white;
-    border-radius: 10px;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    margin-top: 20px;
-    margin-right: 15px;
-    padding-bottom: 15px;
-    padding-top: 15px;
-    margin-left: 10px;
-}
-
-.filtrar-calendario > h2 {
-    font-weight: 500;
-    font-size: 20px;
-    align-self: center;
-}
-
-.filtrar-calendario-periodo {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    padding-top: 5px;
-}
-
-.filtrar-calendario-periodo > h3 {
-    font-weight: 400;
-    font-size: 16px;
-    margin-left: 10px;
-    width: 40%;
-}
-
-.filtrar-calendario-periodo > svg {
-    max-height: 28px;
-}
-
-.divisao-checkbox {
-    height: 1px;
-    width: 75%;
-    background-color: white;
-    display: flex;
-    align-self: center;
-    margin-top: 10px;
-}
+/* --- ESTILOS GLOBAIS DA PÁGINA DA AGENDA LOGADA --- */
 
 .calendario {
     width: calc(100% - 500px);
     margin-left: 250px;
+    background-color: #0d102b;
     height: calc(100vh - 80px);
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background-color: #0d102b;
-}
-
-.header-calendario {
-    background-color: #022E5E;
-    color: white;
-    border-top-right-radius: 15px;
-    border-top-left-radius: 15px;
-    flex-shrink: 0;
-}
-
-.header-parte-de-cima {
-    display: flex;
-    padding-top: 30px;
-    height: fit-content;
-    align-items: center;
-    width: 100%;
-    margin-top: 15px;
-    justify-content: center;
-    position: relative;
-}
-
-.header-parte-de-cima > h3 {
-    font-size: 22px;
-}
-
-.header-parte-de-cima > div {
-    display: flex;
-    padding: 5px 15px;
-    height: fit-content;
-    align-items: center;
-}
-
-.header-parte-de-cima > div > h4 {
-    font-size: 14px;
-
-}
-
-.header-parte-de-cima > div > svg {
-    height: 26px;
-}
-
-.header-parte-de-cima > h4 {
-    font-size: 14px;
-
-}
-
-.header-divisoes-semanas {
-    display: grid;
-    grid-template-columns: 50px repeat(6, 1fr);
-    gap: 0;
-    margin-top: 30px;
-    margin-right: 1.3vw;
-    margin-left: 10px;
-    height: fit-content;
-}
-
-.fundo-grid {
-    background-color: white;
-    overflow-y: auto;
-    overflow-x: hidden;
-    max-height: calc(100vh - 80px - 120px);
-    flex-grow: 1;
-}
-
-.calendario-grid {
-    display: grid;
-    grid-template-columns: 50px repeat(6, 1fr);
-    gap: 0;
-    margin: 10px;
-    min-height: calc(100vh - 80px - 150px);
-}
-
-.time-slot-label {
-    padding: 10px 10px 10px 0px;
-    display: flex;
-    align-items: center;
-    text-align: right;
-    background-color: transparent;
-    border-bottom: 1px solid #AFAFAF;
-}
-
-.time-slot {
-    padding: 10px;
-    min-height: 60px;
-    display: block;
-    border-bottom: 1px solid #AFAFAF;
-    border-left: 1px solid #AFAFAF;
-
-    /* --- A CORREÇÃO PRINCIPAL --- */
-    /* Força a célula a cortar qualquer conteúdo que seja muito largo */
-    overflow: hidden;
-}
-
-.calendario-grid > div:nth-child(6n) {
-    border-right: 0;
-}
-
-.event {
-    display: flex;
-    height: 19px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-align: center;
-    align-items: center;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    width: 100%;
-    margin-bottom: 5px;
-    min-width: 0; /* Garante que o flex item possa encolher */
-}
-
-.event:last-child {
-    margin-bottom: 0;
-}
-
-.event.azul {
-    background-color: #57A1E3;
-}
-
-.event.verde {
-    background-color: #51DB51;
-}
-
-.event.amarelo {
-    background-color: #e6ae08;
-}
-
-.dias-da-semana {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: transparent;
-    padding: 5px 0;
-    margin-left: 5px;
-    margin-right: 5px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    min-width: auto;
-}
-
-.dias-da-semana > h2 {
-    font-size: 16px;
-    font-weight: 500;
 }
 
 .area-lado-direito {
@@ -220,272 +24,14 @@
     font-size: 18px;
 }
 
-.calendario-lado-direito {
-    width: 225px;
-    background-color: white;
-    border-radius: 30px 30px 15px 15px;
-    display: flex;
-    align-self: center;
-    flex-direction: column;
-    padding-bottom: 5px;
-    margin-top: 0px;
-}
-
-
-.header-calendario-lado-direito {
-    border-radius: 15px 15px 0px 0px;
-    display: flex;
-    justify-content: space-around;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    background-color: #022E5E;
-}
-
-.header-calendario-lado-direito > h3 {
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.dias-da-semana-calendario-lado-direito {
-    display: flex;
-    justify-content: space-around;
-    gap: 3px;
-    padding: 5px;
-}
-
-.dias-da-semana-calendario-lado-direito > p {
-    font-size: 12px;
-    font-weight: 500;
-    color: black;
-    text-align: center;
-    flex: 1;
-}
-
-/* Cores dinâmicas dependendo do dia da semana */
-.dia-semana.seg {
-    color: #000; /* Azul para segunda */
-}
-
-.dia-semana.ter {
-    color: #000; /* Preto padrão */
-}
-
-.dia-semana.qua {
-    color: #000;
-}
-
-.dia-semana.qui {
-    color: #000;
-}
-
-.dia-semana.sex {
-    color: #000;
-}
-
-.dia-semana.sab {
-    color: #000;
-}
-
-.dia-semana.dom {
-    color: #DD2B2B; /* Vermelho para domingo */
-}
-
-/* Destaque para o dia atual (adicionado via JS) */
-.dia-semana.atual {
-    color: #022E5E !important; /* Azul claro para destaque no dia atual */
-}
-
-/* --- ESTILO DOS DIAS CLICÁVEIS DO MINI-CALENDÁRIO --- */
-.dias-calendario-lado-direito {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    padding: 0 5px 5px 5px;
-}
-
-/* Estilo para os dias (agora são links <a>) e espaços vazios (<p>) */
-.dias-calendario-lado-direito a,
-.dias-calendario-lado-direito p {
-    font-size: 12px;
-    font-weight: 500;
-    color: black;
-    text-align: center;
-    padding: 2px;
-    text-decoration: none;
-    border-radius: 10px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-}
-
-.dias-calendario-lado-direito a:hover {
-    background-color: #e0e0e0;
-}
-
-/* Estilo para o dia "Hoje" */
-.dias-calendario-lado-direito a.today {
-    background-color: #022E5E;
-    color: white;
-}
-.dias-calendario-lado-direito a.today:hover {
-    background-color: #0479F9;
-}
-
-.resumo-geral-lado-direito {
-    width: 225px;
-    background-color: white;
-    border-radius: 15px;
-    margin-top: 10px;
-    display: flex;
-    align-self: center;
-    flex-direction: column;
-    padding: 15px 15px 15px 15px;
-    max-height: 27.5vh;
-}
-
-.container-scroll-eventos {
-    overflow-y: auto;
-    max-height: 27.5vh; /* Limita só a área de eventos */
-    padding-right: 5px;
-}
-
-/* Opcional: para esconder a barra de rolagem no Chrome */
-.container-scroll-eventos::-webkit-scrollbar {
-    width: 6px;
-}
-.container-scroll-eventos::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 4px;
-}
-
-.resumo-geral-lado-direito > h3 {
-    font-size: 14px;    
-    color: black;
-}
-
-.area-escrita-resumo-geral {
-    color: black;
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* Alinha melhor o texto e a hora */
-    font-size: 12px;
-    border: 2px solid #4291D8;
-    border-radius: 30px;
-    padding: 5px 10px; /* Aumenta um pouco o padding vertical */
-    margin-top: 10px;
-    min-height: 23px;
-    height: auto; /* PERMITE QUE A ALTURA SE AJUSTE AO CONTEÚDO */
-}
-
-/* Ajuste para truncar o texto do nome do evento no resumo */
-.area-escrita-resumo-geral p:first-child {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 120px; /* Define um limite de largura para o texto */
-}
-
-/* Garante que o horário não seja "esmagado" */
-.area-escrita-resumo-geral p:last-child {
-    flex-shrink: 0;
-}
-
-/* Cores das bordas para tipos específicos de evento */
-.area-escrita-resumo-geral.event-summary.tipo-palestra {
-    border-color: #4291D8; /* Azul (usando sua cor padrão do cabeçalho) */
-}
-
-.area-escrita-resumo-geral.event-summary.tipo-visita-tecnica {
-    border-color: #e6ae08; 
-}
-
-.area-escrita-resumo-geral.event-summary.tipo-conselho-de-classe {
-    border-color: #8e57e3; /* Roxo */
-}
-
-.area-escrita-resumo-geral.event-summary.tipo-reuniao {
-    border-color: #51DB51; /* Vermelho */
-}
-
-/* Adicione mais classes conforme os tipos de evento que você tiver */
-.area-escrita-resumo-geral.event-summary.tipo-prova {
-    border-color: #e35757; /* Roxo */
-}
-
-.area-escrita-resumo-geral.event-summary.tipo-evento-esportivo {
-    border-color: #e38e57; /* Laranja */
-}
-
-.area-escrita-resumo-geral.event-summary.tipo-outro {
-    border-color: #888888; /* Cinza */
-}
-
-/* Se quiser uma borda arredondada */
-.area-escrita-resumo-geral.event-summary {
-    border-radius: 30px; /* Arredonda apenas os cantos direitos da borda */
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    width: 90%;
-    max-width: 500px; /* Max-width para o modal da agenda */
-    text-align: left;
-
-    /* --- A CORREÇÃO --- */
-    display: block; /* Remove o 'flex' que estava causando o bug */
-    max-height: 85vh; /* Altura máxima de 85% da tela */
-    overflow-y: auto; /* Adiciona scroll SÓ SE necessário */
-}
-
-.modal-content h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.modal-content p {
-    font-size: 14px;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-/* --- CORES DINÂMICAS PARA OS EVENTOS --- */
-.event:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    z-index: 10;
-}
-.event {
-    transition: all 0.2s ease-in-out;
-}
-
-.event.tipo-palestra { background-color: #57A1E3; } /* Azul */
-.event.tipo-reuniao { background-color: #51DB51; } /* Verde */
-.event.tipo-visita-tecnica { background-color: #e6ae08; } /* Amarelo */
-.event.tipo-prova { background-color: #e35757; } /* Vermelho */
-.event.tipo-conselho-de-classe { background-color: #8e57e3; } /* Roxo */
-.event.tipo-evento-esportivo { background-color: #e38e57; } /* Laranja */
-.event.tipo-outro { background-color: #888888; } /* Cinza */
-
-/* --- NOVO ESTILO DOS FILTROS (ACORDEÃO) --- */
+/* --- FILTROS (ACORDEÃO) --- */
 .filtrar-calendario {
     border: 2px solid white;
     border-radius: 10px;
     color: white;
     padding: 15px;
     margin: 15px 10px 0 10px;
+    background-color: #0d102b;
 }
 
 .filtrar-calendario h2 {
@@ -509,62 +55,53 @@
     justify-content: space-between;
     align-items: center;
     cursor: pointer;
+    padding: 5px 0;
 }
-.filtro-header h3 {
-    font-weight: 400;
-    font-size: 16px;
-}
-.filtro-seta {
-    width: 14px;
-    transition: transform 0.3s ease;
-}
-.filtro-item.aberto .filtro-seta {
-    transform: rotate(180deg);
-}
+
+.filtro-header h3 { font-weight: 400; font-size: 16px; }
+.filtro-seta { width: 14px; transition: transform 0.3s ease; }
+.filtro-item.aberto .filtro-seta { transform: rotate(180deg); }
 
 .filtro-opcoes {
-    max-height: 0; /* Começa fechado */
+    max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-out;
-}
-.filtro-item.aberto .filtro-opcoes {
-    max-height: 200px; /* Altura máxima para abrir */
-    overflow-y: auto; /* Adiciona scroll se as opções forem muitas */
-    margin-top: 10px;
+    padding-left: 5px;
 }
 
-/* Estilo dos Checkboxes (baseado na image_97e97a.png) */
+.filtro-item.aberto .filtro-opcoes {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 5px;
+}
+
 .filtro-opcoes label {
-    display: block;
+    display: flex;
+    align-items: center;
     font-size: 14px;
-    padding: 5px 0;
+    padding: 4px 0;
+    cursor: pointer;
+    color: #ccc;
+}
+.filtro-opcoes label:hover { color: white; }
+
+.filtro-opcoes input[type="checkbox"] {
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+    accent-color: #0479F9;
     cursor: pointer;
 }
-.filtro-opcoes label:hover {
-    color: #0479F9;
-}
-.filtro-opcoes input[type="checkbox"] {
-    margin-right: 8px;
-    accent-color: #0479F9;
-}
 
-/* Estilo para a lista de turmas com scroll */
-/* Limite de altura SÓ QUANDO o filtro de turmas estiver aberto */
-.filtro-item.aberto #filtro-opcoes-turmas {
-    max-height: 150px;
-}
-
-/* Botão Limpar Filtros */
+/* Botões de Filtro */
 .filtro-botoes {
     display: flex;
     justify-content: space-between;
     gap: 10px;
     margin-top: 20px;
 }
-
-.botao-limpar-filtro,
-.botao-filtrar {
-    flex: 1; /* Faz os dois botões ocuparem metade do espaço */
+.botao-limpar-filtro, .botao-filtrar {
+    flex: 1;
     padding: 10px;
     font-size: 14px;
     font-weight: bold;
@@ -575,82 +112,288 @@
     cursor: pointer;
     text-align: center;
 }
+.botao-limpar-filtro { background-color: #6c757d; }
+.botao-limpar-filtro:hover { background-color: #5a6268; }
+.botao-filtrar { background-color: #007bff; }
+.botao-filtrar:hover { background-color: #0056b3; }
 
-.botao-limpar-filtro {
-    background-color: #6c757d;
+/* --- HEADER DO CALENDÁRIO --- */
+.header-calendario {
+    background-color: #022E5E;
+    color: white;
+    border-top-right-radius: 15px;
+    border-top-left-radius: 15px;
+    flex-shrink: 0;
 }
-.botao-limpar-filtro:hover {
-    background-color: #5a6268;
+.header-parte-de-cima {
+    display: flex;
+    padding-top: 30px;
+    height: fit-content;
+    align-items: center;
+    width: 100%;
+    margin-top: 15px;
+    justify-content: center;
+    position: relative;
 }
+.header-parte-de-cima h3 { font-size: 22px; margin: 0 20px; }
+.header-turmas { position: absolute; right: 30px; }
+.header-turmas h4 { font-size: 14px; }
 
-.botao-filtrar {
-    background-color: #007bff;
-}
-.botao-filtrar:hover {
-    background-color: #0056b3;
-}
-
-/* --- ESTILO DA NAVEGAÇÃO DO CALENDÁRIO --- */
 .navegacao-calendario {
     display: flex;
     gap: 8px;
     position: absolute;
-    left: 20px; /* Alinha à esquerda */
+    left: 20px;
     top: 50%;
     transform: translateY(-50%);
-    justify-content: space-between;
-    width: calc(100% - 40px);
 }
-
 .navegacao-calendario .nav-btn {
-    padding: 6px 14px;
+    padding: 6px 14px; background-color: #0d102b; color: #fff; border-radius: 5px;
+    text-decoration: none; font-weight: bold; font-size: 16px; border: 1px solid #0d102b; transition: 0.2s;
+}
+.navegacao-calendario .nav-btn.today { background-color: #f8f9fa; color: #0d102b; border: 1px solid #0d102b; }
+.navegacao-calendario .nav-btn:hover { background-color: #0479F9; border-color: #0479F9; }
+.navegacao-calendario .nav-btn.today:hover { background-color: #e2e6ea; }
+
+.header-divisoes-semanas {
+    display: grid;
+    grid-template-columns: 50px repeat(6, 1fr); /* 6 dias: Seg-Sáb */
+    gap: 0;
+    margin-top: 30px;
+    margin-right: 1.3vw;
+    margin-left: 10px;
+    height: fit-content;
+}
+.dias-da-semana {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: #0d102b;
-    color: #fff;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 16px;
-    transition: background-color 0.2s ease;
-    border: 1px solid #0d102b;
+    padding: 5px 0;
+    margin-left: 5px;
+    margin-right: 5px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
 }
+.dias-da-semana h2 { font-size: 16px; font-weight: 500; }
 
-
-
-
-
-
-.navegacao-calendario .nav-btn:hover {
-    background-color: #0479F9;
-    border-color: #0479F9;
+/* --- GRADE DO CALENDÁRIO --- */
+.fundo-grid {
+    background-color: white;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: calc(100vh - 80px - 120px);
+    flex-grow: 1;
 }
-.navegacao-calendario .nav-btn.today:hover {
-    background-color: #e2e6ea;
+.calendario-grid {
+    display: grid;
+    grid-template-columns: 50px repeat(6, 1fr); /* 6 dias: Seg-Sáb */
+    gap: 0;
+    margin: 10px;
+    min-height: calc(100vh - 80px - 150px);
 }
-
-/* Ajusta o H3 para não ficar em cima dos botões */
-.header-parte-de-cima h3 {
-    margin-left: 150px;
-    margin-right: 150px;
+.time-slot-label {
+    padding: 10px 10px 10px 0px;
+    display: flex;
+    align-items: center;
+    text-align: right;
+    background-color: transparent;
+    border-bottom: 1px solid #AFAFAF;
 }
+.time-slot {
+    padding: 10px;
+    min-height: 60px;
+    display: block;
+    border-bottom: 1px solid #AFAFAF;
+    border-left: 1px solid #AFAFAF;
+    overflow: hidden;
+}
+.event {
+    display: flex; height: 19px; padding: 5px 10px; border-radius: 5px;
+    text-align: center; align-items: center; color: white; font-size: 14px;
+    cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    width: 100%; margin-bottom: 5px; min-width: 0; transition: all 0.2s ease-in-out;
+}
+.event:hover { transform: scale(1.05); box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 10; }
+.event:last-child { margin-bottom: 0; }
 
-/* --- ESTILO DOS BOTÕES DE NAVEGAÇÃO DO MINI-CALENDÁRIO --- */
+/* Cores dos Eventos */
+.event.tipo-palestra { background-color: #57A1E3; }
+.event.tipo-reuniao { background-color: #51DB51; }
+.event.tipo-visita-tecnica { background-color: #e6ae08; }
+.event.tipo-prova { background-color: #e35757; }
+.event.tipo-conselho-de-classe { background-color: #8e57e3; }
+.event.tipo-evento-esportivo { background-color: #e38e57; }
+.event.tipo-outro { background-color: #888888; }
+
+/* --- PAINEL DIREITO --- */
+.calendario-lado-direito {
+    width: 225px;
+    background-color: white;
+    border-radius: 30px 30px 15px 15px;
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    padding-bottom: 5px;
+}
 .header-calendario-lado-direito {
     display: flex;
-    justify-content: space-between; /* Alinha os itens */
+    justify-content: space-between;
     align-items: center;
-    padding: 10px 15px; /* Ajusta o padding */
+    padding: 10px 15px;
+    background-color: #022E5E;
+    border-radius: 15px 15px 0 0;
 }
-
+.header-calendario-lado-direito h3 { font-size: 16px; font-weight: 500; }
 .mini-cal-nav {
-    font-size: 20px;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    padding: 0 8px;
-    border-radius: 4px;
-    transition: background-color 0.2s ease;
+    font-size: 20px; font-weight: bold; color: white; cursor: pointer;
+    padding: 0 8px; border-radius: 4px; transition: background-color 0.2s ease;
 }
+.mini-cal-nav:hover { background-color: rgba(255, 255, 255, 0.2); }
 
-.mini-cal-nav:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.dias-da-semana-calendario-lado-direito {
+    display: flex;
+    justify-content: space-around;
+    gap: 3px;
+    padding: 5px;
+}
+.dias-da-semana-calendario-lado-direito p {
+    font-size: 12px; font-weight: 500; color: black; text-align: center; flex: 1;
+}
+.dia-semana.dom { color: #DD2B2B; }
+.dia-semana.atual { color: #022E5E !important; }
+
+.dias-calendario-lado-direito {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
+    padding: 0 5px 5px 5px;
+}
+.dias-calendario-lado-direito a, .dias-calendario-lado-direito p {
+    font-size: 12px; font-weight: 500; color: black; text-align: center;
+    padding: 2px; text-decoration: none; border-radius: 10px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.dias-calendario-lado-direito a:hover { background-color: #e0e0e0; }
+.dias-calendario-lado-direito a.today { background-color: #022E5E; color: white; }
+.dias-calendario-lado-direito a.today:hover { background-color: #0479F9; }
+
+.resumo-geral-lado-direito {
+    width: 225px;
+    background-color: white;
+    border-radius: 15px;
+    margin-top: 10px;
+    display: flex;
+    align-self: center;
+    flex-direction: column;
+    padding: 15px;
+    max-height: 27.5vh;
+}
+.resumo-geral-lado-direito h3 { font-size: 14px; color: black; }
+.container-scroll-eventos { overflow-y: auto; max-height: 27.5vh; padding-right: 5px; }
+.container-scroll-eventos::-webkit-scrollbar { width: 6px; }
+.container-scroll-eventos::-webkit-scrollbar-thumb { background-color: #ccc; border-radius: 4px; }
+.area-escrita-resumo-geral {
+    color: black; display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; border: 2px solid #4291D8; border-radius: 30px;
+    padding: 5px 10px; margin-top: 10px; min-height: 23px; height: auto;
+}
+.area-escrita-resumo-geral p:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
+.area-escrita-resumo-geral p:last-child { flex-shrink: 0; }
+
+/* --- MODAIS --- */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.5); z-index: 1000;
+    display: flex; justify-content: center; align-items: center;
+}
+.modal-content {
+    background: white; border-radius: 10px; padding: 20px; width: 90%; max-width: 500px;
+    text-align: left; display: block; max-height: 85vh; overflow-y: auto;
+}
+.modal-content h3 { font-size: 18px; margin-bottom: 10px; }
+.modal-content p { font-size: 14px; margin-bottom: 5px; color: #333; white-space: pre-wrap; word-wrap: break-word; }
+
+
+/* =================================================================
+   RESPONSIVIDADE DA AGENDA (MOBILE - MODO DIA ÚNICO)
+   ================================================================= */
+@media (max-width: 768px) {
+    
+    /* 1. HABILITAR SCROLL NA PÁGINA */
+    body { overflow-y: auto !important; }
+
+    /* 2. ESCONDE BARRA DIREITA */
+    .area-lado-direito { display: none; }
+
+    /* 3. LAYOUT PRINCIPAL */
+    .calendario {
+        width: 100%; margin-left: 0; height: auto !important; 
+        min-height: calc(100vh - 80px); overflow: visible !important; 
+    }
+
+    /* 4. HEADER AJUSTES */
+    .header-parte-de-cima {
+        flex-direction: column; gap: 10px; padding-bottom: 15px;
+    }
+    .header-parte-de-cima h3 { margin: 0; font-size: 18px; }
+    .navegacao-calendario {
+        position: static; transform: none; width: 100%; 
+        justify-content: center; margin-bottom: 10px;
+    }
+    .header-turmas { position: static; margin-top: 5px; }
+
+    /* 5. O GRID DE 2 COLUNAS (Hora + Dia) */
+    .calendario-grid, 
+    .header-divisoes-semanas {
+        display: grid;
+        /* 50px fixos para a hora, 1fr (o resto) para o dia */
+        grid-template-columns: 50px 1fr !important; 
+        min-width: auto; 
+    }
+
+    /* 6. CORREÇÃO DE ALINHAMENTO NO HEADER */
+    /* Esconde a div espaçadora para alinhar o dia com a coluna certa */
+    .header-divisoes-semanas .header-spacer {
+        display: none;
+    }
+    
+    /* O dia da semana ativo vai para a segunda coluna */
+    .header-divisoes-semanas .dias-da-semana.mobile-active {
+        grid-column: 2;
+        display: flex; /* Centraliza o texto */
+    }
+
+    /* 7. LÓGICA DE EXIBIÇÃO (Esconde tudo, mostra só o ativo) */
+    /* Esconde as colunas de 0 a 5 (Seg-Sáb) */
+    .col-dia-0, .col-dia-1, .col-dia-2, .col-dia-3, .col-dia-4, .col-dia-5 {
+        display: none;
+    }
+
+    /* Mostra apenas a coluna que tem a classe .mobile-active */
+    .col-dia-0.mobile-active, 
+    .col-dia-1.mobile-active, 
+    .col-dia-2.mobile-active, 
+    .col-dia-3.mobile-active, 
+    .col-dia-4.mobile-active, 
+    .col-dia-5.mobile-active {
+        display: block; 
+    }
+    
+    /* Garante que a célula do evento seja block e vá para a coluna 2 */
+    .time-slot.mobile-active {
+        display: block;
+        grid-column: 2;
+    }
+
+    /* 8. Scroll e Espaçamento */
+    .fundo-grid {
+        background-color: white;
+        overflow: visible !important;
+        max-height: none !important;
+    }
+    
+    .calendario-grid {
+        padding-bottom: 10px; /* Espaço extra no final */
+    }
 }

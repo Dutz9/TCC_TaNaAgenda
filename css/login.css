@@ -1,6 +1,7 @@
+/* Reset básico */
 *{
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
     box-sizing: border-box;
     font-family: "Poppins", sans-serif;
 }
@@ -11,134 +12,162 @@ a {
     background: none;
 }
 
-.login{
-    padding: 10px 20px;
-    width: 25vw;
-    min-height: 26vw;
-    border: 1px solid black;
-    display: flex;
-    padding-top:20px ;
-    background-color: #ffffff;
-    flex-direction: column;
-    align-items: center;
-    border-radius: 20px;
-}
-
-body{
+body {
     min-height: 100vh;
-    min-width: 100vw;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #0d102b;
+    padding: 20px; /* Espaço nas bordas para telas pequenas */
 }
 
-.image{
-    width: 10vw;
-}
-
-#form_login{
-    margin:15px 0 ;
+/* Container Principal do Login */
+.login {
+    padding: 30px;
+    width: 100%;
+    max-width: 400px; /* Largura máxima para desktop */
+    background-color: #ffffff;
     display: flex;
     flex-direction: column;
-   
+    align-items: center;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); /* Sombra suave */
 }
 
-input[type=text] {
-    border: lightgray 1px solid;
-    border-radius: 10px;
-    width: 20vw;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-  }
+/* Cabeçalho do Login (Seta e Logo) */
+.parteDeCima {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; /* Divide em 3 partes iguais */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
 
-  #form_login > input {
-    border: lightgray 1px solid;
-    border-radius: 10px;
-    width: 20vw;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-  }
-
-  .botao-entrar{
-    border: 0;
-    border-radius: 5px;
-    width: 20vw;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    color: #ffffff;
-    background-color: #007bff;
-    color: white;
-  }
-
-  .entrar :hover{
+.seta {
+    width: 24px;
+    height: auto;
     cursor: pointer;
 }
 
-  h1{
+.image {
+    width: 120px; /* Tamanho fixo para o logo não deformar */
+    height: auto;
+}
+
+/* Títulos */
+h1 {
     color: #000000;
-    font-size: 25px;
-    margin: 10px;
-    font-weight:normal;
-  }
-
-  h2{
-    color: #3d3838;
-    font-size: medium;
-  }
- 
-.login > .image{
- 
-   top: 0;
+    font-size: 28px;
+    margin-bottom: 20px;
+    font-weight: 600;
 }
 
-h3{
+h2 {
     color: #3d3838;
-    font-size: small;
-    margin-bottom: 10px;
+    font-size: 16px;
+    align-self: flex-start; /* Alinha o label à esquerda */
+    margin-bottom: 5px;
+    margin-top: 10px;
 }
- 
-h4{
-    color: #3d3838;
-    margin: 10px;
-}
- 
-.parteDeCima{
-   
+
+/* Formulário */
+#form_login {
+    width: 100%;
     display: flex;
-    justify-content: center;        
-    align-items: center;
-    width: 25vw;
+    flex-direction: column;
+}
+
+/* Inputs */
+input[type=text],
+input[type=password] {
+    border: 1px solid lightgray;
+    border-radius: 10px;
+    width: 100%; /* Ocupa toda a largura do container */
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    font-size: 16px; /* Tamanho bom para leitura */
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+input[type=text]:focus,
+input[type=password]:focus {
+    border-color: #007bff;
+}
+
+/* Botão Entrar */
+.entrar {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.botao-entrar {
+    border: 0;
+    border-radius: 10px;
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.botao-entrar:hover {
+    background-color: #0056b3;
+}
+
+/* Link "Esqueci minha senha" */
+h3 {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666;
+}
+h3 a:hover {
+    text-decoration: underline;
+    color: #007bff;
+}
+
+/* Mensagem de Erro */
+.mensagem-erro {
+    color: #D8000C;
+    background-color: #FFD2D2;
+    border: 1px solid #D8000C;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 14px;
+    width: 100%;
+}
+
+/* =================================================================
+   RESPONSIVIDADE (MOBILE)
+   ================================================================= */
+@media (max-width: 480px) {
+    
+    /* No celular, o container ocupa quase toda a largura */
+    .login {
+        max-width: 100%;
+        padding: 20px;
     }
 
-    .seta{
-        width: 2vw;
+    .image {
+        width: 100px; /* Logo um pouco menor */
     }
 
-    .PartesDeCima{
-        width:  calc(25vw / 3);
-        display: flex;
-        align-content: center;
+    h1 {
+        font-size: 24px;
     }
 
-    #Primeira_Parte{
-        width:  calc(20vw / 3);
-        padding-left: 20px ;
+    input[type=text],
+    input[type=password] {
+        padding: 14px; /* Área de toque maior */
     }
 
-    .Titulo{
-        margin-top: 30px;
+    .botao-entrar {
+        padding: 14px; /* Botão maior para o dedo */
     }
-
-    .mensagem-erro {
-        color: #D8000C;
-        background-color: #FFD2D2;
-        border: 1px solid #D8000C;
-        padding: 10px;
-        margin-bottom: 15px;
-        border-radius: 5px;
-        text-align: center;
-    }
+}

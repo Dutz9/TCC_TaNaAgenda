@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- ELEMENTOS PRINCIPAIS DA PÁGINA ---
+    // --- ELEMENTOS PRINCIPAIS ---
     const modalOverlay = document.getElementById('modal-overlay');
     const modalContent = modalOverlay.querySelector('.modal-content');
     const dayModalOverlay = document.getElementById('day-modal-overlay');
@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedDaySpan = document.getElementById('selected-day');
     const rightCalendarDays = document.querySelector('.dias-calendario-lado-direito');
     
-    // --- Seletores do Mini-Calendário ATUALIZADOS ---
     const miniCalHeaderMonth = document.querySelector('.header-calendario-lado-direito h3:nth-of-type(1)');
     const miniCalHeaderYear = document.querySelector('.header-calendario-lado-direito h3:nth-of-type(2)');
     const miniCalPrevBtn = document.getElementById('mini-cal-prev');
@@ -62,7 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- LÓGICA DO MODAL DE EVENTO INDIVIDUAL ---
     function showEventModal(eventData) {
-        // (Esta função continua 100% igual à da última vez)
         modalContent.innerHTML = `
             <h3>${eventData.nome}</h3>
             <p><strong>Data:</strong> ${new Date(eventData.data + 'T00:00:00').toLocaleDateString('pt-BR')}</p>
@@ -92,20 +90,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === dayModalOverlay) dayModalOverlay.style.display = 'none';
     });
 
-    // --- LÓGICA DO PAINEL DIREITO (MINI-CALENDÁRIO E RESUMOS) ---
-    
-    // Pega a data da URL (se existir) para o mini-calendário
+    // --- LÓGICA DO MINI-CALENDÁRIO ---
     const urlParams = new URLSearchParams(window.location.search);
     const weekParam = urlParams.get('week');
     let dataInicial = new Date();
     if (weekParam) {
-        dataInicial = new Date(weekParam + 'T12:00:00'); // Adiciona T12:00 para evitar bugs de fuso
+        dataInicial = new Date(weekParam + 'T12:00:00');
     }
-    
-    // Variável de estado para o mês do mini-calendário
     let dataAtualMiniCal = new Date(dataInicial);
 
-    // --- NOVOS EVENT LISTENERS PARA AS SETAS ---
     miniCalPrevBtn.addEventListener('click', () => {
         dataAtualMiniCal.setMonth(dataAtualMiniCal.getMonth() - 1);
         updateRightPanel(dataAtualMiniCal);
@@ -115,16 +108,15 @@ document.addEventListener('DOMContentLoaded', () => {
         dataAtualMiniCal.setMonth(dataAtualMiniCal.getMonth() + 1);
         updateRightPanel(dataAtualMiniCal);
     });
-    // --- FIM DOS NOVOS LISTENERS ---
 
     function updateSummaries(date) {
-        // (Esta função continua 100% igual à da última vez)
         const todayEvents = getEventsForDate(date);
         const tomorrowDate = new Date(date);
         tomorrowDate.setDate(date.getDate() + 1);
         const tomorrowEvents = getEventsForDate(tomorrowDate);
         const todaySummaryContainer = document.querySelector(".resumo-geral-lado-direito:nth-of-type(1) .container-scroll-eventos");
         const tomorrowSummaryContainer = document.querySelector(".resumo-geral-lado-direito:nth-of-type(2) .container-scroll-eventos");
+        
         todaySummaryContainer.innerHTML = '';
         if (todayEvents.length > 0) {
             todayEvents.forEach(evt => {
@@ -136,6 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             todaySummaryContainer.innerHTML = '<div class="area-escrita-resumo-geral"><p>Nenhum evento hoje.</p></div>';
         }
+        
         tomorrowSummaryContainer.innerHTML = '';
         if (tomorrowEvents.length > 0) {
             tomorrowEvents.forEach(evt => {
@@ -165,9 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const diasSemanaMini = document.querySelectorAll('.dia-semana');
         diasSemanaMini.forEach(dia => dia.classList.remove('atual'));
-        
-        // Destaque do dia da semana (Seg, Ter, Qua...)
-        // Só destaca se o mês/ano do mini-calendário for o mesmo do "hoje"
         if (month === todayMonth && year === todayYear) {
             if (dayOfWeek >= 1 && dayOfWeek <= 6) {
                 diasSemanaMini[dayOfWeek - 1].classList.add('atual');
@@ -198,20 +188,68 @@ document.addEventListener('DOMContentLoaded', () => {
             const clickedDate = new Date(year, month, d);
             const mondayString = getMondayString(clickedDate);
             
-            dayLink.href = `?week=${mondayString}&${filtrosAtuais}`; // O link de navegação continua o mesmo
+            dayLink.href = `?week=${mondayString}&${filtrosAtuais}`;
 
-            // Destaque do dia atual (número)
             if (d === todayDate && month === todayMonth && year === todayYear) {
                 dayLink.classList.add('today');
             }
-
             rightCalendarDays.appendChild(dayLink);
         }
-        
-        // Atualiza os resumos para a data da AGENDA PRINCIPAL, não do mini-calendário
         updateSummaries(dataInicial);
     }
-
-    // --- INICIALIZAÇÃO ---
     updateRightPanel(dataInicial);
+
+
+    // ============================================================
+    // LÓGICA DE NAVEGAÇÃO MOBILE (DIA A DIA)
+    // ============================================================
+    
+    const navPrev = document.getElementById('nav-prev');
+    const navNext = document.getElementById('nav-next');
+    const navToday = document.getElementById('nav-today');
+    
+    // Controla o dia atual no mobile (0 a 5)
+    let currentMobileIndex = (typeof mobileActiveIndexInicial !== 'undefined') ? mobileActiveIndexInicial : 0;
+
+    function updateMobileView() {
+        if (window.innerWidth > 768) return;
+        
+        // Esconde todos os dias (0 a 5)
+        for (let i = 0; i < 6; i++) {
+            document.querySelectorAll(`.col-dia-${i}`).forEach(el => el.classList.remove('mobile-active'));
+        }
+        // Mostra o dia atual
+        document.querySelectorAll(`.col-dia-${currentMobileIndex}`).forEach(el => el.classList.add('mobile-active'));
+    }
+
+    // Inicializa
+    updateMobileView();
+    window.addEventListener('resize', updateMobileView);
+
+    // Event Listeners para os botões
+    if (navPrev) {
+        navPrev.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (currentMobileIndex > 0) {
+                    e.preventDefault(); // Se não for Segunda, só troca o dia
+                    currentMobileIndex--;
+                    updateMobileView();
+                }
+                // Se for Segunda, deixa o link recarregar a semana anterior
+            }
+        });
+    }
+
+    if (navNext) {
+        navNext.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768) {
+                if (currentMobileIndex < 5) { // Se não for Sábado
+                    e.preventDefault(); // Só troca o dia
+                    currentMobileIndex++;
+                    updateMobileView();
+                }
+                // Se for Sábado, deixa o link recarregar a próxima semana
+            }
+        });
+    }
 });
