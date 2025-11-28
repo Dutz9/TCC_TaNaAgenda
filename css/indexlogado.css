@@ -146,6 +146,8 @@
     left: 20px;
     top: 50%;
     transform: translateY(-50%);
+    justify-content: space-between;
+    width: calc(100% - 40px);
 }
 .navegacao-calendario .nav-btn {
     padding: 6px 14px; background-color: #0d102b; color: #fff; border-radius: 5px;
@@ -328,18 +330,28 @@
 
     /* 3. LAYOUT PRINCIPAL */
     .calendario {
-        width: 100%; margin-left: 0; height: auto !important; 
-        min-height: calc(100vh - 80px); overflow: visible !important; 
+        width: 100%;
+         margin-left: 0;
+          height: auto !important; 
+        min-height: calc(100vh - 80px);
+         overflow: visible !important; 
     }
 
     /* 4. HEADER AJUSTES */
     .header-parte-de-cima {
-        flex-direction: column; gap: 10px; padding-bottom: 15px;
+        flex-direction: column;
+         gap: 10px;
+          padding-bottom: 15px;
     }
     .header-parte-de-cima h3 { margin: 0; font-size: 18px; }
     .navegacao-calendario {
-        position: static; transform: none; width: 100%; 
-        justify-content: center; margin-bottom: 10px;
+        position: static;
+         transform: none;
+          width: 100%; 
+        justify-content: center;
+         margin-bottom: 10px;
+         justify-content: space-between;
+         width: calc(100% - 40px);
     }
     .header-turmas { position: static; margin-top: 5px; }
 
