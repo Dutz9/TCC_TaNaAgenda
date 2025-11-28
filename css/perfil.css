@@ -1,145 +1,281 @@
-.area-perfil{
+/* --- CONTAINER PRINCIPAL (DESKTOP) --- */
+.area-perfil {
     position: absolute;
     right: 0;
-    width: calc(100vw - 250px);
+    width: calc(100vw - 250px); /* Desktop: Desconta a sidebar */
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    min-height: calc(100vh - 80px); 
 }
-.perfil-container{
-    width: calc(100vw - 400px);
-    height: calc(95vh - 80px);
+
+.perfil-container {
+    width: 100%;
+    max-width: 1000px;
+    min-height: 600px;
     border: 1px solid #dbdbdb;
     border-radius: 10px;
     display: flex;
     flex-direction: row;
+    background-color: white;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
-.perfil-info > img {
-    width: 64px;
-    height: 64px;
-    margin-right: 5px;
-    margin-left: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-}
-.perfil-menu{
+
+/* --- LADO ESQUERDO (MENU) --- */
+.lado-esquerdo {
+    width: 300px;
+    border-right: 1px solid #dbdbdb;
+    padding: 20px;
     display: flex;
     flex-direction: column;
 }
-.perfil-informacoes{
+
+.perfil-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-left: 10px;
+}
+
+.perfil-info > img {
+    width: 64px;
+    height: 64px;
+    margin-right: 15px;
+    border-radius: 50%;
+}
+
+.perfil-informacoes {
     display: flex;
     flex-direction: column;
     justify-content: center;
 }
-.perfil-informacoes h3{ font-size: 18px; }
-.perfil-informacoes p{ font-size: 14px; color: #666; }
-.perfil-info{ display: flex; }
 
-/* Estilos dos botões do menu lateral */
+.perfil-informacoes h3 { 
+    font-size: 18px; 
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.perfil-informacoes p { 
+    font-size: 14px; 
+    color: #666; 
+}
+
+.perfil-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Botões do Menu Lateral */
 .informacoes-menu, .seguranca-menu {
-    width: 293px;
-    height: 45px;
-    border: 2px solid #dbdbdb;
-    border-radius: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
+    width: 100%;
+    height: 50px;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    padding: 0 15px;
     display: flex;
     align-items: center;
-    background-color: #F3F3F3;
-    transition: background-color 0.2s, border-color 0.2s;
+    background-color: #F9F9F9;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    text-decoration: none;
+    color: #333;
 }
-.seguranca-menu {
-    margin-top: 15px;
-}
-.informacoes-menu p, .seguranca-menu p {
-    font-size: 14px;
-}
+
 .informacoes-menu > img, .seguranca-menu > img {
-    width: 25px;
-    height: 25px;
-    margin-right: 10px;
-    margin-left: 10px;
+    width: 24px;
+    height: 24px;
+    margin-right: 15px;
 }
+
+.informacoes-menu p, .seguranca-menu p {
+    font-size: 15px;
+    font-weight: 500;
+}
+
 .informacoes-menu:hover, .seguranca-menu:hover {
     background-color: #e9ecef;
+    transform: translateX(2px);
 }
-/* Estilo ATIVO para o menu */
+
 .informacoes-menu.ativo, .seguranca-menu.ativo {
     border-color: #0479F9;
-    background-color: #f3f3f3;
+    background-color: #e8f4ff;
+    color: #0479F9;
 }
 
-/* Lado Direito */
-.lado-direito{
-    width: 60%;
-    height: 616px;
-    border-left: 1px solid #dbdbdb; /* Borda fica só na divisão */
-    margin-top: 18px;
-    padding: 20px;
-}
-.lado-direito h1{
-  font-size: 18px;
+/* --- LADO DIREITO (FORMULÁRIO) --- */
+.lado-direito {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
 }
 
-/* Campos do formulário */
-.infos > input{
-    width: 90%;
-    height: 38px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 15px;
-    margin: 5px 0;
+.lado-direito h1 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
 }
-/* Estilo para campos readonly */
-.infos > input[readonly] {
-    background-color: #eee;
-    color: #777;
-    cursor: not-allowed;
+
+/* Formulário */
+.informacoes-pessoais {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
 }
-.infos > label{
-    display: block;
-    font-size: 14px;
-    color: #1d1d1d;
-}
+
 .infos {
     display: flex;
     flex-direction: column;
-    margin: 20px 0;
+    width: 100%;
 }
-.btn-salvar {
-    width: 245px;
-    height: 33px;
-    border: 2px solid #007bff;
-    border-radius: 5px;
-    font-weight: bold;
+
+.infos > label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+.infos > input {
+    width: 100%;
+    height: 45px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px 15px;
+    font-size: 15px;
+    transition: border-color 0.2s;
+}
+
+.infos > input:focus {
+    border-color: #0479F9;
+    outline: none;
+}
+
+.infos > input[readonly] {
+    background-color: #f5f5f5;
+    color: #777;
+    cursor: not-allowed;
+    border-color: #ddd;
+}
+
+#Salvar, #Alterar {
+    margin-top: 10px;
+    align-items: flex-end;
+}
+
+.btn-salvar, .btn-alterar {
+    width: 200px;
+    height: 45px;
     background-color: #007bff;
     color: white;
-}
-.btn-salvar:hover{
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
     cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.btn-salvar:hover, .btn-alterar:hover {
     background-color: #0056b3;
-    border-color: #0056b3;
 }
 
-#Salvar{
-    display: flex;
-    width: 90%;
-    align-items: end;
-}
-
-/* MENSAGENS DE FEEDBACK */
 .mensagem {
     padding: 15px;
     margin-bottom: 20px;
-    border-radius: 5px;
+    border-radius: 6px;
     color: #fff;
     text-align: center;
-    width: 90%;
+    width: 100%;
+    font-weight: 500;
 }
-.mensagem.sucesso { 
-    background-color: #28a745; 
+.mensagem.sucesso { background-color: #28a745; }
+.mensagem.erro { background-color: #dc3545; }
+
+
+/* =================================================================
+   RESPONSIVIDADE (MOBILE) - A CORREÇÃO ESTÁ AQUI
+   ================================================================= */
+
+@media (max-width: 1024px) {
+    /* TABLETS: Remove a conta '100vw - 250px' e usa 100% */
+    .area-perfil {
+        width: 100% !important; /* FORÇA LARGURA TOTAL */
+        position: static !important; /* REMOVE POSIÇÃO ABSOLUTA */
+        padding: 20px;
+        padding-top: 95px;
+    }
+    .perfil-container {
+        width: 100% !important;
+        max-width: none;
+    }
 }
-.mensagem.erro { 
-    background-color: #dc3545; 
+
+@media (max-width: 768px) {
+    body { overflow-y: auto !important; }
+    
+    .area-perfil {
+        padding: 15px;
+        padding-top: 95px;
+        padding-bottom: 50px;
+        display: block;
+        height: auto;
+        min-height: auto;
+        /* GARANTIA EXTRA: Remove qualquer margem herdada */
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+        right: auto !important;
+    }
+
+    .perfil-container {
+        flex-direction: column;
+        width: 100% !important;
+        height: auto;
+        min-height: auto;
+        border: none;
+        box-shadow: none;
+    }
+
+    .lado-esquerdo {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #dbdbdb;
+        padding: 0 0 20px 0;
+        margin-bottom: 20px;
+    }
+    
+    .perfil-info {
+        justify-content: center;
+        padding-left: 0;
+    }
+
+    .lado-direito {
+        width: 100%;
+        border-left: none;
+        padding: 0;
+    }
+
+    .lado-direito h1 { text-align: center; }
+
+    .infos > input {
+        width: 100%;
+        font-size: 16px;
+    }
+
+    #Salvar, #Alterar {
+        width: 100%;
+        align-items: stretch;
+    }
+    .btn-salvar, .btn-alterar {
+        width: 100%;
+    }
 }

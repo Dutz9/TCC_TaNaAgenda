@@ -1,10 +1,12 @@
+/* --- ESTILOS DE CRIAR EVENTO / ADICIONAR PROFESSOR / ADICIONAR TURMA --- */
+
 .formulario-evento {
     margin-left: 250px; /* Mantém o espaçamento da sidebar */
     padding: 40px;
     width: calc(100% - 250px);
-    height: calc(100vh - 80px); /* Ocupa o espaço visível */
+    height: calc(100vh - 80px); /* Ocupa o espaço visível no desktop */
     background-color: white;
-    overflow-y: auto; /* PERMITE O SCROLL VERTICAL SÓ AQUI */
+    overflow-y: auto; /* Scroll interno no desktop */
 }
 
 .formulario-evento h2 {
@@ -18,17 +20,17 @@
 .linha-form {
     display: flex;
     justify-content: space-between;
-    gap: 20px; /* Adiciona um espaço entre as colunas */
+    gap: 20px; 
     margin-bottom: 20px;
     width: 80%;
-    margin-left: auto; /* Centraliza o conjunto */
+    margin-left: auto; 
     margin-right: auto;
 }
 
 .campo {
     display: flex;
     flex-direction: column;
-    width: 48%; /* Cada campo ocupa quase metade da linha */
+    width: 48%; 
 }
 
 .campo label {
@@ -47,12 +49,12 @@
     font-size: 14px;
     background-color: #f9f9f9;
     width: 100%; 
-    box-sizing: border-box; /* Garante que o padding não aumente a largura */
+    box-sizing: border-box; 
 }
 
 /* Ajuste específico para o select multiple de turmas */
 .campo select[multiple] {
-    height: 100px; /* Aumenta a altura para mostrar mais opções */
+    height: 100px; 
 }
 
 .botoes {
@@ -63,6 +65,7 @@
     margin-top: 30px;
     margin-left: auto;
     margin-right: auto;
+    padding-bottom: 30px; 
 }
 
 .botao-cancelar,
@@ -86,14 +89,8 @@
     color: white;
 }
 
-/* Efeitos hover */
-.botao-cancelar:hover { 
-    background-color: #e0e0e0; 
-}
-
-.botao-enviar:hover { 
-    background-color: #0056b3; 
-}
+.botao-cancelar:hover { background-color: #e0e0e0; }
+.botao-enviar:hover { background-color: #0056b3; }
 
 /* Classes para mensagens de feedback */
 .mensagem {
@@ -106,21 +103,19 @@
     margin-left: auto;
     margin-right: auto;
 }
-.sucesso { 
-    background-color: #28a745; 
-}
+.sucesso { background-color: #28a745; }
+.erro { background-color: #dc3545; }
 
-.erro { 
-    background-color: #dc3545; 
-}
-
+/* Lista de Professores */
 .display-box {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: #f9f9f9;
     width: 100%;
-    min-height: 100px; /* Mesma altura do select de turmas */
+    min-height: 100px;
+    max-height: 150px;
+    overflow-y: auto;
     box-sizing: border-box;
 }
 .display-box p {
@@ -181,14 +176,7 @@
     font-weight: bold;
 }
 
-/* --- ESTILOS PARA A LISTA DE PROFESSORES COM O "X" --- */
-.display-box {
-    /* ... (seu estilo existente) ... */
-    /* Garante que o scroll apareça se a lista for longa */
-    max-height: 100px;
-    overflow-y: auto;
-}
-
+/* --- ITENS DA LISTA DE PROFESSORES --- */
 .professor-item {
     display: flex;
     justify-content: space-between;
@@ -209,23 +197,90 @@
 .remove-prof-btn {
     font-size: 20px;
     font-weight: bold;
-    color: #dc3545; /* Vermelho */
+    color: #dc3545;
     cursor: pointer;
     padding: 0 5px;
 }
-
-.remove-prof-btn:hover {
-    opacity: 0.7;
-}
+.remove-prof-btn:hover { opacity: 0.7; }
 
 .display-box-alunos {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #eee; /* Um cinza claro para indicar que é 'readonly' */
+    background-color: #eee;
     width: 100%; 
     box-sizing: border-box;
     font-size: 1.1em;
     font-weight: bold;
     color: #333;
+}
+
+/* =================================================================
+   RESPONSIVIDADE (MOBILE)
+   ================================================================= */
+@media (max-width: 1024px) {
+    /* Remove a margem da sidebar no tablet/mobile */
+    .formulario-evento {
+        margin-left: 0;
+        width: 100%;
+        padding: 20px;
+        padding-top: 95px; /* Compensar header fixo */
+    }
+}
+
+@media (max-width: 768px) {
+    
+    /* --- CORREÇÃO CRUCIAL DE SCROLL --- */
+    /* Força o corpo da página a ter scroll, sobrescrevendo o hidden do global.css */
+    body {
+        overflow-y: auto !important;
+    }
+
+    .conteudo-principal {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    .formulario-evento {
+        height: auto !important; /* Altura automática */
+        overflow: visible !important; /* Remove scroll interno */
+        padding-bottom: 20px; /* Espaço extra no final para garantir que role tudo */
+    }
+    /* ---------------------------------- */
+
+    /* Título menor */
+    .formulario-evento h2 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    /* Empilha os campos que estavam lado a lado */
+    .linha-form {
+        flex-direction: column;
+        width: 100%; 
+        gap: 10px;
+    }
+
+    /* Cada campo ocupa 100% da largura */
+    .campo {
+        width: 100%;
+    }
+
+    /* Botões empilhados */
+    .botoes {
+        flex-direction: column-reverse; /* Botão principal em cima */
+        width: 100%;
+        gap: 10px;
+    }
+    
+    .botao-cancelar, .botao-enviar {
+        width: 100%;
+        padding: 12px; /* Área de toque maior */
+        text-align: center;
+    }
+    
+    /* Ajuste da lista de professores no mobile */
+    .display-box {
+        min-height: 120px; 
+    }
 }

@@ -298,6 +298,7 @@
     </div>
     
     <script src="../js/criarevento.js" defer></script>
+    <script src="../js/global.js"></script>
     <div class="menu-overlay" id="menu-overlay"></div>
 </body>
 </html>

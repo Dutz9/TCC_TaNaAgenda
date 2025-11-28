@@ -202,6 +202,7 @@
     </div>
 
     <script src="../js/meuseventos.js"></script>
+    <script src="../js/global.js"></script>
 
     <?php if (isset($mensagem_toast)): ?>
     <script>

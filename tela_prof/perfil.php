@@ -125,6 +125,8 @@
             </div>
         </section>
     </section>
+
+    <script src="../js/global.js"></script>
     <div class="menu-overlay" id="menu-overlay"></div>
 </body>
 </html>

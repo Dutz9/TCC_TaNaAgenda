@@ -893,3 +893,113 @@
 .modal-buttons .btn-editar-evento:hover {
     background-color: #0056b3;
 }
+
+/* =================================================================
+   RESPONSIVIDADE E MOBILE
+   ================================================================= */
+
+@media (max-width: 1024px) {
+    /* Ajuste para tablets: remove a margem da sidebar */
+    .area-notificacoes {
+        margin-left: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    /* FIX DO SCROLL NO MOBILE */
+    body {
+        overflow-y: auto !important;
+    }
+
+    .area-notificacoes {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+        padding-top: 95px; /* Compensar header fixo */
+        height: auto !important; /* Remove altura fixa para permitir scroll */
+        overflow: visible !important; /* Remove scroll interno */
+        padding-bottom: 100px; /* Espaço extra no fim */
+    }
+    
+    .area-notificacoes h2 {
+        font-size: 22px;
+        padding-bottom: 20px;
+    }
+
+    /* Filtros empilhados */
+    .container-filtros {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .container-filtros select, 
+    .container-filtros .botao-limpar {
+        width: 100%;
+        min-width: auto;
+    }
+
+    /* Cards: 1 por linha no celular */
+    .notificacao-container {
+        grid-template-columns: 1fr;
+        padding-right: 0;
+    }
+
+    .criar-btn {
+        min-height: 80px;
+    }
+    .criar-btn svg {
+        max-height: 50px;
+    }
+
+    /* Ajuste dos Modais para Mobile */
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        flex-direction: column; /* Empilha Esquerda/Direita */
+        margin-left: 0; /* Remove margem esquerda que existia para desktop */
+        max-height: 90vh;
+        padding: 15px;
+        gap: 10px;
+        overflow-y: auto;
+    }
+
+    .modal-left {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #ccc;
+        padding-right: 0;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+        max-height: 300px;
+    }
+
+    .modal-right {
+        width: 100%;
+    }
+
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .form-group {
+        width: 100%;
+    }
+
+    .modal-buttons {
+        flex-direction: column-reverse;
+        gap: 10px;
+    }
+    .modal-buttons button, 
+    .modal-buttons a {
+        width: 100%;
+        text-align: center;
+    }
+
+    .confirmation-buttons {
+        flex-direction: column-reverse;
+        width: 100%;
+    }
+    .confirmation-buttons button {
+        width: 100%;
+    }
+}
