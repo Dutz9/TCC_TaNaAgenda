@@ -176,28 +176,44 @@ document.addEventListener('DOMContentLoaded', () => {
                 respostas = JSON.parse(evento.respostas_professores) || [];
             } catch (e) { console.warn("JSON das respostas inválido."); }
         }
-        let tituloRespostas = 'Respostas dos Professores';
+        let tituloRespostas = 'Respostas dos Professores'; // Declaração inicial
         let respostasHtml = '';
-        if (evento.tipo_solicitante === 'Coordenador') {
-            tituloRespostas = 'Professores Envolvidos';
+        
+        // CHAVE DA CORREÇÃO: Agrupa Coordenador E Administrador
+        if (evento.tipo_solicitante === 'Coordenador' || evento.tipo_solicitante === 'Administrador') {
+            // Lógica para eventos de Coordenador/ADM (Apenas notificação/envolvimento)
+            tituloRespostas = 'Professores Envolvidos'; // CHAVE: Título correto
+            
             if (respostas.length > 0) {
                 respostas.forEach(r => {
-                    respostasHtml += `<div class="response-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg><div><p>${r.nome}</p></div></div>`;
+                    // Para ADM/Coord, apenas listamos o nome sem status, como no modelo
+                    respostasHtml += `<div class="response-item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                                        <div><p>${r.nome}</p></div> <!-- Sem <span> de status -->
+                                      </div>`;
                 });
             } else {
-                respostasHtml = '<p>Nenhum professor diretamente envolvido.</p>';
+                 respostasHtml = '<p>Nenhum professor diretamente envolvido.</p>';
             }
+    
         } else if (respostas.length > 0) {
+            // Lógica para eventos de PROFESSOR (Requer aprovação)
+            tituloRespostas = 'Respostas dos Professores';
             respostas.forEach(r => {
+                let statusText = r.status || 'Pendente'; 
                 let statusClass = r.status === 'Aprovado' ? 'aprovado' : (r.status === 'Recusado' ? 'recusado' : 'sem-resposta');
-                respostasHtml += `<div class="response-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg><div><p>${r.nome}</p><span class="${statusClass}">${r.status}</span></div></div>`;
+                
+                respostasHtml += `<div class="response-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                                    <div><p>${r.nome}</p><span class="${statusClass}">${statusText}</span></div>
+                                  </div>`;
             });
         } else {
             respostasHtml = '<p>Nenhum professor para aprovação neste evento.</p>';
         }
-
+    
         modalLeft.innerHTML = `<div class="coordinator-info"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg><div><h3>${evento.nm_solicitante}</h3><p>${evento.tipo_solicitante}</p></div></div><div class="responses-section"><h4>${tituloRespostas}</h4><div class="respostas-vinculadas">${respostasHtml}</div></div>`;
-        
+                
         let botoesHtml = '';
         if (evento.status === 'Solicitado') {
             botoesHtml = `<div class="modal-buttons"><button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button><button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button></div>`;

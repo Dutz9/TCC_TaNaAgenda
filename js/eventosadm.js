@@ -17,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const container = document.querySelector('.notificacao-container');
-    // CHAVE: Usa o ID do modal da página
     const modalDetalhes = document.getElementById('modal-decisao-coord'); 
     const modalConfirmar = document.getElementById('modal-confirm-excluir');
 
@@ -134,7 +133,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('decisao', decisao);
 
         try {
-            // Reutiliza o endpoint do Coordenador
             const response = await fetch('../api/decisao_final_evento.php', { method: 'POST', body: formData });
             const result = await response.json();
             if (response.ok && result.status === 'sucesso') {
@@ -179,28 +177,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 respostas = JSON.parse(evento.respostas_professores) || [];
             } catch (e) { console.warn("JSON das respostas inválido."); }
         }
-        let tituloRespostas = 'Respostas dos Professores';
+        let tituloRespostas = 'Respostas dos Professores'; // Inicialização ÚNICA
         let respostasHtml = '';
         
-        // CORREÇÃO: O Administrador vê o Coordenador como "Coordenador"
-        // e o Professor como "Professor", mas a lógica é a mesma do Coordenador.
-        if (evento.tipo_solicitante === 'Coordenador') {
-            tituloRespostas = 'Professores Envolvidos (Coordenador)';
-             if (respostas.length > 0) {
-                respostas.forEach(r => {
-                    // Aqui está usando a estrutura simples para eventos de Coordenador
-                    respostasHtml += `<div class="response-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg><div><p>${r.nome}</p></div></div>`;
+        // CHAVE: Unificamos a lógica de exibição para Coordenador e Administrador
+        if (evento.tipo_solicitante === 'Coordenador' || evento.tipo_solicitante === 'Administrador') {
+            // Se o solicitante é um cargo de gestão (ADM/Coord), a lista é de notificação/envolvimento.
+            tituloRespostas = 'Professores Envolvidos';
+            
+            if (respostas.length > 0) {
+                 respostas.forEach(r => {
+                    // *** CORREÇÃO: Omitimos completamente a tag <span> do status para eventos de ADM/Coord ***
+                    respostasHtml += `<div class="response-item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                                        <div><p>${r.nome}</p></div> <!-- Apenas o nome do professor -->
+                                      </div>`;
                 });
             } else {
-                respostasHtml = '<p>Nenhum professor diretamente envolvido.</p>';
+                 respostasHtml = '<p>Nenhum professor diretamente envolvido.</p>';
             }
 
         } else if (respostas.length > 0) {
-            // Lógica para eventos de Professor
+            // Lógica para eventos de PROFESSOR (Requer aprovação) - Esta lógica está correta
             tituloRespostas = 'Respostas dos Professores';
             respostas.forEach(r => {
+                let statusText = r.status || 'Pendente'; 
                 let statusClass = r.status === 'Aprovado' ? 'aprovado' : (r.status === 'Recusado' ? 'recusado' : 'sem-resposta');
-                respostasHtml += `<div class="response-item"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg><div><p>${r.nome}</p><span class="${statusClass}">${r.status}</span></div></div>`;
+                
+                respostasHtml += `<div class="response-item">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+                                    <div><p>${r.nome}</p><span class="${statusClass}">${statusText}</span></div>
+                                  </div>`;
             });
         } else {
             respostasHtml = '<p>Nenhum professor para aprovação neste evento.</p>';
