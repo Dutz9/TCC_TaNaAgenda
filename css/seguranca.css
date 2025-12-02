@@ -35,7 +35,6 @@
 }
 
 #Alterar{
-    display: flex;
-    width: 90%;
-    align-items: end;
+    margin-top: 10px;
+    align-items: flex-end;
 }

@@ -211,12 +211,29 @@
     overflow: hidden;
 }
 .event {
-    display: flex; height: 19px; padding: 5px 10px; border-radius: 5px;
-    text-align: center; align-items: center; color: white; font-size: 14px;
-    cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    width: 100%; margin-bottom: 5px; min-width: 0; transition: all 0.2s ease-in-out;
+    display: flex; 
+    height: 19px; 
+    padding: 5px 10px; 
+    border-radius: 5px;
+    text-align: center; 
+    align-items: center; 
+    color: white; 
+    font-size: 14px;
+    cursor: pointer; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis;
+    width: 100%; 
+    margin-bottom: 5px; 
+    min-width: 0; 
+    transition: all 0.2s ease-in-out;
 }
-.event:hover { transform: scale(1.05); box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 10; }
+.event:hover {
+     transform: scale(1.05); 
+     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+     z-index: 10; 
+    }
+
 .event:last-child { margin-bottom: 0; }
 
 /* Cores dos Eventos */
@@ -302,6 +319,14 @@
 }
 .area-escrita-resumo-geral p:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 120px; }
 .area-escrita-resumo-geral p:last-child { flex-shrink: 0; }
+
+.area-escrita-resumo-geral.event-summary.tipo-palestra { border-color: #57A1E3; }
+.area-escrita-resumo-geral.event-summary.tipo-reuniao { border-color: #51DB51; }
+.area-escrita-resumo-geral.event-summary.tipo-visita-tecnica { border-color: #e6ae08; }
+.area-escrita-resumo-geral.event-summary.tipo-prova { border-color: #e35757; }
+.area-escrita-resumo-geral.event-summary.tipo-conselho-de-classe { border-color: #8e57e3; }
+.area-escrita-resumo-geral.event-summary.tipo-evento-esportivo { border-color: #e38e57; }
+.area-escrita-resumo-geral.event-summary.tipo-outro { border-color: #888888; }
 
 /* --- MODAIS --- */
 .modal-overlay {
