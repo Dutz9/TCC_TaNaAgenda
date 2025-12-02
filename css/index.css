@@ -200,12 +200,12 @@
 
 /* Cores dos Eventos */
 .event.tipo-palestra { background-color: #57A1E3; }
-.event.tipo-reuniao { background-color: #51DB51; }
-.event.tipo-visita-tecnica { background-color: #e6ae08; }
-.event.tipo-prova { background-color: #e35757; }
-.event.tipo-conselho-de-classe { background-color: #8e57e3; }
-.event.tipo-evento-esportivo { background-color: #e38e57; }
-.event.tipo-outro { background-color: #888888; }
+.event.tipo-reuniao { background-color: #E488F5; }
+.event.tipo-visita-tecnica { background-color: #29A6B2; }
+.event.tipo-prova { background-color: #F2C33B; }
+.event.tipo-conselho-de-classe { background-color: #8173F5; }
+.event.tipo-evento-esportivo { background-color: #FF9938; }
+.event.tipo-outro { background-color: #8D6E63; }
 
 /* --- PAINEL DIREITO (MINI-CALENDÁRIO E RESUMOS) --- */
 .calendario-lado-direito {
@@ -315,12 +315,12 @@
 }
 .area-escrita-resumo-geral p:last-child { flex-shrink: 0; }
 .area-escrita-resumo-geral.event-summary.tipo-palestra { border-color: #57A1E3; }
-.area-escrita-resumo-geral.event-summary.tipo-reuniao { border-color: #51DB51; }
-.area-escrita-resumo-geral.event-summary.tipo-visita-tecnica { border-color: #e6ae08; }
-.area-escrita-resumo-geral.event-summary.tipo-prova { border-color: #e35757; }
-.area-escrita-resumo-geral.event-summary.tipo-conselho-de-classe { border-color: #8e57e3; }
-.area-escrita-resumo-geral.event-summary.tipo-evento-esportivo { border-color: #e38e57; }
-.area-escrita-resumo-geral.event-summary.tipo-outro { border-color: #888888; }
+.area-escrita-resumo-geral.event-summary.tipo-reuniao { border-color: #E488F5; }
+.area-escrita-resumo-geral.event-summary.tipo-visita-tecnica { border-color: #29A6B2; }
+.area-escrita-resumo-geral.event-summary.tipo-prova { border-color: #F2C33B; }
+.area-escrita-resumo-geral.event-summary.tipo-conselho-de-classe { border-color: #8173F5; }
+.area-escrita-resumo-geral.event-summary.tipo-evento-esportivo { border-color: #FF882F; }
+.area-escrita-resumo-geral.event-summary.tipo-outro { border-color: #7A5F56; }
 
 /* --- MODAIS (Pop-ups) --- */
 .modal-overlay {
