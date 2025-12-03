@@ -239,7 +239,7 @@
 .event.tipo-visita-tecnica { background-color: #29A6B2; }
 .event.tipo-prova { background-color: #F2C33B; }
 .event.tipo-conselho-de-classe { background-color: #8173F5; }
-.event.tipo-evento-esportivo { background-color: #FF9938; }
+.event.tipo-evento-esportivo { background-color: #FF882F; }
 .event.tipo-outro { background-color: #8D6E63; }
 
 /* --- PAINEL DIREITO (MINI-CALENDÁRIO E RESUMOS) --- */
@@ -295,6 +295,13 @@
     text-decoration: none;
     border-radius: 10px;
     transition: background-color 0.2s ease, color 0.2s ease;
+    
+    /* NOVO: Para posicionar a linha indicadora */
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 .dias-calendario-lado-direito a:hover {
@@ -308,6 +315,24 @@
 }
 .dias-calendario-lado-direito a.today:hover {
     background-color: #0479F9;
+}
+
+/* --- NOVO: INDICADOR DE EVENTO (Linha Azul) --- */
+.calendar-day-link.has-event::after {
+    content: '';
+    width: 14px;        /* Largura da linha */
+    height: 2px;        /* Espessura da linha */
+    background-color: #0d102b; /* Azul do tema */
+    border-radius: 2px;
+    position: absolute;
+    bottom: 3px;        /* Distância do fundo */
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza horizontalmente */
+}
+
+/* Se for o dia "Hoje", a linha fica branca para dar contraste */
+.calendar-day-link.today.has-event::after {
+    background-color: #ffffff;
 }
 
 .resumo-geral-lado-direito {

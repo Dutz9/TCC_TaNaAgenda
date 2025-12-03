@@ -103,6 +103,19 @@
         }
     }
 
+    // --- NOVA LÓGICA: BUSCA EVENTOS PARA O MINICALENDÁRIO (MÊS INTEIRO) ---
+// Precisamos de uma lista separada que cubra todo o mês para os "pontinhos" no JS
+$inicio_mes_js = clone $hoje;
+$inicio_mes_js->modify('first day of this month');
+$fim_mes_js = clone $hoje;
+$fim_mes_js->modify('last day of this month');
+
+$lista_eventos_mes = $eventoController->listarAprovados(
+    $inicio_mes_js->format('Y-m-d'), 
+    $fim_mes_js->format('Y-m-d'), 
+    $filtros // Mantemos os mesmos filtros (turma, tipo) para consistência
+);
+
     // 7. DADOS PARA AS LEGENDAS
 $legendas_eventos = [
     ['tipo' => 'Palestra', 'cor' => 'tipo-palestra'],
@@ -116,7 +129,11 @@ $legendas_eventos = [
 ?>
 
 <script>
-    const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
+    // MUDANÇA IMPORTANTE: Use $lista_eventos_mes aqui
+    const eventosDoBanco = <?php echo json_encode($lista_eventos_mes); ?>;
+    
+    // Mantém a lógica mobile (verifica se a variável existe antes de imprimir para não dar erro)
+    const mobileActiveIndexInicial = <?php echo isset($mobile_active_index) ? $mobile_active_index : 0; ?>;
 </script>
 
 <!DOCTYPE html>

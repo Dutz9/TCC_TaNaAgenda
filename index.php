@@ -105,6 +105,20 @@ foreach ($lista_eventos as $evento) {
     }
 }
 
+// --- NOVA LÓGICA: BUSCA EVENTOS PARA O MINICALENDÁRIO (MÊS INTEIRO) ---
+// Precisamos de uma lista separada que cubra todo o mês para os "pontinhos" no JS
+$inicio_mes_js = clone $hoje;
+$inicio_mes_js->modify('first day of this month');
+$fim_mes_js = clone $hoje;
+$fim_mes_js->modify('last day of this month');
+
+$lista_eventos_mes = $eventoController->listarAprovados(
+    $inicio_mes_js->format('Y-m-d'), 
+    $fim_mes_js->format('Y-m-d'), 
+    $filtros // Mantemos os mesmos filtros (turma, tipo) para consistência
+);
+
+
 // 7. DADOS PARA AS LEGENDAS
 $legendas_eventos = [
     ['tipo' => 'Palestra', 'cor' => 'tipo-palestra'],
@@ -119,7 +133,10 @@ $legendas_eventos = [
 ?>
 
 <script>
-    const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
+    // AQUI ESTÁ A MUDANÇA: Passamos a lista do mês inteiro para o JS usar no minicalendário
+    const eventosDoBanco = <?php echo json_encode($lista_eventos_mes); ?>; 
+    
+    // (O grid principal em PHP usa $lista_eventos, que é só da semana, isso está correto e não muda)
     const mobileActiveIndexInicial = <?php echo $mobile_active_index; ?>;
 </script>
 

@@ -180,21 +180,37 @@ document.addEventListener('DOMContentLoaded', () => {
         params.delete('week');
         const filtrosAtuais = params.toString();
 
-        for (let d = 1; d <= daysInMonth; d++) {
-            const dayLink = document.createElement('a');
-            dayLink.innerText = d < 10 ? `0${d}` : d;
-            dayLink.className = 'calendar-day-link';
+       
+    for (let d = 1; d <= daysInMonth; d++) {
+        const dayLink = document.createElement('a');
+        dayLink.innerText = d < 10 ? `0${d}` : d;
+        dayLink.className = 'calendar-day-link';
 
-            const clickedDate = new Date(year, month, d);
-            const mondayString = getMondayString(clickedDate);
-            
-            dayLink.href = `?week=${mondayString}&${filtrosAtuais}`;
-
-            if (d === todayDate && month === todayMonth && year === todayYear) {
-                dayLink.classList.add('today');
-            }
-            rightCalendarDays.appendChild(dayLink);
+        const clickedDate = new Date(year, month, d);
+        
+        // --- NOVA LÓGICA: VERIFICA SE TEM EVENTO NESTE DIA ---
+        // Usa a função auxiliar existente para formatar a data como YYYY-MM-DD
+        const dateStr = formatarDataParaFiltro(clickedDate);
+        
+        // Verifica no array (que agora contém o mês todo) se existe algum evento nesta data
+        const hasEvent = eventosDoBanco.some(ev => ev.dt_evento === dateStr);
+        
+        // Se tiver, adiciona a classe que faz a linha azul aparecer
+        if (hasEvent) {
+            dayLink.classList.add('has-event');
         }
+        // --- FIM DA NOVA LÓGICA ---
+
+        const mondayString = getMondayString(clickedDate);
+        
+        dayLink.href = `?week=${mondayString}&${filtrosAtuais}`;
+
+        if (d === todayDate && month === todayMonth && year === todayYear) {
+            dayLink.classList.add('today');
+        }
+
+        rightCalendarDays.appendChild(dayLink);
+    }
         updateSummaries(dataInicial);
     }
     updateRightPanel(dataInicial);

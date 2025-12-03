@@ -316,10 +316,22 @@
     gap: 5px;
     padding: 0 5px 5px 5px;
 }
-.dias-calendario-lado-direito a, .dias-calendario-lado-direito p {
-    font-size: 12px; font-weight: 500; color: black; text-align: center;
-    padding: 2px; text-decoration: none; border-radius: 10px;
+.dias-calendario-lado-direito a, 
+.dias-calendario-lado-direito p {
+    font-size: 12px; font-weight: 500; 
+    color: black; 
+    text-align: center;
+    padding: 2px; 
+    text-decoration: none; 
+    border-radius: 10px;
     transition: background-color 0.2s ease, color 0.2s ease;
+
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
 }
 .dias-calendario-lado-direito a:hover { background-color: #e0e0e0; }
 .dias-calendario-lado-direito a.today { background-color: #022E5E; color: white; }
@@ -411,6 +423,24 @@
 .modal-content h3 { font-size: 18px; margin-bottom: 10px; }
 .modal-content p { font-size: 14px; margin-bottom: 5px; color: #333; white-space: pre-wrap; word-wrap: break-word; }
 
+
+/* Cria a linha horizontal */
+.calendar-day-link.has-event::after {
+    content: '';
+    width: 14px;        /* Largura da linha */
+    height: 2px;        /* Espessura */
+    background-color: #0479F9; /* Cor da linha */
+    border-radius: 2px;
+    position: absolute;
+    bottom: 3px;        /* Distância do rodapé do quadrado */
+    left: 50%;
+    transform: translateX(-50%); /* Centraliza */
+}
+
+/* Muda a cor da linha se for o dia "Hoje" (para dar contraste com o fundo azul) */
+.calendar-day-link.today.has-event::after {
+    background-color: #ffffff;
+}
 
 /* =================================================================
    RESPONSIVIDADE DA AGENDA (MOBILE - MODO DIA ÚNICO)

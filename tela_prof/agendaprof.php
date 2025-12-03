@@ -102,6 +102,19 @@
         }
     }
 
+    // --- NOVA LÓGICA: BUSCA EVENTOS PARA O MINICALENDÁRIO (MÊS INTEIRO) ---
+// Precisamos de uma lista separada que cubra todo o mês para os "pontinhos" no JS
+$inicio_mes_js = clone $hoje;
+$inicio_mes_js->modify('first day of this month');
+$fim_mes_js = clone $hoje;
+$fim_mes_js->modify('last day of this month');
+
+$lista_eventos_mes = $eventoController->listarAprovados(
+    $inicio_mes_js->format('Y-m-d'), 
+    $fim_mes_js->format('Y-m-d'), 
+    $filtros // Mantemos os mesmos filtros (turma, tipo) para consistência
+);
+
     // 7. DADOS PARA AS LEGENDAS
 $legendas_eventos = [
     ['tipo' => 'Palestra', 'cor' => 'tipo-palestra'],
@@ -116,8 +129,11 @@ $legendas_eventos = [
 ?>
 
 <script>
-    const eventosDoBanco = <?php echo json_encode($lista_eventos); ?>;
-    const mobileActiveIndexInicial = <?php echo $mobile_active_index; ?>;
+    // MUDANÇA IMPORTANTE: Use $lista_eventos_mes aqui
+    const eventosDoBanco = <?php echo json_encode($lista_eventos_mes); ?>;
+    
+    // Mantém a lógica mobile (verifica se a variável existe antes de imprimir para não dar erro)
+    const mobileActiveIndexInicial = <?php echo isset($mobile_active_index) ? $mobile_active_index : 0; ?>;
 </script>
 
 <!DOCTYPE html>
@@ -140,7 +156,7 @@ $legendas_eventos = [
         <a href="perfil.php">
             <p><?php echo htmlspecialchars($usuario_logado['nm_usuario']); ?></p>
         </a>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#ffffff" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path fill="#ffffff" d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
     </header>
 
     <main>
