@@ -34,6 +34,19 @@
     background-color: #0d102b;
 }
 
+.filtrar-calendario.legenda-eventos {
+    border: 2px solid white;
+    border-radius: 10px;
+    color: white;
+    padding: 15px 15px 0px 15px;
+    margin: 15px 10px 0 10px;
+}
+
+/* CORREÇÃO DA MARGEM DA LEGENDA */
+.legendas-calendario {
+    margin: 0 10px 15px 10px; /* Top: 0, Right: 10px, Bottom: 15px, Left: 10px */
+}
+
 .filtrar-calendario h2 {
     font-weight: 500;
     font-size: 20px;
@@ -63,16 +76,31 @@
 .filtro-item.aberto .filtro-seta { transform: rotate(180deg); }
 
 .filtro-opcoes {
-    max-height: 0;
+    max-height: 0 !important; /* CHAVE: FORÇA O FECHAMENTO INICIAL */
     overflow: hidden;
     transition: max-height 0.3s ease-out;
     padding-left: 5px;
+    margin-top: 0 !important; 
 }
 
 .filtro-item.aberto .filtro-opcoes {
-    max-height: 300px;
+    max-height: 200px !important; /* Abre o filtro padrão */
     overflow-y: auto;
-    margin-top: 5px;
+    margin-top: 10px !important; 
+}
+
+.legendas-calendario .filtro-item {
+    padding-bottom: 0 !important; /* Remove o padding interno de 10px */
+    margin-bottom: 0 !important;  /* Remove a margem interna de 10px */
+    border-bottom: none !important; /* Remove a linha de separação */
+}
+
+.legenda-eventos h2 {
+    display: none;
+}
+
+.legendas-calendario .filtro-item.aberto .filtro-opcoes {
+    max-height: 300px !important; /* Abre a Legenda */
 }
 
 .filtro-opcoes label {
@@ -326,6 +354,49 @@
 .area-escrita-resumo-geral.event-summary.tipo-conselho-de-classe { border-color: #8173F5; }
 .area-escrita-resumo-geral.event-summary.tipo-evento-esportivo { border-color: #FF882F; }
 .area-escrita-resumo-geral.event-summary.tipo-outro { border-color: #7A5F56; }
+
+/* =================================================================
+   NOVAS REGRAS PARA A LEGENDA
+   ================================================================= */
+
+/* Sobrescreve a margem de 15px/10px para alinhar com o filtro de cima */
+.legendas-calendario {
+    margin: 0 10px 15px 10px; /* Top: 0, Right: 10px, Bottom: 15px, Left: 10px */
+}
+
+/* Oculta o título H2 da Legenda, já que ele usa o H3 do filtro-header */
+.legenda-eventos h2 {
+    display: none;
+}
+
+.legenda-item {
+    display: flex;
+    align-items: center;
+    padding: 5px 0;
+}
+
+.legenda-cor {
+    display: inline-block;
+    width: 15px;
+    height: 15px;
+    border-radius: 3px;
+    margin-right: 10px;
+    flex-shrink: 0; /* Impede que a cor encolha */
+}
+
+.legenda-item p {
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Cores dos Eventos (Estas classes são usadas no PHP para aplicar a cor do evento na bolinha) */
+.legenda-cor.tipo-palestra { background-color: #57A1E3; }
+.legenda-cor.tipo-reuniao { background-color: #E488F5; } 
+.legenda-cor.tipo-visita-tecnica { background-color: #29A6B2; } 
+.legenda-cor.tipo-prova { background-color: #F2C33B; } 
+.legenda-cor.tipo-conselho-de-classe { background-color: #8173F5; } 
+.legenda-cor.tipo-evento-esportivo { background-color: #FF9938; } 
+.legenda-cor.tipo-outro { background-color: #8D6E63; }
 
 /* --- MODAIS --- */
 .modal-overlay {
