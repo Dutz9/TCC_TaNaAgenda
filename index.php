@@ -1,6 +1,6 @@
 <?php
 // =================================================================
-// BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX) (v6 - Final Sem Domingo)
+// BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX) (v8 - Final Sem Domingo, Com Legenda)
 // =================================================================
 
 require_once 'config_local.php';
@@ -76,11 +76,11 @@ $turmaController = new TurmaController();
 $lista_turmas_filtro = $turmaController->listar();
 $tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
 
+// 5. LÓGICA DE EVENTOS (BUSCA NO BANCO)
 $eventoController = new EventoController();
-// MUDANÇA: DATA FINAL É O ÍNDICE 5 (SÁBADO)
 $lista_eventos = $eventoController->listarAprovados($dias_desta_semana[0]->format('Y-m-d'), $dias_desta_semana[5]->format('Y-m-d'), $filtros);
 
-// 5. PROCESSAMENTO DO GRID
+// 6. PROCESSAMENTO DO GRID
 $horarios_todos = [ "07:10", "08:00", "08:50", "10:00", "10:50", "11:40", "13:30", "14:20", "15:10", "16:20", "17:10", "18:00", "18:30", "19:20", "20:10", "21:20", "22:10" ];
 if (!empty($filtros['periodo'])) {
     $horarios_semana = [];
@@ -104,6 +104,18 @@ foreach ($lista_eventos as $evento) {
         $calendario_grid[$horario_inicio][$data_evento_chave][] = $evento;
     }
 }
+
+// 7. DADOS PARA AS LEGENDAS
+$legendas_eventos = [
+    ['tipo' => 'Palestra', 'cor' => 'tipo-palestra'],
+    ['tipo' => 'Visita Técnica', 'cor' => 'tipo-visita-tecnica'],
+    ['tipo' => 'Reunião', 'cor' => 'tipo-reuniao'],
+    ['tipo' => 'Prova', 'cor' => 'tipo-prova'],
+    ['tipo' => 'Conselho de Classe', 'cor' => 'tipo-conselho-de-classe'],
+    ['tipo' => 'Evento Esportivo', 'cor' => 'tipo-evento-esportivo'],
+    ['tipo' => 'Outro', 'cor' => 'tipo-outro'],
+];
+
 ?>
 
 <script>
@@ -193,6 +205,28 @@ foreach ($lista_eventos as $evento) {
                     </div>
                 </section>
             </form>
+            
+            <!-- CHAVE: NOVA SEÇÃO DE LEGENDA -->
+        <section class="filtrar-calendario legenda-eventos">
+    <div class="filtro-item">
+        <div class="filtro-header">
+            <h3>Legendas</h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512" class="filtro-seta"><path fill="#ffffff" d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>
+        </div>
+        <div class="filtro-opcoes">
+            <?php foreach($legendas_eventos as $legenda): ?>
+                <div class="legenda-item">
+                    <span class="legenda-cor <?php echo $legenda['cor']; ?>"></span>
+                        <p><?php echo $legenda['tipo']; ?></p></div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</section>
+        
+    
+</section>
+            <!-- FIM DA NOVA SEÇÃO DE LEGENDA -->
+            
         </section>
 
         <section class="calendario">
