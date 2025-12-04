@@ -77,7 +77,7 @@
 
 /* ESTADO ABERTO (SOBRESCREVE O FECHAMENTO) */
 .filtro-item.aberto .filtro-opcoes {
-    max-height: 200px !important; /* Abre o filtro padrão */
+    max-height: 400px !important; /* Abre o filtro padrão */
     overflow-y: auto;
     margin-top: 10px !important; 
 }
@@ -93,7 +93,7 @@
 }
 
 .legendas-calendario .filtro-item.aberto .filtro-opcoes {
-    max-height: 300px !important; /* Abre a Legenda */
+    max-height: 400px !important; /* Abre a Legenda */
 }
 
 .filtro-opcoes label {
