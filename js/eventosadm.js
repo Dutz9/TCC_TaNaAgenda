@@ -16,9 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // --- Elementos Principais ---
     const container = document.querySelector('.notificacao-container');
     const modalDetalhes = document.getElementById('modal-decisao-coord'); 
     const modalConfirmar = document.getElementById('modal-confirm-excluir');
+
+    // --- Elementos do Modal de Visualização de Motivo ---
+    const modalVisualizar = document.getElementById('modal-visualizar-motivo');
+    const btnFecharVisualizacao = document.getElementById('btn-fechar-visualizacao');
 
     if (!container || !modalDetalhes || !modalConfirmar) {
         console.error('Elementos essenciais (container ou modais) não foram encontrados.');
@@ -32,14 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let eventoParaExcluir = null;
 
-    // --- LÓGICA DOS FILTROS (REINTRODUZIDA) ---
+    // --- LÓGICA DOS FILTROS ---
     const formFiltros = document.getElementById('form-filtros');
     if (formFiltros) {
         formFiltros.addEventListener('change', () => {
-            formFiltros.submit(); // Envia o formulário automaticamente
+            formFiltros.submit();
         });
     }
-    // --- FIM DA LÓGICA DOS FILTROS ---
     
     // --- "ESCUTADORES" DE CLIQUES ---
     
@@ -53,25 +57,61 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     modalDetalhes.addEventListener('click', (e) => {
-        if (e.target === modalDetalhes) modalDetalhes.style.display = 'none';
+        if (e.target === modalDetalhes) {
+            modalDetalhes.style.display = 'none';
+            return;
+        }
 
-        const botao = e.target.closest('button, a');
-        if (!botao) return;
+        const botaoClicado = e.target.closest('button, a');
 
-        if (botao.classList.contains('aprovar') || botao.classList.contains('recusar')) {
+        // --- NOVA LÓGICA: CLIQUE NA RESPOSTA PARA VER MOTIVO ---
+        const itemResposta = e.target.closest('.response-item');
+        if (itemResposta && !botaoClicado) { 
+            const motivoTexto = itemResposta.dataset.motivo;
+            
+            if (motivoTexto && motivoTexto !== 'null' && motivoTexto.trim() !== '') {
+                const displayTexto = document.getElementById('conteudo-motivo-leitura');
+                if(displayTexto) {
+                    displayTexto.textContent = motivoTexto;
+                    modalVisualizar.style.display = 'flex';
+                }
+            }
+        }
+        // --- FIM DA NOVA LÓGICA ---
+
+        if (!botaoClicado) return;
+
+        if (botaoClicado.classList.contains('aprovar') || botaoClicado.classList.contains('recusar')) {
             e.preventDefault();
-            const eventoId = botao.dataset.id;
-            const decisao = botao.classList.contains('aprovar') ? 'Aprovado' : 'Recusado';
-            enviarDecisaoFinal(eventoId, decisao, botao);
+            // CORREÇÃO: Usar 'botaoClicado' em vez de 'botao'
+            const eventoId = botaoClicado.dataset.id;
+            const decisao = botaoClicado.classList.contains('aprovar') ? 'Aprovado' : 'Recusado';
+            enviarDecisaoFinal(eventoId, decisao, botaoClicado);
         }
         
-        if (botao.classList.contains('btn-excluir-evento')) {
+        if (botaoClicado.classList.contains('btn-excluir-evento')) {
             e.preventDefault();
-            eventoParaExcluir = botao.dataset.id;
+            // CORREÇÃO: Usar 'botaoClicado' em vez de 'botao'
+            eventoParaExcluir = botaoClicado.dataset.id;
             modalConfirmar.style.display = 'flex';
         }
     });
 
+    // --- LÓGICA PARA FECHAR O MODAL DE VISUALIZAÇÃO ---
+    if (btnFecharVisualizacao) {
+        btnFecharVisualizacao.addEventListener('click', () => {
+            modalVisualizar.style.display = 'none';
+        });
+    }
+    if (modalVisualizar) {
+        modalVisualizar.addEventListener('click', (e) => {
+            if (e.target === modalVisualizar) {
+                modalVisualizar.style.display = 'none';
+            }
+        });
+    }
+
+    // --- LÓGICA DO MODAL DE EXCLUSÃO ---
     btnConfirmarNao.addEventListener('click', () => {
         modalConfirmar.style.display = 'none';
         eventoParaExcluir = null;
@@ -90,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- FUNÇÕES AJAX (Reutilizam os endpoints do Coordenador) ---
+    // --- FUNÇÕES AJAX ---
 
     async function enviarExclusao(eventoId) {
         btnConfirmarSim.disabled = true;
@@ -100,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('cd_evento', eventoId);
 
         try {
-            // Reutiliza o endpoint do Coordenador
             const response = await fetch('../api/excluir_evento.php', { method: 'POST', body: formData });
             const result = await response.json();
             if (response.ok && result.status === 'sucesso') {
@@ -169,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return `${dia}/${mes}/${ano}`;
     }
 
-    // CHAVE: MODAL DE DECISÃO (USADO PARA ADM)
     function abrirModalDecisao(evento) {
         let respostas = [];
         if (evento.respostas_professores) {
@@ -177,20 +215,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 respostas = JSON.parse(evento.respostas_professores) || [];
             } catch (e) { console.warn("JSON das respostas inválido."); }
         }
-        let tituloRespostas = 'Respostas dos Professores'; // Inicialização ÚNICA
+        let tituloRespostas = 'Respostas dos Professores'; 
         let respostasHtml = '';
         
-        // CHAVE: Unificamos a lógica de exibição para Coordenador e Administrador
         if (evento.tipo_solicitante === 'Coordenador' || evento.tipo_solicitante === 'Administrador') {
-            // Se o solicitante é um cargo de gestão (ADM/Coord), a lista é de notificação/envolvimento.
             tituloRespostas = 'Professores Envolvidos';
             
             if (respostas.length > 0) {
                  respostas.forEach(r => {
-                    // *** CORREÇÃO: Omitimos completamente a tag <span> do status para eventos de ADM/Coord ***
                     respostasHtml += `<div class="response-item">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
-                                        <div><p>${r.nome}</p></div> <!-- Apenas o nome do professor -->
+                                        <div><p>${r.nome}</p></div>
                                       </div>`;
                 });
             } else {
@@ -198,13 +233,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
         } else if (respostas.length > 0) {
-            // Lógica para eventos de PROFESSOR (Requer aprovação) - Esta lógica está correta
             tituloRespostas = 'Respostas dos Professores';
             respostas.forEach(r => {
                 let statusText = r.status || 'Pendente'; 
                 let statusClass = r.status === 'Aprovado' ? 'aprovado' : (r.status === 'Recusado' ? 'recusado' : 'sem-resposta');
                 
-                respostasHtml += `<div class="response-item">
+                // --- INSERÇÃO DO MOTIVO NO DATASET ---
+                let dataMotivo = r.motivo ? `data-motivo="${r.motivo.replace(/"/g, '&quot;')}"` : '';
+                let tooltipHint = r.motivo ? ' title="Clique para ver o motivo"' : '';
+
+                respostasHtml += `<div class="response-item" ${dataMotivo} ${tooltipHint}>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg>
                                     <div><p>${r.nome}</p><span class="${statusClass}">${statusText}</span></div>
                                   </div>`;
@@ -217,23 +255,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let botoesHtml = '';
         
-        // Cenário 1: Evento pendente
         if (evento.status === 'Solicitado') {
-            botoesHtml = `<div class="modal-buttons">
-                            <button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button>
-                            <button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button>
-                        </div>`;
+            botoesHtml = `<div class="modal-buttons"><button class="recusar" data-id="${evento.cd_evento}">Recusar Evento</button><button class="aprovar" data-id="${evento.cd_evento}">Aprovar Evento</button></div>`;
         }
-        // Cenário 2: Evento já Aprovado
         else if (evento.status === 'Aprovado') {
-            // ATENÇÃO: Link de edição aponta para a versão ADM
             botoesHtml = `<div class="modal-buttons">
                             <button class="btn-excluir-evento recusar" data-id="${evento.cd_evento}">Excluir</button>
                             <button class="recusar" data-id="${evento.cd_evento}">Reverter p/ Recusado</button>
                             <a href="criareventoadm.php?edit=${evento.cd_evento}" class="btn-editar-evento">Editar</a>
                         </div>`;
         }
-        // Cenário 3: Evento já Recusado
         else if (evento.status === 'Recusado') {
             botoesHtml = `<div class="modal-buttons">
                             <button class="btn-excluir-evento recusar" data-id="${evento.cd_evento}">Excluir</button>

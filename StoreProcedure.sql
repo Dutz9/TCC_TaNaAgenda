@@ -174,21 +174,26 @@ END$$
 -- Procedure para registrar aprovação de professor (nova: para fluxo paralelo, via N:N)
 ALTER TABLE resolucao_eventos_usuarios 
 MODIFY COLUMN status_resolucao ENUM('Aprovado', 'Recusado', 'Pendente') NULL DEFAULT 'Pendente';
-
 DROP PROCEDURE IF EXISTS `registrarAprovacaoProfessor`$$
 CREATE PROCEDURE `registrarAprovacaoProfessor`(
     IN pCdEvento VARCHAR(45),
     IN pCdUsuario VARCHAR(45),
-    IN pStatus ENUM('Aprovado', 'Recusado', 'Pendente') 
+    IN pStatus ENUM('Aprovado', 'Recusado', 'Pendente'),
+    IN pDsMotivo TEXT -- Novo parâmetro
 )
 BEGIN
     DECLARE qtd INT DEFAULT 0;
     
     SELECT COUNT(*) INTO qtd FROM resolucao_eventos_usuarios WHERE eventos_cd_evento = pCdEvento AND usuarios_cd_usuario = pCdUsuario;
+    
     IF (qtd > 0) THEN
-        UPDATE resolucao_eventos_usuarios SET status_resolucao = pStatus WHERE eventos_cd_evento = pCdEvento AND usuarios_cd_usuario = pCdUsuario;
+        UPDATE resolucao_eventos_usuarios 
+        SET status_resolucao = pStatus, 
+            ds_motivo = pDsMotivo -- Salva o motivo
+        WHERE eventos_cd_evento = pCdEvento AND usuarios_cd_usuario = pCdUsuario;
     ELSE
-        INSERT INTO resolucao_eventos_usuarios (eventos_cd_evento, usuarios_cd_usuario, status_resolucao) VALUES (pCdEvento, pCdUsuario, pStatus);
+        INSERT INTO resolucao_eventos_usuarios (eventos_cd_evento, usuarios_cd_usuario, status_resolucao, ds_motivo) 
+        VALUES (pCdEvento, pCdUsuario, pStatus, pDsMotivo);
     END IF;
 END$$
 
@@ -284,16 +289,20 @@ BEGIN
     VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Aprovado', pCdUsuarioSolicitante, CURDATE());
 END$$
 
+-- ATUALIZAÇÃO 2: LISTAR PARA COORDENADOR
 DROP PROCEDURE IF EXISTS `listarEventosParaCoordenador`$$
 CREATE PROCEDURE `listarEventosParaCoordenador`(
     IN pCdUsuario VARCHAR(25),
     IN pStatus ENUM('Solicitado', 'Aprovado', 'Recusado'),
-    IN pSolicitante ENUM('Todos', 'Eu', 'Professores'), -- Lógica de filtro diferente aqui
+    IN pSolicitante ENUM('Todos', 'Eu', 'Professores'),
     IN pCdTurma INT,
     IN pTipoEvento ENUM('Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
     IN pDataFiltro ENUM('Todos', 'Proximos7Dias', 'EsteMes', 'MesPassado', 'ProximoMes')
 )
 BEGIN
+    -- AUMENTA O LIMITE DO GROUP_CONCAT PARA ESTA SESSÃO
+    SET SESSION group_concat_max_len = 1000000;
+
     SELECT
         e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
         e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
@@ -303,7 +312,7 @@ BEGIN
         (SELECT SUM(t_inner.qt_alunos) FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
         CASE 
             WHEN solicitante.tipo_usuario_ic_usuario = 'Professor' THEN
-                (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']')
+                (SELECT CONCAT('[', GROUP_CONCAT(DISTINCT JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao, 'motivo', IFNULL(reu.ds_motivo, ''))), ']')
                  FROM resolucao_eventos_usuarios reu JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario
                  WHERE reu.eventos_cd_evento = e.cd_evento AND u.cd_usuario != e.cd_usuario_solicitante)
             ELSE 
@@ -317,26 +326,19 @@ BEGIN
     LEFT JOIN eventos_has_turmas eht_filtro ON e.cd_evento = eht_filtro.eventos_cd_evento
         
     WHERE 
-        -- 1. Regra de Relevância (O que eu posso ver)
         (
-            e.status = 'Solicitado' -- Eventos pendentes de professores
-            OR e.cd_usuario_solicitante = pCdUsuario -- Eventos que eu criei
-            OR e.cd_usuario_aprovador = pCdUsuario -- Eventos que eu julguei
+            e.status = 'Solicitado'
+            OR e.cd_usuario_solicitante = pCdUsuario
+            OR e.cd_usuario_aprovador = pCdUsuario
             OR e.status IN ('Aprovado', 'Recusado')
         )
-        
-        -- 2. FILTROS
         AND (pStatus IS NULL OR e.status = pStatus)
         AND (pTipoEvento IS NULL OR e.tipo_evento = pTipoEvento)
         AND (pCdTurma IS NULL OR eht_filtro.turmas_cd_turma = pCdTurma)
-        
-        -- Lógica do Filtro de Solicitante para o COORDENADOR
         AND (pSolicitante IS NULL OR pSolicitante = 'Todos'
             OR (pSolicitante = 'Eu' AND e.cd_usuario_solicitante = pCdUsuario)
             OR (pSolicitante = 'Professores' AND solicitante.tipo_usuario_ic_usuario = 'Professor')
         )
-        
-        -- Lógica de Data
         AND (pDataFiltro IS NULL OR pDataFiltro = 'Todos'
             OR (pDataFiltro = 'Proximos7Dias' AND e.dt_evento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY))
             OR (pDataFiltro = 'EsteMes' AND MONTH(e.dt_evento) = MONTH(CURDATE()) AND YEAR(e.dt_evento) = YEAR(CURDATE()))
@@ -348,6 +350,7 @@ BEGIN
     ORDER BY FIELD(e.status, 'Solicitado', 'Aprovado', 'Recusado'), dt_solicitacao DESC;
 
 END$$
+
 
 -- Procedure para o coordenador APROVAR um evento (versão atualizada)
 DROP PROCEDURE IF EXISTS `aprovarEventoDefinitivo`$$
@@ -742,12 +745,11 @@ BEGIN
     -- 1. Remove as associações da turma com professores
     DELETE FROM usuarios_has_turmas WHERE turmas_cd_turma = pCdTurma;
     
-    -- 2. Remove as associações da turma com eventos
-    DELETE FROM eventos_has_turmas WHERE eventos_cd_evento = pCdTurma;
+    -- 2. Remove as associações da turma com eventos (CORRIGIDO)
+    -- Antes estava comparando o ID do Evento com o ID da Turma, o que gerava o erro.
+    DELETE FROM eventos_has_turmas WHERE turmas_cd_turma = pCdTurma;
     
     -- 3. Finalmente, apaga a turma
-    -- NOTA: Se a turma for chave primária em 'cursos' (o que não deve ser),
-    -- o banco irá falhar, o que é o comportamento esperado.
     DELETE FROM turmas WHERE cd_turma = pCdTurma;
 END$$
 
@@ -1043,17 +1045,20 @@ BEGIN
 END$$
 
 -- Procedure para listar eventos relevantes para o PROFESSOR
+-- ATUALIZAÇÃO 1: LISTAR PARA PROFESSOR
 DROP PROCEDURE IF EXISTS `listarEventosParaProfessor`$$
 CREATE PROCEDURE `listarEventosParaProfessor`(
     IN pCdUsuario VARCHAR(25),
     IN pStatus ENUM('Solicitado', 'Aprovado', 'Recusado'),
-    -- Filtro de quem solicitou: 'Todos', 'Eu', 'OutrosProfessores', 'Coordenador'
     IN pSolicitante ENUM('Todos', 'Eu', 'OutrosProfessores', 'Coordenador'), 
     IN pCdTurma INT,
     IN pTipoEvento ENUM('Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
     IN pDataFiltro ENUM('Todos', 'Proximos7Dias', 'EsteMes', 'MesPassado', 'ProximoMes')
 )
 BEGIN
+    -- AUMENTA O LIMITE DO GROUP_CONCAT PARA ESTA SESSÃO (1MB)
+    SET SESSION group_concat_max_len = 1000000;
+
     SELECT
         e.cd_evento, e.nm_evento, e.dt_evento, e.horario_inicio, e.horario_fim,
         e.ds_descricao, e.status, e.cd_usuario_solicitante, e.dt_solicitacao,
@@ -1061,12 +1066,13 @@ BEGIN
         solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
         (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
         (SELECT SUM(t_inner.qt_alunos) FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
-        -- Respostas de outros professores (se o evento for do tipo que requer aprovação)
-        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao)), ']') 
+        
+        -- O GROUP_CONCAT AQUI AGORA TEM MAIS ESPAÇO
+        (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao, 'motivo', IFNULL(reu.ds_motivo, ''))), ']') 
          FROM resolucao_eventos_usuarios reu JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario 
          WHERE reu.eventos_cd_evento = e.cd_evento AND u.cd_usuario != e.cd_usuario_solicitante
         ) AS respostas_professores,
-        -- A resposta do próprio usuário logado para este evento
+        
         (SELECT status_resolucao FROM resolucao_eventos_usuarios WHERE eventos_cd_evento = e.cd_evento AND usuarios_cd_usuario = pCdUsuario) AS minha_resposta
         
     FROM eventos e
@@ -1074,13 +1080,9 @@ BEGIN
     LEFT JOIN eventos_has_turmas eht_filtro ON e.cd_evento = eht_filtro.eventos_cd_evento
         
     WHERE 
-        -- 1. Regra de Relevância (O que me interessa ver)
         (
-            -- Eventos que EU solicitei
             e.cd_usuario_solicitante = pCdUsuario 
-            -- OU eventos que eu preciso responder (estou na lista de resolucao)
             OR EXISTS (SELECT 1 FROM resolucao_eventos_usuarios reu_check WHERE reu_check.eventos_cd_evento = e.cd_evento AND reu_check.usuarios_cd_usuario = pCdUsuario)
-            -- OU eventos criados por Coordenador que afetam alguma das MINHAS turmas
             OR (solicitante.tipo_usuario_ic_usuario = 'Coordenador' 
                 AND EXISTS (SELECT 1 
                             FROM eventos_has_turmas eht_check 
@@ -1088,23 +1090,14 @@ BEGIN
                             WHERE eht_check.eventos_cd_evento = e.cd_evento AND uht_check.usuarios_cd_usuario = pCdUsuario)
             )
         )
-        
-        -- 2. FILTROS DE TIPO E STATUS
         AND (pStatus IS NULL OR e.status = pStatus)
         AND (pTipoEvento IS NULL OR e.tipo_evento = pTipoEvento)
         AND (pCdTurma IS NULL OR eht_filtro.turmas_cd_turma = pCdTurma)
-        
-        -- 3. LÓGICA DO FILTRO DE SOLICITANTE
         AND (pSolicitante IS NULL OR pSolicitante = 'Todos'
             OR (pSolicitante = 'Eu' AND e.cd_usuario_solicitante = pCdUsuario)
-            OR (pSolicitante = 'OutrosProfessores' 
-                AND e.cd_usuario_solicitante != pCdUsuario
-                AND solicitante.tipo_usuario_ic_usuario = 'Professor')
-            OR (pSolicitante = 'Coordenador' 
-                AND solicitante.tipo_usuario_ic_usuario = 'Coordenador')
+            OR (pSolicitante = 'OutrosProfessores' AND e.cd_usuario_solicitante != pCdUsuario AND solicitante.tipo_usuario_ic_usuario = 'Professor')
+            OR (pSolicitante = 'Coordenador' AND solicitante.tipo_usuario_ic_usuario = 'Coordenador')
         )
-        
-        -- 4. LÓGICA DE DATA
         AND (pDataFiltro IS NULL OR pDataFiltro = 'Todos' OR
             (pDataFiltro = 'Proximos7Dias' AND e.dt_evento BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY)) OR
             (pDataFiltro = 'EsteMes' AND MONTH(e.dt_evento) = MONTH(CURDATE()) AND YEAR(e.dt_evento) = YEAR(CURDATE())) OR
@@ -1115,5 +1108,4 @@ BEGIN
     GROUP BY e.cd_evento
     ORDER BY FIELD(e.status, 'Solicitado', 'Aprovado', 'Recusado'), e.dt_solicitacao DESC;
 END$$
-
 DELIMITER ;

@@ -814,3 +814,46 @@
     max-height: 40px;
     margin-top: 5px;
 }
+
+/* --- ESTILO DO MODAL DE VISUALIZAÇÃO DE MOTIVO --- */
+.area-texto-leitura {
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+#conteudo-motivo-leitura {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+}
+
+/* Ajuste de posicionamento considerando a sidebar */
+#modal-visualizar-motivo {
+    left: 250px; 
+    width: calc(100vw - 250px);
+}
+
+@media (max-width: 768px) {
+    #modal-visualizar-motivo {
+        left: 0;
+        width: 100vw;
+    }
+}
+
+/* Cursor pointer para indicar que a resposta é clicável */
+.response-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.response-item:hover {
+    background-color: #f9f9f9;
+}

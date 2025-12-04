@@ -190,6 +190,34 @@
         </div>
     </div>
 
+        <!-- NOVO MODAL: MOTIVO DA RECUSA -->
+        <div id="modal-motivo-recusa" class="modal-overlay" style="display: none;">
+        <div class="modal-content-confirm">
+            <h3>Motivo da Recusa</h3>
+            <p>Informe o motivo para recusar este evento:</p>
+            <form id="form-recusa">
+                <textarea id="texto-motivo" placeholder="Digite o motivo aqui..." required></textarea>
+                <div class="confirmation-buttons">
+                    <button type="button" id="btn-cancelar-recusa" class="botao-cancelar">Voltar</button>
+                    <button type="submit" id="btn-confirmar-recusa" class="botao-enviar" style="background-color: red;">Recusar este evento</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- NOVO MODAL: VISUALIZAR MOTIVO (POP-UP) -->
+    <div id="modal-visualizar-motivo" class="modal-overlay" style="display: none;">
+        <div class="modal-content-confirm" style="max-width: 600px;"> <!-- Um pouco mais largo -->
+            <h3>Motivo da Recusa</h3>
+            <div class="area-texto-leitura">
+                <p id="conteudo-motivo-leitura"></p>
+            </div>
+            <div class="confirmation-buttons">
+                <button type="button" id="btn-fechar-visualizacao" class="botao-cancelar">Fechar</button>
+            </div>
+        </div>
+    </div>
+
     <div id="modal-confirm-cancelar" class="modal-overlay" style="display: none;">
         <div class="modal-content-confirm">
             <h3>Confirmar Cancelamento</h3>

@@ -8,11 +8,13 @@
     // Define a resposta como JSON
     header('Content-Type: application/json');
 
-    // 2. VERIFICAÇÃO DE PERMISSÃO (CRUCIAL)
-    // Apenas Coordenadores podem executar esta ação
-    if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
+    // 2. VERIFICAÇÃO DE PERMISSÃO (CORRIGIDA)
+    // Permite Coordenador OU Administrador
+    $tipo_usuario = $usuario_logado['tipo_usuario_ic_usuario'];
+    
+    if ($tipo_usuario !== 'Coordenador' && $tipo_usuario !== 'Administrador') {
         http_response_code(403); // Proibido (Forbidden)
-        echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas coordenadores podem excluir eventos.']);
+        echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas coordenadores ou administradores podem excluir eventos.']);
         exit();
     }
 

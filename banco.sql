@@ -381,3 +381,5 @@ INSERT INTO resolucao_eventos_usuarios (eventos_cd_evento, usuarios_cd_usuario, 
 -- Evento 45 (Solicitado)
 ('EVT_FINAL_45', '1014', 'Aprovado'), ('EVT_FINAL_45', '1018', 'Pendente'), 
 ('EVT_FINAL_45', '1025', 'Pendente');
+
+ALTER TABLE resolucao_eventos_usuarios ADD COLUMN ds_motivo TEXT NULL;

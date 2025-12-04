@@ -204,5 +204,19 @@
     </script>
     <?php endif; ?>
     <div class="menu-overlay" id="menu-overlay"></div>
+
+    <!-- NOVO MODAL: VISUALIZAR MOTIVO (POP-UP) -->
+    <div id="modal-visualizar-motivo" class="modal-overlay" style="display: none;">
+        <div class="modal-content-confirm" style="max-width: 600px;">
+            <h3>Motivo da Recusa</h3>
+            <div class="area-texto-leitura">
+                <p id="conteudo-motivo-leitura"></p>
+            </div>
+            <div class="confirmation-buttons">
+                <button type="button" id="btn-fechar-visualizacao" class="botao-cancelar">Fechar</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

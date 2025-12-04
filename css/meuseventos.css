@@ -299,6 +299,83 @@
 .respostausuario {
     color: #0479F9;
 }
+
+/* Estilo do textarea no modal de recusa */
+#texto-motivo {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    resize: none;
+    font-family: inherit;
+}
+
+/* Estilo do motivo expandido na lista de respostas */
+.motivo-expandido {
+    background-color: #f8d7da; /* Fundo avermelhado claro */
+    color: #721c24;
+    padding: 8px;
+    border-radius: 5px;
+    margin-top: 5px;
+    font-size: 13px;
+    width: 100%;
+    border: 1px solid #f5c6cb;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cursor pointer para indicar que dá pra clicar */
+.response-item {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.response-item:hover {
+    background-color: #f9f9f9;
+}
+
+/* Área de texto com scroll caso o motivo seja muito grande */
+.area-texto-leitura {
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    margin-bottom: 20px;
+    text-align: left; /* Garante leitura da esquerda para direita */
+}
+
+#conteudo-motivo-leitura {
+    font-size: 14px;
+    color: #333;
+    line-height: 1.5;
+    white-space: pre-wrap; /* Mantém quebras de linha que o usuário digitou */
+    word-wrap: break-word; /* Quebra palavras muito longas */
+    margin: 0;
+}
+
+/* 
+   AJUSTE DE POSICIONAMENTO ESPECÍFICO PARA ESSE MODAL 
+   Para centralizar descontando a barra lateral
+*/
+#modal-visualizar-motivo {
+    left: 250px; /* Empurra o início do overlay para depois da sidebar */
+    width: calc(100vw - 250px); /* A largura é o total menos a sidebar */
+}
+
+/* Responsividade: No mobile, a sidebar some, então volta ao normal */
+@media (max-width: 768px) {
+    #modal-visualizar-motivo {
+        left: 0;
+        width: 100vw;
+    }
+}
  
 .modal-right {
     width: 70%;
@@ -740,6 +817,14 @@
 
 .feedback-bar.erro {
     background-color: #dc3545; /* Vermelho */
+}
+
+#btn-confirmar-recusa{
+    color: white;
+}
+
+#btn-cancelar-recusa, #btn-fechar-visualizacao{
+    background-color: #dbdbdb;
 }
 
 /* --- ESTILO DOS BOTÕES DE AÇÃO DENTRO DO MODAL --- */
