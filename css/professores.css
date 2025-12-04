@@ -1,30 +1,12 @@
-/* 
-    professores.css - Estilos específicos para a listagem de Professores e Coordenadores
-    
-    A maioria dos estilos de card (.admin-card, .admin-btn, .card-adicionar) 
-    é herdada do ../css/coordenador.css. 
-*/
 
-
-/* 
-    CHAVE: ESTRUTURA DA GRID (2 COLUNAS)
-    A classe .admin-card-container é usada no HTML.
-    O CSS do .admin-card (o card individual) é pego de coordenador.css.
-*/
 .admin-card-container {
     display: grid;
-    /* Manteremos as 2 colunas, já que você gostou */
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
 }
 
-
-/* 
-    SOBRESCREVE O ESTILO INTERNO DO CARD PARA AS INFORMAÇÕES
-    (Estas regras definem o layout do conteúdo DENTRO do .admin-card)
-*/
 .prof-infos {
-    /* Herda o estilo do .admin-card, mas organiza o conteúdo em coluna */
+
     display: flex;
     flex-direction: column;
     margin-right: 10px;

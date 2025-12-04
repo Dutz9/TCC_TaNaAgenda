@@ -1,12 +1,6 @@
--- Stored Procedures para TCC (Versão Final para Admin/Prof/Coord)
 
 DELIMITER $$
 
--- =================================================================
--- SPs GERAIS (EXISTENTES)
--- =================================================================
-
--- Procedure para listar todos os usuários (corrigida: nomes de tabelas/colunas atualizados)
 DROP PROCEDURE IF EXISTS listarUsuarios$$
 CREATE PROCEDURE listarUsuarios()
 BEGIN

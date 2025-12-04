@@ -1,30 +1,25 @@
 <?php
-// Inclui o arquivo de configuração para carregar as classes e iniciar a sessão
 require_once 'config_local.php';
  
-// Inicia a sessão. Essencial para manter o usuário logado.
 session_start();
  
-// Variável para guardar a mensagem de erro, se houver
 $mensagemErro = '';
- 
-// Verifica se o formulário foi enviado (se a requisição é do tipo POST)
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  
-    // 1. Pega os dados do formulário de forma segura
+  
     $email = isset($_POST['email']) ? trim($_POST['email']) : '';
     $senha = isset($_POST['senha']) ? trim($_POST['senha']) : '';
- 
-    // Validação simples para ver se os campos não estão vazios
+
     if (!empty($email) && !empty($senha)) {
         try {
-            // 2. Cria uma instância do nosso controlador
+  
             $controller = new UsuarioController();
  
-            // 3. Chama o método para verificar o acesso
+
             $dadosUsuario = $controller->VerificarAcesso($email, $senha);
  
-            // 4. Se o login for bem-sucedido, $dadosUsuario conterá os dados
+      
             if ($dadosUsuario && count($dadosUsuario) > 0) {
                 
                 // Guarda os dados do usuário na sessão
@@ -35,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  
                 if ($tipoUsuario == 'Professor') {
                     header('Location: tela_prof/agendaprof.php');
-                    exit(); // Encerra o script após o redirecionamento
+                    exit(); 
                 } 
                 
                 elseif ($tipoUsuario == 'Coordenador') {
@@ -49,8 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 } 
                 
                 else {
-                    // Caso seja outro tipo de usuário (ex: Administrador)
-                    // Por enquanto, podemos apenas mostrar um erro ou redirecionar para uma página padrão.
+
                     $mensagemErro = 'Tipo de usuário não tem uma página de destino.';
                 }
  

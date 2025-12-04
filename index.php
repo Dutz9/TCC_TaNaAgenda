@@ -1,7 +1,4 @@
 <?php
-// =================================================================
-// BLOCO DE DADOS - PÁGINA PÚBLICA (INDEX) (v8 - Final Sem Domingo, Com Legenda)
-// =================================================================
 
 require_once 'config_local.php';
 

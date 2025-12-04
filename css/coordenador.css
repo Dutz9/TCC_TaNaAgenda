@@ -22,11 +22,6 @@
  
 .notificacao-container {
     display: grid;
-    /* * Nova regra:
-     * Cria colunas que se ajustam automaticamente.
-     * Elas terão no mínimo 250px e no máximo 1fr (o que couber).
-     * Isso força os cards a terem um tamanho consistente.
-     */
     grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
     gap: 20px; 
     padding-right: 10px;

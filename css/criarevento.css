@@ -1,12 +1,12 @@
-/* --- ESTILOS DE CRIAR EVENTO / ADICIONAR PROFESSOR / ADICIONAR TURMA --- */
+
 
 .formulario-evento {
-    margin-left: 250px; /* Mantém o espaçamento da sidebar */
+    margin-left: 250px; 
     padding: 40px;
     width: calc(100% - 250px);
-    height: calc(100vh - 80px); /* Ocupa o espaço visível no desktop */
+    height: calc(100vh - 80px); 
     background-color: white;
-    overflow-y: auto; /* Scroll interno no desktop */
+    overflow-y: auto; 
 }
 
 .formulario-evento h2 {

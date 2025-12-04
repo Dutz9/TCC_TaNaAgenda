@@ -1,4 +1,4 @@
-/* CHAVE: Força a grid de 2 colunas para Cursos */
+
 .cursos-grid-container {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -6,7 +6,7 @@
 }
 
 
-/* --- ESTILOS DE INFORMAÇÃO ESPECÍFICA DO CARD DE CURSO --- */
+
 
 .curso-infos {
     display: flex;
