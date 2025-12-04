@@ -280,9 +280,11 @@
                     </div>
 
                     <div class="linha-form">
-                         <div class="campo">
-                            <label>Professores Envolvidos (automático)</label>
-                            <div id="display-professores" class="display-box"><p>Carregando professores...</p></div>
+                    <div class="campo">
+                            <label for="selecao-professores">Professores Envolvidos (Selecione)</label>
+                            <select id="selecao-professores" name="professores_notificar[]" multiple>
+                                <option value="" disabled>Selecione primeiro as turmas...</option>
+                            </select>
                         </div>
                         <div class="campo">
                             <label>Total de Alunos (automático)</label>
