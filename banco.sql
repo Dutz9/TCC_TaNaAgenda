@@ -309,7 +309,9 @@ INSERT INTO eventos (cd_evento, dt_evento, nm_evento, horario_inicio, horario_fi
 ('EVT_FINAL_07', '2025-12-01', 'Conselho 1K2', '08:50', '10:00', 'Conselho de Classe', 'Conselho de Classe.', 'Aprovado', '0002', '2025-11-20', '0002'),
 ('EVT_FINAL_08', '2025-12-02', 'Amistoso Futsal', '16:20', '18:00', 'Evento Esportivo', '1I1 x 1G2.', 'Aprovado', '1018', '2025-11-20', '0002'),
 ('EVT_FINAL_09', '2025-12-03', 'Encerramento Noite', '20:10', '21:00', 'Reunião', 'Reunião geral.', 'Aprovado', '0002', '2025-11-21', '0002'),
-('EVT_FINAL_10', '2025-12-04', 'Feira Projetos 1I1', '13:30', '16:00', 'Palestra', 'Apresentação.', 'Aprovado', '1022', '2025-11-22', '0002'),
+('EVT_FINAL_50', '2025-12-04', 'Feira Projetos 1I1', '13:30', '16:00', 'Palestra', 'Apresentação.', 'Aprovado', '1022', '2025-11-22', '0002'),
+('EVT_FINAL_51', '2025-12-04', 'Reunião 1N1', '13:30', '16:00', 'Reunião', 'Reunião.', 'Aprovado', '1022', '2025-11-22', '0002'),
+('EVT_FINAL_10', '2025-12-04', 'Visita 1P1', '13:30', '16:00', 'Visita Técnica', 'Visita..', 'Aprovado', '1022', '2025-11-22', '0002'),
 ('EVT_FINAL_11', '2025-12-05', 'Entrega Notas', '07:10', '18:00', 'Reunião', 'Fechamento de notas.', 'Aprovado', '0002', '2025-11-23', '0002'),
 ('EVT_FINAL_12', '2025-12-08', 'Palestra ABNT', '10:00', '11:40', 'Palestra', 'Normas ABNT.', 'Aprovado', '1001', '2025-11-25', '0002');
 
