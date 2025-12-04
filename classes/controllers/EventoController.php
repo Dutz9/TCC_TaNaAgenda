@@ -1,9 +1,7 @@
 <?php
 class EventoController extends Banco {
 
-    /**
-     * Lista eventos aprovados com filtros para o calendário.
-     */
+
     public function listarAprovados($dataInicio, $dataFim, $filtros = []) {
         try {
             $periodoFiltro = !empty($filtros['periodo']) ? implode(',', $filtros['periodo']) : null;
@@ -24,13 +22,10 @@ class EventoController extends Banco {
         }
     }
 
-    /**
-     * Cria um evento solicitado por professor.
-     */
+
     public function criar($dadosEvento) {
         $this->iniciarTransacao();
         try {
-            // 1. Cria o evento
             $this->Executar('criarEvento', [
                 'pCdEvento' => $dadosEvento['cd_evento'],
                 'pDtEvento' => $dadosEvento['dt_evento'],
@@ -44,7 +39,6 @@ class EventoController extends Banco {
 
             $cdEvento = $dadosEvento['cd_evento'];
             
-            // 2. Associa as turmas
             foreach ($dadosEvento['turmas'] as $cdTurma) {
                 $this->ExecutarSQL(
                     'INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES (:cd_evento, :cd_turma)',
@@ -52,10 +46,8 @@ class EventoController extends Banco {
                 );
             }
 
-            // 3. Associa os professores para aprovação
             if (!empty($dadosEvento['professores'])) {
                 foreach ($dadosEvento['professores'] as $cdProfessor) {
-                    // CORREÇÃO: Passando 'pDsMotivo' => null
                     $this->Executar('registrarAprovacaoProfessor', [
                         'pCdEvento' => $cdEvento,
                         'pCdUsuario' => $cdProfessor,
@@ -73,13 +65,9 @@ class EventoController extends Banco {
         }
     }
 
-    /**
-     * Cria um evento já aprovado (Coordenador).
-     */
     public function criarAprovado($dadosEvento) {
         $this->iniciarTransacao();
         try {
-            // 1. Cria o evento aprovado
             $this->Executar('criarEventoAprovado', [
                 'pCdEvento' => $dadosEvento['cd_evento'],
                 'pDtEvento' => $dadosEvento['dt_evento'],
@@ -93,7 +81,6 @@ class EventoController extends Banco {
     
             $cdEvento = $dadosEvento['cd_evento'];
             
-            // 2. Associa as turmas
             foreach ($dadosEvento['turmas'] as $cdTurma) {
                 $this->ExecutarSQL(
                     'INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES (:cd_evento, :cd_turma)',
@@ -101,10 +88,9 @@ class EventoController extends Banco {
                 );
             }
     
-            // 3. Associa os professores (mesmo sem precisar aprovar, ficam registrados)
             if (!empty($dadosEvento['professores'])) {
                 foreach ($dadosEvento['professores'] as $cdProfessor) {
-                    // CORREÇÃO: Passando 'pDsMotivo' => null
+
                     $this->Executar('registrarAprovacaoProfessor', [
                         'pCdEvento' => $cdEvento,
                         'pCdUsuario' => $cdProfessor,
@@ -122,7 +108,6 @@ class EventoController extends Banco {
         }
     }
 
-    // Listagem para Professor
     public function listarParaProfessor($cdUsuario, $filtros = []) {
         try {
             $parametros = [
@@ -139,7 +124,7 @@ class EventoController extends Banco {
         }
     }
 
-    // Listagem para Coordenador
+
     public function listarParaCoordenador($cdUsuario, $filtros = []) {
         try {
             $parametros = [
@@ -160,9 +145,7 @@ class EventoController extends Banco {
         return $this->listarParaCoordenador($cdUsuario, $filtros); 
     }
 
-    /**
-     * Registra a resposta do professor (Aprovado/Recusado) com motivo opcional.
-     */
+
     public function registrarRespostaProfessor($cdEvento, $cdUsuario, $statusResposta, $motivo = null) {
         try {
             $this->Executar('registrarAprovacaoProfessor', [
@@ -227,13 +210,11 @@ class EventoController extends Banco {
         }
     }
 
-    /**
-     * Atualiza uma solicitação existente.
-     */
+
     public function atualizarSolicitacao($cdEvento, $dadosEvento) {
         $this->iniciarTransacao();
         try {
-            // 1. Atualiza dados
+
             $this->Executar('atualizarSolicitacaoEvento', [
                 'pCdEvento' => $cdEvento,
                 'pNmEvento' => $dadosEvento['nm_evento'],
@@ -244,7 +225,6 @@ class EventoController extends Banco {
                 'pDsDescricao' => $dadosEvento['ds_descricao']
             ]);
             
-            // 2. Re-insere turmas
             foreach ($dadosEvento['turmas'] as $cdTurma) {
                 $this->ExecutarSQL(
                     'INSERT INTO eventos_has_turmas (eventos_cd_evento, turmas_cd_turma) VALUES (:cd_evento, :cd_turma)',
@@ -252,10 +232,8 @@ class EventoController extends Banco {
                 );
             }
 
-            // 3. Re-insere professores
             if (!empty($dadosEvento['professores'])) {
                 foreach ($dadosEvento['professores'] as $cdProfessor) {
-                    // CORREÇÃO: Passando 'pDsMotivo' => null
                     $this->Executar('registrarAprovacaoProfessor', [
                         'pCdEvento' => $cdEvento,
                         'pCdUsuario' => $cdProfessor,
@@ -288,7 +266,6 @@ class EventoController extends Banco {
         }
     }
 
-    // Contadores para a bolinha vermelha
     public function contarPendenciasProfessor($cdUsuario) {
         try {
             $dados = $this->Consultar('contarNotificacoesProfessor', ['pCdUsuario' => $cdUsuario]);

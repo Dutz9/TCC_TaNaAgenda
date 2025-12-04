@@ -1,6 +1,4 @@
-/**
- * Mostra uma barra de feedback flutuante no topo da tela.
- */
+
 function showFeedback(message, type = 'sucesso') {
     const bar = document.getElementById('feedback-bar');
     if (!bar) return;
@@ -10,13 +8,13 @@ function showFeedback(message, type = 'sucesso') {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante que as pontes de dados existem
+
     if (typeof funcionariosDaPagina === 'undefined' || typeof todasAsTurmas === 'undefined' || typeof todosOsCursos === 'undefined') {
         console.error("Variáveis de dados (funcionariosDaPagina, todasAsTurmas ou todosOsCursos) não foram encontradas.");
         return;
     }
 
-    // --- Elementos Comuns ---
+
     const searchInput = document.getElementById('search-prof');
     const cardContainer = document.getElementById('admin-card-container');
     const modalOverlay = document.getElementById('modal-overlay');
@@ -26,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cancelarBtn = document.querySelector('.cancelar');
     const excluirConfirmBtn = document.querySelector('.excluir-confirm');
 
-    // --- Campos do Modal ---
+
     const modalUserId = document.getElementById('modal-user-id');
     const modalUserNome = document.getElementById('modal-user-nome');
     const modalUserRm = document.getElementById('modal-user-rm');
@@ -40,13 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalCursosSelect = document.getElementById('modal-user-cursos');
 
     let funcionarioEmEdicao = null;
-    let choicesAssoc = null; // Instância ativa do Choices.js (Turma ou Curso)
+    let choicesAssoc = null;
     const cardAdicionar = document.querySelector('.card-adicionar');
 
 
-    /**
-     * Função para "desenhar" os cards (CORRIGIDO PARA USAR CONTAGEM)
-     */
+
     function renderizarFuncionarios(listaFuncionarios) {
         cardContainer.querySelectorAll('.admin-card:not(.card-adicionar)').forEach(card => card.remove());
         cardContainer.querySelector('.sem-eventos')?.remove();
@@ -56,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const p = document.createElement('p');
                 p.className = 'sem-eventos';
                 p.textContent = 'Nenhum funcionário encontrado com esse filtro.';
-                // Garante que a mensagem ocupe a largura total do grid
+
                 p.style.gridColumn = '1 / -1'; 
                 cardContainer.appendChild(p);
             }
@@ -72,12 +68,12 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (funcionario.tipo_usuario === 'Professor') {
                 assocNomes = funcionario.turmas_associadas_nomes || '';
-                // CHAVE: Calcula a contagem usando o novo separador ' | '
+
                 const numAssoc = assocNomes ? assocNomes.split(' | ').filter(n => n.trim() !== '').length : 0;
                 assocInfo = `<b>Turmas:</b> ${numAssoc === 0 ? 'Nenhuma' : numAssoc}`;
             } else if (funcionario.tipo_usuario === 'Coordenador') {
                 assocNomes = funcionario.cursos_associados_nomes || '';
-                 // CHAVE: Calcula a contagem usando o novo separador ' | '
+
                 const numAssoc = assocNomes ? assocNomes.split(' | ').filter(n => n.trim() !== '').length : 0;
                 assocInfo = `<b>Cursos:</b> ${numAssoc === 0 ? 'Nenhum' : numAssoc}`;
             }
@@ -94,16 +90,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Função para filtrar
-     */
+    
     function filtrarFuncionarios() {
         const termoBusca = searchInput.value.toLowerCase();
         const funcionariosFiltrados = funcionariosDaPagina.filter(func => {
             const nome = func.nm_usuario.toLowerCase();
             const rm = func.cd_usuario.toLowerCase();
             const cargo = func.tipo_usuario.toLowerCase();
-            // CHAVE: Filtra usando a string de nomes completa (separada por ' | ')
+
             const turmas = (func.turmas_associadas_nomes || '').toLowerCase();
             const cursos = (func.cursos_associados_nomes || '').toLowerCase();
             
@@ -118,40 +112,36 @@ document.addEventListener('DOMContentLoaded', () => {
         funcionarioEmEdicao = null;
     }
 
-    /**
-     * Prepara o dropdown (Choices.js) baseado no tipo de usuário (Prof/Coord)
-     * CORRIGIDO: Limpa o SELECT antes de criar a nova instância.
-     */
+
     function setupChoicesDropdown(tipoUsuario, associacoesAtuaisString) {
-        // 1. Destrói a instância anterior se existir
+
         if (choicesAssoc) {
             choicesAssoc.destroy();
             choicesAssoc = null;
         }
 
-        // 2. Define o <select> a ser usado, o array de dados e a chave de associação
         let selectElement = (tipoUsuario === 'Professor') ? modalTurmasSelect : modalCursosSelect;
         let dataArray = (tipoUsuario === 'Professor') ? todasAsTurmas : todosOsCursos;
         let idKey = (tipoUsuario === 'Professor') ? 'cd_turma' : 'cd_curso';
         let labelKey = (tipoUsuario === 'Professor') ? 'nm_turma' : 'nm_curso';
         let placeholderText = (tipoUsuario === 'Professor') ? 'Selecione as turmas...' : 'Selecione os cursos...';
         
-        // CHAVE DE CORREÇÃO DE DUPLICAÇÃO/VAZAMENTO: Limpa o conteúdo do SELECT (se não tiver Choices.js)
+
         selectElement.innerHTML = ''; 
 
-        // 3. Monta o mapa de associações atuais (string para array)
+
         const assocMap = {};
-        // CHAVE: Usa o novo separador ' | '
+
         if (associacoesAtuaisString) {
              associacoesAtuaisString.split(' | ').forEach(itemNome => {
-                // Remove espaços em branco antes/depois do nome
+     
                 assocMap[itemNome.trim()] = true; 
             });
         }
         
-        // 4. Prepara as opções para o Choices.js
+
         const options = dataArray.map(item => {
-            // Verifica se o NOME do item está no mapa de associações atuais
+  
             const estaSelecionada = assocMap[item[labelKey].trim()] === true;
             
             return {
@@ -161,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
             };
         });
 
-        // 5. Inicializa o Choices.js
+    
         choicesAssoc = new Choices(selectElement, {
             removeItemButton: true,
             placeholder: true,
@@ -170,26 +160,23 @@ document.addEventListener('DOMContentLoaded', () => {
             searchEnabled: true
         });
         
-        // 6. Mostra/Esconde o container correto
+
         dropdownTurmasContainer.style.display = (tipoUsuario === 'Professor') ? 'block' : 'none';
         dropdownCursosContainer.style.display = (tipoUsuario === 'Coordenador') ? 'block' : 'none';
     }
 
 
-    // --- LÓGICA DOS EVENT LISTENERS ---
-
-    // Abre o Modal de Edição
     cardContainer.addEventListener('click', (e) => {
         const botaoEditar = e.target.closest('button.btn-editar'); 
         if (!botaoEditar) return;
         const userId = botaoEditar.dataset.id;
         const userType = botaoEditar.dataset.tipo;
         
-        // CORREÇÃO: Encontra o objeto mais recente na lista
+
         funcionarioEmEdicao = funcionariosDaPagina.find(f => f.cd_usuario === userId);
         
         if (funcionarioEmEdicao) {
-            // Preenche campos de texto
+
             modalUserId.value = funcionarioEmEdicao.cd_usuario;
             modalUserNome.value = funcionarioEmEdicao.nm_usuario;
             modalUserRm.value = funcionarioEmEdicao.cd_usuario;
@@ -197,8 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
             modalUserTelefone.value = funcionarioEmEdicao.cd_telefone || ''; 
             document.getElementById('modal-titulo-edicao').textContent = `Editar ${funcionarioEmEdicao.tipo_usuario}`;
 
-            // Configura o dropdown dinâmico
-            // CHAVE: Pega a string de nomes
             const associacoesString = (userType === 'Professor') ? funcionarioEmEdicao.turmas_associadas_nomes : funcionarioEmEdicao.cursos_associados_nomes;
             setupChoicesDropdown(userType, associacoesString);
             
@@ -206,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Botão "Salvar Alterações"
+
     salvarBtn.addEventListener('click', async () => {
         const id = modalUserId.value;
         const nome = modalUserNome.value;
@@ -214,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const telefone = modalUserTelefone.value;
         const tipo = funcionarioEmEdicao.tipo_usuario;
         
-        // Captura as associações corretas
+
         const associacoesSelecionadas = choicesAssoc ? choicesAssoc.getValue(true) : [];
         
         const formData = new FormData();
@@ -223,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('email', email);
         formData.append('telefone', telefone);
         
-        // Define o endpoint e o parâmetro de associações
+
         let endpoint = '';
         let assocParamName = '';
 
@@ -255,23 +240,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok && result.status === 'sucesso') {
                 
-                // Atualiza o objeto na memória do JS
+
                 funcionarioEmEdicao.nm_usuario = nome;
                 funcionarioEmEdicao.nm_email = email;
                 funcionarioEmEdicao.cd_telefone = telefone;
-                
-                // CHAVE: Atualiza o campo correto com o novo separador ' | ' para refletir as alterações
+
                 const nomesAssociados = choicesAssoc.getValue(false).map(item => item.label).join(' | ');
                 
                 if (tipo === 'Professor') {
-                    // ATUALIZA O NOME DO CAMPO NA MEMÓRIA
+
                     funcionarioEmEdicao.turmas_associadas_nomes = nomesAssociados; 
                 } else {
-                    // ATUALIZA O NOME DO CAMPO NA MEMÓRIA
+
                     funcionarioEmEdicao.cursos_associados_nomes = nomesAssociados;
                 }
                 
-                // Re-renderiza a lista para refletir as mudanças no card
+
                 renderizarFuncionarios(funcionariosDaPagina);
                 
                 showFeedback(result.mensagem, 'sucesso');
@@ -287,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
         salvarBtn.disabled = false;
     });
 
-    // --- Lógica de Exclusão ---
+
     excluirModalBtn.addEventListener('click', () => { confirmationModal.style.display = 'flex'; });
     cancelarBtn.addEventListener('click', () => { confirmationModal.style.display = 'none'; });
 
@@ -296,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tipo = funcionarioEmEdicao.tipo_usuario;
         if (!id) return;
         
-        // Coordenadores/Professores usam o mesmo endpoint de exclusão de professor
+
         const endpoint = '../api/excluir_professor.php'; 
         
         if(tipo === 'Administrador') {
@@ -332,11 +316,11 @@ document.addEventListener('DOMContentLoaded', () => {
         excluirConfirmBtn.disabled = false;
     });
 
-    // Fechar modais
+ 
     confirmationModal.addEventListener('click', (e) => { if (e.target === confirmationModal) fecharModais(); });
     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) fecharModais(); });
 
-    // --- INICIALIZAÇÃO ---
+
     searchInput.addEventListener('input', filtrarFuncionarios);
     renderizarFuncionarios(funcionariosDaPagina);
 });

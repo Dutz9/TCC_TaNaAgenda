@@ -3,12 +3,12 @@ class Banco
 {
     private $conexao = null;
     private $cSQL = null;
-    private $transacaoAtiva = false; // Flag para controlar a transação
+    private $transacaoAtiva = false;
 
     public function __construct() {}
 
     private function Conectar() {
-        if ($this->conexao !== null) return; // Se já está conectado, não faz nada
+        if ($this->conexao !== null) return;
         try {
             $this->conexao = new PDO('mysql:dbname=escola;host=localhost;', 'root', 'root');
             $this->conexao->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -19,11 +19,10 @@ class Banco
     }
     
     protected function Desconectar() {
-        if ($this->transacaoAtiva) return; // NÃO desconecta se estiver no meio de uma transação
+        if ($this->transacaoAtiva) return;
         $this->conexao = null;
     }
 
-    // --- MÉTODOS DE TRANSAÇÃO ---
     public function iniciarTransacao() {
         $this->Conectar();
         $this->transacaoAtiva = true;
@@ -43,7 +42,6 @@ class Banco
         $this->transacaoAtiva = false;
         $this->Desconectar();
     }
-    // --- FIM DOS MÉTODOS DE TRANSAÇÃO ---
 
     protected function Consultar($nomeProcedure, $parametros = []) {
         try {

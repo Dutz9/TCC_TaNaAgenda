@@ -17,7 +17,6 @@
 }
 
 .curso-infos h3 {
-    /* Estilo para o nome do curso */
     font-size: 16px; 
     font-weight: 600; 
     color: #333;
@@ -28,10 +27,9 @@
 }
 
 .curso-infos p {
-    /* Estilo para as informações menores (Turmas, Coordenadores) */
     font-size: 14px;
     color: #666;
-    /* Linha debaixo é para truncamento em linha única */
+
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;

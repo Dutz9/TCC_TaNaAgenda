@@ -52,7 +52,7 @@
     box-sizing: border-box; 
 }
 
-/* Ajuste específico para o select multiple de turmas */
+
 .campo select[multiple] {
     height: 100px; 
 }
@@ -92,7 +92,7 @@
 .botao-cancelar:hover { background-color: #e0e0e0; }
 .botao-enviar:hover { background-color: #0056b3; }
 
-/* Classes para mensagens de feedback */
+
 .mensagem {
     padding: 15px;
     margin-bottom: 20px;
@@ -106,7 +106,7 @@
 .sucesso { background-color: #28a745; }
 .erro { background-color: #dc3545; }
 
-/* Lista de Professores */
+
 .display-box {
     padding: 10px;
     border: 1px solid #ccc;
@@ -130,7 +130,7 @@
     color: red;
 }
 
-/* --- ESTILOS DO NOVO MODAL DE CONFIRMAÇÃO --- */
+
 .confirm-modal-overlay {
     position: fixed;
     top: 0;
@@ -171,12 +171,12 @@
     justify-content: center;
     gap: 15px;
 }
-/* Reutiliza os estilos dos botões do formulário */
+
 .confirm-modal-content .confirmation-buttons button {
     font-weight: bold;
 }
 
-/* --- ITENS DA LISTA DE PROFESSORES --- */
+
 .professor-item {
     display: flex;
     justify-content: space-between;
@@ -215,23 +215,19 @@
     color: #333;
 }
 
-/* =================================================================
-   RESPONSIVIDADE (MOBILE)
-   ================================================================= */
 @media (max-width: 1024px) {
-    /* Remove a margem da sidebar no tablet/mobile */
+
     .formulario-evento {
         margin-left: 0;
         width: 100%;
         padding: 20px;
-        padding-top: 95px; /* Compensar header fixo */
+        padding-top: 95px;
     }
 }
 
 @media (max-width: 768px) {
     
-    /* --- CORREÇÃO CRUCIAL DE SCROLL --- */
-    /* Força o corpo da página a ter scroll, sobrescrevendo o hidden do global.css */
+
     body {
         overflow-y: auto !important;
     }
@@ -242,44 +238,38 @@
     }
 
     .formulario-evento {
-        height: auto !important; /* Altura automática */
-        overflow: visible !important; /* Remove scroll interno */
-        padding-bottom: 20px; /* Espaço extra no final para garantir que role tudo */
+        height: auto !important;
+        overflow: visible !important;
+        padding-bottom: 20px;
     }
-    /* ---------------------------------- */
 
-    /* Título menor */
     .formulario-evento h2 {
         font-size: 22px;
         margin-bottom: 20px;
     }
 
-    /* Empilha os campos que estavam lado a lado */
     .linha-form {
         flex-direction: column;
         width: 100%; 
         gap: 10px;
     }
 
-    /* Cada campo ocupa 100% da largura */
     .campo {
         width: 100%;
     }
 
-    /* Botões empilhados */
     .botoes {
-        flex-direction: column-reverse; /* Botão principal em cima */
+        flex-direction: column-reverse; 
         width: 100%;
         gap: 10px;
     }
     
     .botao-cancelar, .botao-enviar {
         width: 100%;
-        padding: 12px; /* Área de toque maior */
+        padding: 12px;
         text-align: center;
     }
     
-    /* Ajuste da lista de professores no mobile */
     .display-box {
         min-height: 120px; 
     }

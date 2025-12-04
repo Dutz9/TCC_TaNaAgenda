@@ -10,12 +10,11 @@
     display: flex;
     flex-direction: column;
     margin-right: 10px;
-    flex: 1; /* Ocupa o espaço restante */
+    flex: 1; 
     min-width: 0; 
 }
 
 .prof-infos h3 {
-    /* Estilo do RM e Nome */
     font-size: 16px; 
     font-weight: 600; 
     color: #333;
@@ -26,16 +25,10 @@
 }
 
 .prof-infos p {
-    /* Estilo do Cargo/Turmas/Cursos */
     font-size: 14px;
-    color: #666; /* Cor cinza/padrão */
+    color: #666; 
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     margin: 2px 0;
 }
-
-
-
-/* REMOVEMOS REGRAS DE CARD DUPLICADAS/OBSOLETAS (Ex: .cardprof, .gridprof) */
-/* E as regras de modal duplicadas */

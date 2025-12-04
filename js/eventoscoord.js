@@ -1,6 +1,4 @@
-/**
- * Mostra uma barra de feedback flutuante no topo da tela.
- */
+
 function showFeedback(message, type = 'sucesso') {
     const bar = document.getElementById('feedback-bar');
     if (!bar) return;
@@ -9,19 +7,18 @@ function showFeedback(message, type = 'sucesso') {
     setTimeout(() => { bar.classList.remove('show'); }, 3500);
 }
 
-// --- LÓGICA PRINCIPAL DA PÁGINA ---
+
 document.addEventListener('DOMContentLoaded', () => {
     if (typeof eventosDaPagina === 'undefined' || typeof usuario_logado === 'undefined') {
         console.error("Variáveis de dados ('eventosDaPagina' ou 'usuario_logado') não foram encontradas.");
         return;
     }
 
-    // --- Elementos Principais ---
+
     const container = document.querySelector('.notificacao-container');
     const modalDetalhes = document.getElementById('modal-decisao-coord');
     const modalConfirmar = document.getElementById('modal-confirm-excluir');
-    
-    // --- Elementos do Modal de Visualização de Motivo ---
+
     const modalVisualizar = document.getElementById('modal-visualizar-motivo');
     const btnFecharVisualizacao = document.getElementById('btn-fechar-visualizacao');
 
@@ -37,15 +34,15 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let eventoParaExcluir = null;
 
-    // --- LÓGICA DOS FILTROS ---
+
     const formFiltros = document.getElementById('form-filtros');
     if (formFiltros) {
         formFiltros.addEventListener('change', () => {
-            formFiltros.submit(); // Envia o formulário automaticamente
+            formFiltros.submit();
         });
     }
 
-    // --- "ESCUTADORES" DE CLIQUES ---
+
     
     container.addEventListener('click', (e) => {
         const botao = e.target.closest('button.detalhes-btn');
@@ -57,7 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     modalDetalhes.addEventListener('click', (e) => {
-        // Fecha ao clicar no fundo
+  
         if (e.target === modalDetalhes) {
             modalDetalhes.style.display = 'none';
             return;
@@ -65,12 +62,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const botaoClicado = e.target.closest('button, a');
 
-        // --- NOVA LÓGICA: CLIQUE NA RESPOSTA PARA VER MOTIVO ---
+
         const itemResposta = e.target.closest('.response-item');
         if (itemResposta && !botaoClicado) { 
             const motivoTexto = itemResposta.dataset.motivo;
             
-            // Verifica se existe um motivo válido e exibe o modal
+
             if (motivoTexto && motivoTexto !== 'null' && motivoTexto.trim() !== '') {
                 const displayTexto = document.getElementById('conteudo-motivo-leitura');
                 if(displayTexto) {
@@ -79,11 +76,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
-        // --- FIM DA NOVA LÓGICA ---
+
 
         if (!botaoClicado) return;
 
-        // Botões de Decisão (Aprovar/Recusar)
         if (botaoClicado.classList.contains('aprovar') || botaoClicado.classList.contains('recusar')) {
             e.preventDefault();
             const eventoId = botaoClicado.dataset.id;
@@ -91,7 +87,6 @@ document.addEventListener('DOMContentLoaded', () => {
             enviarDecisaoFinal(eventoId, decisao, botaoClicado);
         }
         
-        // Botão de Excluir
         if (botaoClicado.classList.contains('btn-excluir-evento')) {
             e.preventDefault();
             eventoParaExcluir = botaoClicado.dataset.id;
@@ -99,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- LÓGICA PARA FECHAR O MODAL DE VISUALIZAÇÃO ---
     if (btnFecharVisualizacao) {
         btnFecharVisualizacao.addEventListener('click', () => {
             modalVisualizar.style.display = 'none';
@@ -113,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DO MODAL DE EXCLUSÃO ---
     btnConfirmarNao.addEventListener('click', () => {
         modalConfirmar.style.display = 'none';
         eventoParaExcluir = null;
@@ -132,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- FUNÇÕES AJAX ---
 
     async function enviarExclusao(eventoId) {
         btnConfirmarSim.disabled = true;
@@ -240,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 let statusText = r.status || 'Pendente'; 
                 let statusClass = r.status === 'Aprovado' ? 'aprovado' : (r.status === 'Recusado' ? 'recusado' : 'sem-resposta');
                 
-                // --- INSERÇÃO DO MOTIVO NO DATASET ---
+
                 let dataMotivo = r.motivo ? `data-motivo="${r.motivo.replace(/"/g, '&quot;')}"` : '';
                 let tooltipHint = r.motivo ? ' title="Clique para ver o motivo"' : '';
                 

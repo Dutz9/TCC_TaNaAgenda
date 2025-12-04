@@ -42,9 +42,8 @@
     margin: 15px 10px 0 10px;
 }
 
-/* CORREÇÃO DA MARGEM DA LEGENDA */
 .legendas-calendario {
-    margin: 0 10px 15px 10px; /* Top: 0, Right: 10px, Bottom: 15px, Left: 10px */
+    margin: 0 10px 15px 10px;
 }
 
 .filtrar-calendario h2 {
@@ -76,7 +75,7 @@
 .filtro-item.aberto .filtro-seta { transform: rotate(180deg); }
 
 .filtro-opcoes {
-    max-height: 0 !important; /* CHAVE: FORÇA O FECHAMENTO INICIAL */
+    max-height: 0 !important;
     overflow: hidden;
     transition: max-height 0.3s ease-out;
     padding-left: 5px;
@@ -84,15 +83,15 @@
 }
 
 .filtro-item.aberto .filtro-opcoes {
-    max-height: 200px !important; /* Abre o filtro padrão */
+    max-height: 200px !important;
     overflow-y: auto;
     margin-top: 10px !important; 
 }
 
 .legendas-calendario .filtro-item {
-    padding-bottom: 0 !important; /* Remove o padding interno de 10px */
-    margin-bottom: 0 !important;  /* Remove a margem interna de 10px */
-    border-bottom: none !important; /* Remove a linha de separação */
+    padding-bottom: 0 !important;
+    margin-bottom: 0 !important;
+    border-bottom: none !important;
 }
 
 .legenda-eventos h2 {
@@ -100,7 +99,7 @@
 }
 
 .legendas-calendario .filtro-item.aberto .filtro-opcoes {
-    max-height: 300px !important; /* Abre a Legenda */
+    max-height: 300px !important;
 }
 
 .filtro-opcoes label {
@@ -121,7 +120,6 @@
     cursor: pointer;
 }
 
-/* Botões de Filtro */
 .filtro-botoes {
     display: flex;
     justify-content: space-between;
@@ -145,7 +143,6 @@
 .botao-filtrar { background-color: #007bff; }
 .botao-filtrar:hover { background-color: #0056b3; }
 
-/* --- HEADER DO CALENDÁRIO --- */
 .header-calendario {
     background-color: #022E5E;
     color: white;
@@ -187,7 +184,7 @@
 
 .header-divisoes-semanas {
     display: grid;
-    grid-template-columns: 50px repeat(6, 1fr); /* 6 dias: Seg-Sáb */
+    grid-template-columns: 50px repeat(6, 1fr);
     gap: 0;
     margin-top: 30px;
     margin-right: 1.3vw;
@@ -207,7 +204,6 @@
 }
 .dias-da-semana h2 { font-size: 16px; font-weight: 500; }
 
-/* --- GRADE DO CALENDÁRIO --- */
 .fundo-grid {
     background-color: white;
     overflow-y: auto;
@@ -217,7 +213,7 @@
 }
 .calendario-grid {
     display: grid;
-    grid-template-columns: 50px repeat(6, 1fr); /* 6 dias: Seg-Sáb */
+    grid-template-columns: 50px repeat(6, 1fr);
     gap: 0;
     margin: 10px;
     min-height: calc(100vh - 80px - 150px);
@@ -264,7 +260,7 @@
 
 .event:last-child { margin-bottom: 0; }
 
-/* Cores dos Eventos */
+
 .event.tipo-palestra { background-color: #57A1E3; }
 .event.tipo-reuniao { background-color: #E488F5; }
 .event.tipo-visita-tecnica { background-color: #29A6B2; }
@@ -273,7 +269,7 @@
 .event.tipo-evento-esportivo { background-color: #FF9938; }
 .event.tipo-outro { background-color: #8D6E63; }
 
-/* --- PAINEL DIREITO --- */
+
 .calendario-lado-direito {
     width: 225px;
     background-color: white;
@@ -367,16 +363,12 @@
 .area-escrita-resumo-geral.event-summary.tipo-evento-esportivo { border-color: #FF882F; }
 .area-escrita-resumo-geral.event-summary.tipo-outro { border-color: #7A5F56; }
 
-/* =================================================================
-   NOVAS REGRAS PARA A LEGENDA
-   ================================================================= */
 
-/* Sobrescreve a margem de 15px/10px para alinhar com o filtro de cima */
 .legendas-calendario {
-    margin: 0 10px 15px 10px; /* Top: 0, Right: 10px, Bottom: 15px, Left: 10px */
+    margin: 0 10px 15px 10px; 
 }
 
-/* Oculta o título H2 da Legenda, já que ele usa o H3 do filtro-header */
+
 .legenda-eventos h2 {
     display: none;
 }
@@ -393,7 +385,7 @@
     height: 15px;
     border-radius: 3px;
     margin-right: 10px;
-    flex-shrink: 0; /* Impede que a cor encolha */
+    flex-shrink: 0;
 }
 
 .legenda-item p {
@@ -401,7 +393,7 @@
     margin: 0;
 }
 
-/* Cores dos Eventos (Estas classes são usadas no PHP para aplicar a cor do evento na bolinha) */
+
 .legenda-cor.tipo-palestra { background-color: #57A1E3; }
 .legenda-cor.tipo-reuniao { background-color: #E488F5; } 
 .legenda-cor.tipo-visita-tecnica { background-color: #29A6B2; } 
@@ -410,7 +402,7 @@
 .legenda-cor.tipo-evento-esportivo { background-color: #FF9938; } 
 .legenda-cor.tipo-outro { background-color: #8D6E63; }
 
-/* --- MODAIS --- */
+
 .modal-overlay {
     position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
     background: rgba(0, 0, 0, 0.5); z-index: 1000;
@@ -424,64 +416,58 @@
 .modal-content p { font-size: 14px; margin-bottom: 5px; color: #333; white-space: pre-wrap; word-wrap: break-word; }
 
 
-/* Cria a linha horizontal */
+
 .calendar-day-link.has-event::after {
     content: '';
-    width: 14px;        /* Largura da linha */
-    height: 2px;        /* Espessura */
-    background-color: #0479F9; /* Cor da linha */
+    width: 14px;     
+    height: 2px;    
+    background-color: #0479F9; 
     border-radius: 2px;
     position: absolute;
-    bottom: 3px;        /* Distância do rodapé do quadrado */
+    bottom: 3px;      
     left: 50%;
-    transform: translateX(-50%); /* Centraliza */
+    transform: translateX(-50%); 
 }
 
-/* Muda a cor da linha se for o dia "Hoje" (para dar contraste com o fundo azul) */
+
 .calendar-day-link.today.has-event::after {
     background-color: #ffffff;
 }
 
 .filtro-opcoes::-webkit-scrollbar {
-    width: 8px; /* Largura da barra */
+    width: 8px;
 }
 .filtro-opcoes::-webkit-scrollbar-track {
-    background: #0d102b; /* Fundo da barra (cor da sidebar) */
+    background: #0d102b; 
 }
 .filtro-opcoes::-webkit-scrollbar-thumb {
-    background-color: #22253A; /* Cor da própria barra */
+    background-color: #22253A;
     border-radius: 4px;
-    border: 2px solid #0d102b; /* Borda da cor da sidebar */
+    border: 2px solid #0d102b;
 }
 .filtro-opcoes::-webkit-scrollbar-thumb:hover {
     background-color: #5a6268;
 }
 
-/* Dia Selecionado na Navegação */
 .dias-calendario-lado-direito a.selected {
     background-color: #0479F9;
     color: white;
     font-weight: bold;
 }
 
-/* Se o dia selecionado for "hoje" também */
+
 .dias-calendario-lado-direito a.today.selected {
     background-color: #022E5E;
 }
 
 
-/* =================================================================
-   RESPONSIVIDADE DA AGENDA (MOBILE - MODO DIA ÚNICO)
-   ================================================================= */
 @media (max-width: 768px) {
     
-    /* 1. HABILITAR SCROLL NA PÁGINA */
     body { overflow-y: auto !important; }
 
-    /* 2. ESCONDE BARRA DIREITA */
     .area-lado-direito { display: none; }
 
-    /* 3. LAYOUT PRINCIPAL */
+
     .calendario {
         width: 100%;
          margin-left: 0;
@@ -490,7 +476,6 @@
          overflow: visible !important; 
     }
 
-    /* 4. HEADER AJUSTES */
     .header-parte-de-cima {
         flex-direction: column;
          gap: 10px;
@@ -508,34 +493,27 @@
     }
     .header-turmas { position: static; margin-top: 5px; }
 
-    /* 5. O GRID DE 2 COLUNAS (Hora + Dia) */
+
     .calendario-grid, 
     .header-divisoes-semanas {
         display: grid;
-        /* 50px fixos para a hora, 1fr (o resto) para o dia */
         grid-template-columns: 50px 1fr !important; 
         min-width: auto; 
     }
 
-    /* 6. CORREÇÃO DE ALINHAMENTO NO HEADER */
-    /* Esconde a div espaçadora para alinhar o dia com a coluna certa */
     .header-divisoes-semanas .header-spacer {
         display: none;
     }
     
-    /* O dia da semana ativo vai para a segunda coluna */
     .header-divisoes-semanas .dias-da-semana.mobile-active {
         grid-column: 2;
-        display: flex; /* Centraliza o texto */
+        display: flex;
     }
 
-    /* 7. LÓGICA DE EXIBIÇÃO (Esconde tudo, mostra só o ativo) */
-    /* Esconde as colunas de 0 a 5 (Seg-Sáb) */
     .col-dia-0, .col-dia-1, .col-dia-2, .col-dia-3, .col-dia-4, .col-dia-5 {
         display: none;
     }
 
-    /* Mostra apenas a coluna que tem a classe .mobile-active */
     .col-dia-0.mobile-active, 
     .col-dia-1.mobile-active, 
     .col-dia-2.mobile-active, 
@@ -545,13 +523,12 @@
         display: block; 
     }
     
-    /* Garante que a célula do evento seja block e vá para a coluna 2 */
     .time-slot.mobile-active {
         display: block;
         grid-column: 2;
     }
 
-    /* 8. Scroll e Espaçamento */
+
     .fundo-grid {
         background-color: white;
         overflow: visible !important;
@@ -559,6 +536,6 @@
     }
     
     .calendario-grid {
-        padding-bottom: 10px; /* Espaço extra no final */
+        padding-bottom: 10px;
     }
 }

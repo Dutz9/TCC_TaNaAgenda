@@ -1,6 +1,4 @@
-/**
- * Mostra uma barra de feedback flutuante no topo da tela.
- */
+
 function showFeedback(message, type = 'sucesso') {
     const bar = document.getElementById('feedback-bar');
     if (!bar) return;
@@ -9,27 +7,27 @@ function showFeedback(message, type = 'sucesso') {
     setTimeout(() => { bar.classList.remove('show'); }, 3500);
 }
 
-// --- LÓGICA PRINCIPAL DA PÁGINA ---
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante que a ponte de dados existe
+
     if (typeof cursosDaPagina === 'undefined') {
         console.error("A variável 'cursosDaPagina' não foi encontrada.");
         return;
     }
 
-    // --- Elementos Principais ---
+
     const searchInput = document.getElementById('search-curso');
     const cardContainer = document.getElementById('admin-card-container');
     const modalOverlay = document.getElementById('modal-overlay');
     
-    // --- Elementos dos Modais ---
+
     const salvarBtn = document.querySelector('.salvar');
     const excluirModalBtn = document.querySelector('.excluir');
     const confirmationModal = document.getElementById('confirmation-modal');
     const cancelarBtn = document.querySelector('.cancelar');
     const excluirConfirmBtn = document.querySelector('.excluir-confirm');
 
-    // --- Campos do Modal de Edição ---
+
     const modalCursoId = document.getElementById('modal-curso-id');
     const modalCursoNome = document.getElementById('modal-curso-nome');
     const modalCursoTurmas = document.getElementById('modal-curso-turmas');
@@ -39,11 +37,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let cursoEmEdicao = null;
 
-    /**
-     * Função para "desenhar" os cards na tela (CORRIGIDA)
-     */
+
     function renderizarCursos(listaCursos) {
-        // Remove todos os cards, exceto o de adicionar
+
         cardContainer.querySelectorAll('.admin-card:not(.card-adicionar)').forEach(card => card.remove());
         cardContainer.querySelector('.sem-eventos')?.remove();
 
@@ -61,12 +57,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'admin-card'; 
             card.id = `curso-card-${curso.cd_curso}`;
-            
-            // CHAVE DE CORREÇÃO 1: USAR contagem_coordenadores (retornada pela SP)
+
             const numCoords = parseInt(curso.contagem_coordenadores, 10);
             const coordDisplay = `<b>Coordenadores:</b> ${numCoords === 0 || isNaN(numCoords) ? 'N/A' : numCoords}`;
             
-            // Renderiza as informações do curso
+
             card.innerHTML = `
                 <div class="curso-infos">
                     <h3>${curso.nm_curso} (${curso.ic_periodo})</h3>
@@ -79,9 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Função para filtrar e re-renderizar a lista
-     */
+
     function filtrarCursos() {
         const termoBusca = searchInput.value.toLowerCase();
         
@@ -102,26 +95,22 @@ document.addEventListener('DOMContentLoaded', () => {
         cursoEmEdicao = null;
     }
 
-    /**
-     * NOVO: Função para exibir a lista de coordenadores no modal
-     */
     function exibirCoordenadoresModal(curso) { 
-        // CHAVE: Usa o dado que já está na memória (coordenadores_associados)
+
         const coordenadoresNomes = curso.coordenadores_associados;
         modalListaCoords.innerHTML = '';
         
-        // 1. Verifica se a string de nomes está vazia
+
         if (!coordenadoresNomes || coordenadoresNomes.trim() === '') {
             modalListaCoords.innerHTML = '<p>Nenhum coordenador vinculado a este curso.</p>';
             return;
         }
-        
-        // 2. Divide a string pelo separador padrão de GROUP_CONCAT (", ")
+
         const listaNomes = coordenadoresNomes.split(', ');
         
-        // 3. Renderiza cada nome
+
         listaNomes.forEach(nome => {
-            if (nome.trim() !== '') { // Filtra entradas vazias
+            if (nome.trim() !== '') {
                 const item = document.createElement('div');
                 item.className = 'response-item';
                 item.innerHTML = `
@@ -135,9 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- LÓGICA DOS EVENT LISTENERS ---
-
-    // Abre o Modal de Edição
     cardContainer.addEventListener('click', (e) => {
         const botaoEditar = e.target.closest('button.btn-editar'); 
         if (!botaoEditar) return;
@@ -146,23 +132,20 @@ document.addEventListener('DOMContentLoaded', () => {
         cursoEmEdicao = cursosDaPagina.find(c => String(c.cd_curso) === cursoId);
         
         if (cursoEmEdicao) {
-            // Preenche os campos do modal
             modalCursoId.value = cursoEmEdicao.cd_curso;
             modalCursoNome.value = cursoEmEdicao.nm_curso;
             modalCursoTurmas.value = cursoEmEdicao.contagem_turmas;
             modalCursoPeriodo.value = cursoEmEdicao.ic_periodo;
             
-            // Simulação da Duração
+
             if (modalCursoDuracao) modalCursoDuracao.value = '3 Módulos/Anos'; 
             
-            // CHAVE: Chamamos a função de exibição do modal
             exibirCoordenadoresModal(cursoEmEdicao); 
             
             modalOverlay.style.display = 'flex';
         }
     });
 
-    // Botão "Salvar Alterações" (com AJAX)
     salvarBtn.addEventListener('click', async () => {
         const formData = new FormData();
         formData.append('cd_curso', modalCursoId.value);
@@ -181,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok && result.status === 'sucesso') {
                 
-                // CHAVE: RECARREGA A PÁGINA APÓS O SUCESSO
+
                 showFeedback(result.mensagem, 'sucesso');
                 setTimeout(() => {
                     window.location.reload(); 
@@ -198,17 +181,14 @@ document.addEventListener('DOMContentLoaded', () => {
         salvarBtn.disabled = false;
     });
 
-    // Botão "Excluir Curso" (abre a confirmação)
     excluirModalBtn.addEventListener('click', () => {
         confirmationModal.style.display = 'flex';
     });
 
-    // Botão "Cancelar" (na confirmação)
     cancelarBtn.addEventListener('click', () => {
         confirmationModal.style.display = 'none';
     });
 
-    // Botão "Excluir" (final, na confirmação)
     excluirConfirmBtn.addEventListener('click', async () => {
         const id = modalCursoId.value;
         if (!id) return;
@@ -228,7 +208,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok && result.status === 'sucesso') {
                 
-                // CHAVE: RECARREGA A PÁGINA APÓS O SUCESSO
                 showFeedback(result.mensagem, 'sucesso');
                  setTimeout(() => {
                     window.location.reload(); 
@@ -245,11 +224,9 @@ document.addEventListener('DOMContentLoaded', () => {
         excluirConfirmBtn.disabled = false;
     });
 
-    // Fechar modais ao clicar fora
     confirmationModal.addEventListener('click', (e) => { if (e.target === confirmationModal) fecharModais(); });
     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) fecharModais(); });
 
-    // --- INICIALIZAÇÃO ---
     searchInput.addEventListener('input', filtrarCursos);
     renderizarCursos(cursosDaPagina);
 });

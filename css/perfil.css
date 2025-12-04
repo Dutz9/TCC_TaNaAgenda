@@ -1,8 +1,7 @@
-/* --- CONTAINER PRINCIPAL (DESKTOP) --- */
 .area-perfil {
     position: absolute;
     right: 0;
-    width: calc(100vw - 250px); /* Desktop: Desconta a sidebar */
+    width: calc(100vw - 250px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -22,7 +21,6 @@
     box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-/* --- LADO ESQUERDO (MENU) --- */
 .lado-esquerdo {
     width: 300px;
     border-right: 1px solid #dbdbdb;
@@ -66,7 +64,6 @@
     gap: 10px;
 }
 
-/* Botões do Menu Lateral */
 .informacoes-menu, .seguranca-menu {
     width: 100%;
     height: 50px;
@@ -104,7 +101,7 @@
     color: #0479F9;
 }
 
-/* --- LADO DIREITO (FORMULÁRIO) --- */
+
 .lado-direito {
     flex: 1;
     padding: 40px;
@@ -121,7 +118,7 @@
     border-bottom: 1px solid #eee;
 }
 
-/* Formulário */
+
 .informacoes-pessoais {
     display: flex;
     flex-direction: column;
@@ -200,15 +197,11 @@
 .mensagem.erro { background-color: #dc3545; }
 
 
-/* =================================================================
-   RESPONSIVIDADE (MOBILE) - A CORREÇÃO ESTÁ AQUI
-   ================================================================= */
 
 @media (max-width: 1024px) {
-    /* TABLETS: Remove a conta '100vw - 250px' e usa 100% */
     .area-perfil {
-        width: 100% !important; /* FORÇA LARGURA TOTAL */
-        position: static !important; /* REMOVE POSIÇÃO ABSOLUTA */
+        width: 100% !important;
+        position: static !important;
         padding: 20px;
         padding-top: 95px;
     }
@@ -228,7 +221,6 @@
         display: block;
         height: auto;
         min-height: auto;
-        /* GARANTIA EXTRA: Remove qualquer margem herdada */
         margin-left: 0 !important;
         margin-right: 0 !important;
         right: auto !important;

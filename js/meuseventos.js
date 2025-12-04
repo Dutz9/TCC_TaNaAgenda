@@ -1,6 +1,4 @@
-/**
- * Mostra uma barra de feedback flutuante no topo da tela.
- */
+
 function showToast(message, type = 'sucesso') {
     const bar = document.getElementById('toast-notification');
     if (!bar) return;
@@ -19,30 +17,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalDetalhes = document.getElementById('modal-detalhes-evento');
     const modalConfirmar = document.getElementById('modal-confirm-cancelar');
     
-    // --- ELEMENTOS DO MODAL DE MOTIVO (RECUSA) ---
+
     const modalMotivo = document.getElementById('modal-motivo-recusa');
     const btnCancelarRecusa = document.getElementById('btn-cancelar-recusa');
     const formRecusa = document.getElementById('form-recusa');
     const textoMotivo = document.getElementById('texto-motivo');
     
-    // --- ELEMENTOS DO MODAL DE VISUALIZAÇÃO ---
+
     const modalVisualizar = document.getElementById('modal-visualizar-motivo');
     const btnFecharVisualizacao = document.getElementById('btn-fechar-visualizacao');
 
     let eventoParaCancelar = null;
     let eventoIdParaRecusar = null;
-    let btnRecusarClicado = null; // Guarda referência do botão para atualizar UI
+    let btnRecusarClicado = null;
 
     const btnConfirmarSim = document.getElementById('btn-cancelar-sim');
     const btnConfirmarNao = document.getElementById('btn-cancelar-nao');
 
-    // --- Lógica de Filtros ---
+
     const formFiltros = document.getElementById('form-filtros');
     if (formFiltros) {
         formFiltros.addEventListener('change', () => formFiltros.submit());
     }
 
-    // --- Abrir Detalhes ---
     container.addEventListener('click', (e) => {
         const botaoClicado = e.target.closest('button.detalhes-btn');
         if (botaoClicado) {
@@ -52,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Ações dentro do Modal de Detalhes ---
     modalDetalhes.addEventListener('click', (e) => {
         if (e.target === modalDetalhes) {
             modalDetalhes.style.display = 'none';
@@ -61,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const botaoClicado = e.target.closest('button, a');
         
-        // Clicou num item de resposta (Ver Motivo)
+
         const itemResposta = e.target.closest('.response-item');
         if (itemResposta && !botaoClicado) { 
             const motivoTexto = itemResposta.dataset.motivo;
@@ -73,23 +69,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!botaoClicado) return;
 
-        // Botão Aprovar (Direto)
+
         if (botaoClicado.classList.contains('btn-aprovar')) {
             e.preventDefault();
             const eventoId = botaoClicado.dataset.id;
             enviarResposta(eventoId, 'Aprovado', null, botaoClicado);
         }
         
-        // Botão Recusar (Abre modal de motivo)
+
         if (botaoClicado.classList.contains('btn-recusar')) {
             e.preventDefault();
             eventoIdParaRecusar = botaoClicado.dataset.id;
             btnRecusarClicado = botaoClicado;
-            textoMotivo.value = ''; // Limpa textarea
+            textoMotivo.value = '';
             modalMotivo.style.display = 'flex';
         }
         
-        // Botão Cancelar Solicitação
+
         if (botaoClicado.classList.contains('btn-cancelar-solicitacao')) {
             e.preventDefault();
             eventoParaCancelar = botaoClicado.dataset.id;
@@ -97,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Lógica Modal Motivo (Recusa) ---
+
     if (btnCancelarRecusa) {
         btnCancelarRecusa.addEventListener('click', () => {
             modalMotivo.style.display = 'none';
@@ -126,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Lógica Modal Visualizar Motivo ---
+
     if (btnFecharVisualizacao) {
         btnFecharVisualizacao.addEventListener('click', () => modalVisualizar.style.display = 'none');
     }
@@ -136,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- Lógica Modal Cancelar ---
+
     btnConfirmarNao.addEventListener('click', () => modalConfirmar.style.display = 'none');
     
     btnConfirmarSim.addEventListener('click', () => {
@@ -147,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === modalConfirmar) modalConfirmar.style.display = 'none';
     });
 
-    // --- FUNÇÕES AJAX ---
 
     async function enviarCancelamento(eventoId) {
         btnConfirmarSim.disabled = true;
@@ -222,7 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 showToast(result.mensagem, 'erro');
                 if (containerBotoes) {
-                    // Restaura botões
                     containerBotoes.innerHTML = `<button class="btn-recusar" data-id="${eventoId}">Recusar</button><button class="btn-aprovar" data-id="${eventoId}">Aprovar</button>`;
                 }
             }

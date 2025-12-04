@@ -1,6 +1,4 @@
-/**
- * Mostra uma barra de feedback flutuante no topo da tela.
- */
+
 function showFeedback(message, type = 'sucesso') {
     const bar = document.getElementById('feedback-bar');
     if (!bar) return;
@@ -9,27 +7,27 @@ function showFeedback(message, type = 'sucesso') {
     setTimeout(() => { bar.classList.remove('show'); }, 3500);
 }
 
-// --- LÓGICA PRINCIPAL DA PÁGINA ---
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante que a ponte de dados existe
+
     if (typeof turmasDaPagina === 'undefined') {
         console.error("A variável 'turmasDaPagina' não foi encontrada.");
         return;
     }
 
-    // --- Elementos Principais ---
+
     const searchInput = document.getElementById('search-turma');
     const cardContainer = document.getElementById('admin-card-container');
     const modalOverlay = document.getElementById('modal-overlay');
     
-    // --- Elementos dos Modais ---
+
     const salvarBtn = document.querySelector('.salvar');
     const excluirModalBtn = document.querySelector('.excluir');
     const confirmationModal = document.getElementById('confirmation-modal');
     const cancelarBtn = document.querySelector('.cancelar');
     const excluirConfirmBtn = document.querySelector('.excluir-confirm');
 
-    // --- Campos do Modal de Edição ---
+
     const modalTurmaId = document.getElementById('modal-turma-id');
     const modalTurmaNome = document.getElementById('modal-turma-nome');
     const modalTurmaCurso = document.getElementById('modal-turma-curso');
@@ -41,9 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let turmaEmEdicao = null;
 
-    /**
-     * Função para "desenhar" os cards na tela
-     */
+
     function renderizarTurmas(listaTurmas) {
         cardContainer.querySelectorAll('.admin-card:not(.card-adicionar)').forEach(card => card.remove());
         cardContainer.querySelector('.sem-eventos')?.remove();
@@ -72,9 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Função para filtrar e re-renderizar a lista
-     */
     function filtrarTurmas() {
         const termoBusca = searchInput.value.toLowerCase();
         
@@ -95,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         turmaEmEdicao = null;
     }
 
-    // --- FUNÇÃO AJAX (com SVG corrigido) ---
+
     async function buscarProfessores(turmaId) {
         modalListaProfs.innerHTML = '<p>Carregando...</p>';
         try {
@@ -108,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     professores.forEach(prof => {
                         const item = document.createElement('div');
                         item.className = 'response-item';
-                        // --- CORREÇÃO AQUI: SVG COMPLETO ---
+
                         item.innerHTML = `
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                                 <path fill="#000000" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
@@ -129,9 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- LÓGICA DOS EVENT LISTENERS ---
-
-    // Abre o Modal de Edição
     cardContainer.addEventListener('click', (e) => {
         const botaoEditar = e.target.closest('button.btn-editar'); 
         if (!botaoEditar) return;
@@ -153,9 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- LÓGICA DOS BOTÕES DO MODAL (com AJAX) ---
-
-    // Botão "Salvar Alterações"
+ 
     salvarBtn.addEventListener('click', async () => {
         const formData = new FormData();
         formData.append('cd_turma', modalTurmaId.value);
@@ -175,13 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok && result.status === 'sucesso') {
-                // Atualiza a "memória" do JS
+
                 turmaEmEdicao.nm_turma = modalTurmaNome.value;
                 turmaEmEdicao.cd_sala = modalTurmaSala.value;
                 turmaEmEdicao.qt_alunos = modalTurmaAlunos.value;
                 turmaEmEdicao.ic_serie = modalTurmaSerie.value;
 
-                // Atualiza o card na tela
                 const card = document.getElementById(`turma-card-${turmaEmEdicao.cd_turma}`);
                 if (card) {
                     card.querySelector('h3').textContent = modalTurmaNome.value;
@@ -200,17 +187,16 @@ document.addEventListener('DOMContentLoaded', () => {
         salvarBtn.disabled = false;
     });
 
-    // Botão "Excluir Turma" (abre a confirmação)
     excluirModalBtn.addEventListener('click', () => {
         confirmationModal.style.display = 'flex';
     });
 
-    // Botão "Cancelar" (na confirmação)
+
     cancelarBtn.addEventListener('click', () => {
         confirmationModal.style.display = 'none';
     });
 
-    // Botão "Excluir" (final, na confirmação)
+
     excluirConfirmBtn.addEventListener('click', async () => {
         const id = modalTurmaId.value;
         if (!id) return;
@@ -247,11 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
         excluirConfirmBtn.disabled = false;
     });
 
-    // Fechar modais ao clicar fora
+
     confirmationModal.addEventListener('click', (e) => { if (e.target === confirmationModal) fecharModais(); });
     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) fecharModais(); });
 
-    // --- INICIALIZAÇÃO ---
+
     searchInput.addEventListener('input', filtrarTurmas);
     renderizarTurmas(turmasDaPagina);
 });

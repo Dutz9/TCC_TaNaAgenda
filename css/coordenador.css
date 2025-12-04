@@ -38,7 +38,7 @@
 .notificacao h3 {
     font-size: medium;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limita a 2 linhas */
+    -webkit-line-clamp: 2; 
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -537,24 +537,23 @@
     margin-left: 10px;
 }
 
-/* --- ESTILO DAS RESPOSTAS NO MODAL --- */
 .response-item .aprovado {
-    color: #1DB81D; /* Verde */
+    color: #1DB81D;
 }
 
 .response-item .recusado {
-    color: #FF0000; /* Vermelho */
+    color: #FF0000;
     font-weight: bold;
 }
 
 .response-item .sem-resposta {
-    color: #0479F9; /* Azul */
+    color: #0479F9; 
 }
 
-/* --- ESTILO DA BARRA DE FEEDBACK --- */
+
 .feedback-bar {
     position: fixed;
-    top: -100px; /* Começa escondida fora da tela */
+    top: -100px;
     left: 50%;
     transform: translateX(-50%);
     padding: 15px 25px;
@@ -567,55 +566,49 @@
 }
 
 .feedback-bar.show {
-    top: 90px; /* Posição quando está visível */
+    top: 90px;
 }
 
 .feedback-bar.sucesso {
-    background-color: #28a745; /* Verde */
+    background-color: #28a745;
 }
 
 .feedback-bar.erro {
-    background-color: #dc3545; /* Vermelho */
+    background-color: #dc3545;
 }
 
-/* --- ESTILO DOS STATUS DOS EVENTOS (VERSÃO CORRIGIDA E MAIS ESPECÍFICA) --- */
 
 .notificacao p b {
     margin-right: 5px;
 }
 
-/* Agora especificamos: aplique esta cor em um <p> com a classe .status-solicitado DENTRO de .notificacao */
 .notificacao .status-solicitado {
-    color: #0479F9; /* Azul */
+    color: #0479F9;
     font-weight: bold;
 }
 
 .notificacao .status-aprovado {
-    color: #1DB81D; /* Verde */
+    color: #1DB81D;
     font-weight: bold;
 }
 
 .notificacao .status-recusado {
-    color: #FF0000; /* Vermelho */
+    color: #FF0000;
     font-weight: bold;
 }
 
-/* --- ESTILO PARA CARDS JÁ RESPONDIDOS --- */
 
 .notificacao.card-respondido {
-    /* Deixa o card com uma aparência "desbotada" para indicar que já foi tratado */
     opacity: 0.6;
-    background-color: #f8f9fa; /* Um cinza bem claro */
+    background-color: #f8f9fa;
     transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
 .notificacao.card-respondido:hover {
-    /* Ao passar o mouse, ele volta ao normal para mostrar que ainda é clicável */
     opacity: 1;
     background-color: #ffffff;
 }
 
-/* --- ESTILOS DO CONTAINER DE FILTROS --- */
 .container-filtros {
     display: flex;
     flex-wrap: wrap; 
@@ -643,7 +636,7 @@
     font-size: 14px;
     font-weight: bold;
     color: #fff;
-    background-color: #6c757d; /* Cinza */
+    background-color: #6c757d;
     border: none;
     border-radius: 5px;
     text-decoration: none;
@@ -655,13 +648,12 @@
     background-color: #5a6268;
 }
 
-/* --- ESTILO DO MODAL DE CONFIRMAÇÃO DE EXCLUSÃO --- */
 .modal-content-confirm {
     background: white;
     border-radius: 10px;
     padding: 25px;
     width: 90%;
-    max-width: 450px; /* Menor que o modal de detalhes */
+    max-width: 450px;
     text-align: center;
     box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
@@ -692,9 +684,8 @@
     cursor: pointer;
 }
 
-/* Estilo para o novo botão de Edição (azul) */
 .modal-buttons .btn-editar-evento {
-    background-color: #007bff; /* Azul padrão */
+    background-color: #007bff;
     color: white;
     border: none;
     padding: 10px 20px;
@@ -708,7 +699,6 @@
     background-color: #0056b3;
 }
 
-/* --- ESTILO DA BARRA DE PESQUISA --- */
 .barra-de-pesquisa {
     display: flex;
     justify-content: flex-end;
@@ -731,7 +721,6 @@
     min-width: 250px;
 }
 
-/* --- ESTILO UNIFICADO DE CARDS (Professores, Turmas) --- */
 .admin-card-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -752,7 +741,7 @@
 
 .admin-card .prof-infos {
     flex-grow: 1;
-    min-width: 0; /* Importante para o truncamento funcionar */
+    min-width: 0;
 }
 
 .admin-card h3 {
@@ -774,7 +763,7 @@
 }
 
 .admin-card .admin-btn {
-    background-color: #343a40; /* Botão escuro (como image_fc3144.png) */
+    background-color: #343a40;
     color: white;
     border: none;
     padding: 8px 18px;
@@ -788,7 +777,6 @@
     background-color: #23272b;
 }
 
-/* Card de Adicionar */
 .admin-card.card-adicionar {
     background-color: #007bff;
     color: white;
@@ -802,7 +790,7 @@
 .admin-card.card-adicionar:hover {
     background-color: #0056b3;
 }
-.admin-card.card-adicionar h3 { /* "Adicionar Novo Professor" */
+.admin-card.card-adicionar h3 {
     color: white;
 }
 .admin-card.card-adicionar svg {
@@ -810,7 +798,6 @@
     margin-top: 5px;
 }
 
-/* --- ESTILO DO MODAL DE VISUALIZAÇÃO DE MOTIVO --- */
 .area-texto-leitura {
     max-height: 300px;
     overflow-y: auto;
@@ -831,7 +818,6 @@
     margin: 0;
 }
 
-/* Ajuste de posicionamento considerando a sidebar */
 #modal-visualizar-motivo {
     left: 250px; 
     width: calc(100vw - 250px);
@@ -844,7 +830,6 @@
     }
 }
 
-/* Cursor pointer para indicar que a resposta é clicável */
 .response-item {
     cursor: pointer;
     transition: background-color 0.2s;

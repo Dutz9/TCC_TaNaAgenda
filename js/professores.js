@@ -1,6 +1,4 @@
-/**
- * Mostra uma barra de feedback flutuante no topo da tela.
- */
+
 function showFeedback(message, type = 'sucesso') {
     const bar = document.getElementById('feedback-bar');
     if (!bar) return;
@@ -9,27 +7,26 @@ function showFeedback(message, type = 'sucesso') {
     setTimeout(() => { bar.classList.remove('show'); }, 3500);
 }
 
-// --- LÓGICA PRINCIPAL DA PÁGINA ---
+
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante que as pontes de dados existem
+
     if (typeof professoresDaPagina === 'undefined' || typeof todasAsTurmas === 'undefined') {
         console.error("Variáveis de dados ('professoresDaPagina' ou 'todasAsTurmas') não foram encontradas.");
         return;
     }
 
-    // --- Elementos Principais ---
     const searchInput = document.getElementById('search-prof');
     const cardContainer = document.getElementById('admin-card-container');
     const modalOverlay = document.getElementById('modal-overlay');
     
-    // --- Elementos dos Modais ---
+
     const salvarBtn = document.querySelector('.salvar');
     const excluirModalBtn = document.querySelector('.excluir');
     const confirmationModal = document.getElementById('confirmation-modal');
     const cancelarBtn = document.querySelector('.cancelar');
     const excluirConfirmBtn = document.querySelector('.excluir-confirm');
 
-    // --- Campos do Modal de Edição ---
+
     const modalProfId = document.getElementById('modal-prof-id');
     const modalProfNome = document.getElementById('modal-prof-nome');
     const modalProfRm = document.getElementById('modal-prof-rm');
@@ -38,11 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalTurmasSelect = document.getElementById('modal-prof-turmas');
 
     let professorEmEdicao = null;
-    let choicesTurmas = null; // Variável para guardar a instância do Choices.js
+    let choicesTurmas = null;
 
-    /**
-     * Função para "desenhar" os cards na tela
-     */
+
     function renderizarProfessores(listaProfessores) {
         cardContainer.querySelectorAll('.admin-card:not(.card-adicionar)').forEach(card => card.remove());
         cardContainer.querySelector('.sem-eventos')?.remove();
@@ -71,9 +66,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    /**
-     * Função para filtrar e re-renderizar a lista
-     */
     function filtrarProfessores() {
         const termoBusca = searchInput.value.toLowerCase();
         const professoresFiltrados = professoresDaPagina.filter(prof => {
@@ -91,9 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
         professorEmEdicao = null;
     }
 
-    // --- LÓGICA DOS EVENT LISTENERS ---
-
-    // Abre o Modal de Edição
     cardContainer.addEventListener('click', (e) => {
         const botaoEditar = e.target.closest('button.btn-editar'); 
         if (!botaoEditar) return;
@@ -102,25 +91,23 @@ document.addEventListener('DOMContentLoaded', () => {
         professorEmEdicao = professoresDaPagina.find(p => p.cd_usuario === profId);
         
         if (professorEmEdicao) {
-            // Preenche os campos de texto
+
             modalProfId.value = professorEmEdicao.cd_usuario;
             modalProfNome.value = professorEmEdicao.nm_usuario;
             modalProfRm.value = professorEmEdicao.cd_usuario;
             modalProfEmail.value = professorEmEdicao.nm_email;
             modalProfTelefone.value = professorEmEdicao.cd_telefone || ''; 
 
-            // --- LÓGICA CORRIGIDA DO CHOICES.JS (Versão 3) ---
-            
-            // 1. Destrói o Choices.js antigo, se existir
+
             if (choicesTurmas) {
                 choicesTurmas.destroy();
                 choicesTurmas = null;
             }
             
-            // 2. Limpa o <select> (só para garantir)
+
             modalTurmasSelect.innerHTML = ''; 
             
-            // 3. Cria um mapa das turmas que o professor JÁ TEM
+
             const turmasAtuaisMap = {};
             if (professorEmEdicao.turmas_associadas) {
                 professorEmEdicao.turmas_associadas.split(', ').forEach(nomeTurma => {
@@ -128,36 +115,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             }
             
-            // 4. Prepara o array de 'choices' para a biblioteca
+
             const turmasOptions = todasAsTurmas.map(turma => {
-                // Verifica se esta turma deve vir pré-selecionada
                 const estaSelecionada = turmasAtuaisMap[turma.nm_turma] === true;
                 
                 return {
-                    value: String(turma.cd_turma), // O value DEVE ser string
-                    label: turma.nm_turma,         // O label é o Nome
-                    selected: estaSelecionada      // Define se vem marcado
+                    value: String(turma.cd_turma), 
+                    label: turma.nm_turma,        
+                    selected: estaSelecionada     
                 };
             });
             
-            // 5. Inicializa o Choices.js passando as opções (choices)
+
             choicesTurmas = new Choices(modalTurmasSelect, {
                 removeItemButton: true,
                 placeholder: true,
                 placeholderValue: 'Selecione as turmas...',
-                choices: turmasOptions, // Passa o array de opções aqui
+                choices: turmasOptions,
                 searchEnabled: true
             });
-            
-            // 6. NÃO precisamos mais chamar setValue()
-            
-            // --- FIM DA CORREÇÃO ---
+
             
             modalOverlay.style.display = 'flex';
         }
     });
 
-    // Botão "Salvar Alterações"
     salvarBtn.addEventListener('click', async () => {
         const id = modalProfId.value;
         const nome = modalProfNome.value;
@@ -185,13 +167,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await response.json();
 
             if (response.ok && result.status === 'sucesso') {
-                // Atualiza a "memória" do JS
+
                 professorEmEdicao.nm_usuario = nome;
                 professorEmEdicao.nm_email = email;
                 professorEmEdicao.cd_telefone = telefone;
                 professorEmEdicao.turmas_associadas = choicesTurmas.getValue(false).map(item => item.label).join(', ');
 
-                // Atualiza o card na tela
+
                 const card = document.getElementById(`prof-card-${id}`);
                 if(card) {
                     card.querySelector('h3').textContent = `${id} - ${nome}`;
@@ -211,7 +193,6 @@ document.addEventListener('DOMContentLoaded', () => {
         salvarBtn.disabled = false;
     });
 
-    // --- Lógica de Exclusão (igual) ---
     excluirModalBtn.addEventListener('click', () => { confirmationModal.style.display = 'flex'; });
     cancelarBtn.addEventListener('click', () => { confirmationModal.style.display = 'none'; });
 
@@ -245,7 +226,7 @@ document.addEventListener('DOMContentLoaded', () => {
     confirmationModal.addEventListener('click', (e) => { if (e.target === confirmationModal) fecharModais(); });
     modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) fecharModais(); });
 
-    // --- INICIALIZAÇÃO ---
+
     searchInput.addEventListener('input', filtrarProfessores);
     renderizarProfessores(professoresDaPagina);
 });

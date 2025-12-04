@@ -36,21 +36,19 @@ body {
     max-height: 30px;
 }
 
-/* --- CORREÇÃO DO LAYOUT DA SIDEBAR --- */
 .area-lado {
     width: 250px;
-    height: 100vh; /* Define a altura para 100% da tela */
+    height: 100vh;
     background-color: #0d102b;
     top: 0;
-    position: fixed; /* Fica fixa na esquerda */
+    position: fixed;
     display: flex;
     flex-direction: column;
     color: white;
     font-size: 16px;
-    overflow-y: auto; /* Adiciona scroll SÓ na sidebar */
+    overflow-y: auto;
     z-index: 1001;
     
-    /* ADICIONE ESTA LINHA (para o "respiro" no final) */
     padding-bottom: 30px; 
 }
 
@@ -189,42 +187,34 @@ a > img {
     color: white;
 }
 
-/* --- ESTILIZAÇÃO DA SCROLLBAR DA SIDEBAR --- */
 .area-lado::-webkit-scrollbar {
-    width: 8px; /* Largura da barra */
+    width: 8px;
 }
 .area-lado::-webkit-scrollbar-track {
-    background: #0d102b; /* Fundo da barra (cor da sidebar) */
+    background: #0d102b;
 }
 .area-lado::-webkit-scrollbar-thumb {
-    background-color: #22253A; /* Cor da própria barra */
+    background-color: #22253A;
     border-radius: 4px;
-    border: 2px solid #0d102b; /* Borda da cor da sidebar */
+    border: 2px solid #0d102b;
 }
 .area-lado::-webkit-scrollbar-thumb:hover {
     background-color: #5a6268;
 }
 
-/* =================================================================
-   RESPONSIVIDADE GERAL (MENU E HEADER)
-   ================================================================= */
-
-/* Botão Menu (Hambúrguer) - Padrão é oculto */
 .menu-toggle { display: none; }
 
 @media (max-width: 1024px) {
     
-    /* HEADER MOBILE */
     .header {
         justify-content: space-between; 
         padding-left: 20px;
         width: 100%;
-        position: fixed; /* Fixa o header no topo */
+        position: fixed;
         top: 0;
         z-index: 1500;
     }
     
-    /* Botão Hambúrguer Visível */
     .menu-toggle {
         display: block;
         font-size: 24px;
@@ -234,11 +224,10 @@ a > img {
         color: white;
     }
 
-    /* SIDEBAR MOBILE (Escondida por padrão) */
     .area-lado {
-        width: 85vw; /* Largura relativa */
+        width: 85vw;
         max-width: 300px;
-        left: -100%; /* Fora da tela */
+        left: -100%;
         transition: left 0.3s ease-in-out;
         position: fixed;
         height: 100vh;
@@ -247,19 +236,17 @@ a > img {
         padding-bottom: 100px; 
     }
 
-    /* Classe para abrir o menu */
     .area-lado.active {
         left: 0;
     }
 
-    /* Overlay escuro de fundo */
+
     .menu-overlay {
         position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
         background: rgba(0,0,0,0.5); z-index: 1999; display: none;
     }
     .menu-overlay.active { display: block; }
 
-    /* Ajustes de Conteúdo (para não ficar embaixo do header fixo) */
     .calendario, .area-notificacoes, .conteudo-principal {
         width: 100% !important; 
         margin-left: 0 !important; 
@@ -267,7 +254,7 @@ a > img {
         padding-top: 95px; 
     }
     
-    /* Ajuste dos Filtros no Mobile */
+
     .filtrar-calendario {
         margin: 15px; margin-bottom: 30px;
     }

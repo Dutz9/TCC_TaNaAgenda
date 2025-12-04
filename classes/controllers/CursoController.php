@@ -1,11 +1,8 @@
 <?php
-  // classes/controllers/CursoController.php
 
   class CursoController extends Banco {
 
-      /**
-       * Lista todos os cursos disponíveis (usado em dropdowns).
-       */
+ 
       public function listar() {
           try {
               return $this->Consultar('listarCursos', []);
@@ -14,22 +11,16 @@
           }
       }
 
-      /**
-       * Lista todos os cursos com contagem de turmas e coordenadores.
-       * (Usado na página de administração de cursos)
-       */
+
       public function listarComContagem() {
         try {
-            // CHAVE: Chamando a SP atualizada com a contagem de coordenadores
             return $this->Consultar('listarCursosComContagem', []);
         } catch (\Throwable $th) {
             throw $th;
         }
     }
 
-      /**
-       * Cria um novo curso.
-       */
+
       public function criarCurso($dadosCurso) {
         try {
             $this->Executar('criarCurso', [
@@ -41,9 +32,7 @@
         }
       }
 
-      /**
-       * Atualiza os dados de um curso.
-       */
+
       public function atualizarCurso($dadosCurso) {
         try {
             $this->Executar('atualizarCurso', [
@@ -56,9 +45,7 @@
         }
       }
       
-      /**
-       * Exclui um curso do sistema.
-       */
+
       public function excluirCurso($cdCurso) {
         try {
             $this->Executar('excluirCurso', [
