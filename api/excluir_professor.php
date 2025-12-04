@@ -1,49 +1,47 @@
 <?php
-  // api/excluir_professor.php
+
 
   require_once 'config.php';
-  require_once 'verifica_sessao.php'; // Garante que o usuário está logado
+  require_once 'verifica_sessao.php'; 
 
   header('Content-Type: application/json');
 
-  // 1. CHAVE: Permitir Coordenador OU Administrador
+
   $tipo_usuario_logado = $usuario_logado['tipo_usuario_ic_usuario'];
   if ($tipo_usuario_logado !== 'Coordenador' && $tipo_usuario_logado !== 'Administrador') {
-      http_response_code(403); // Proibido
+      http_response_code(403); 
       echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas Coordenadores ou Administradores.']);
       exit();
   }
 
-  // 2. VALIDAÇÃO DO MÉTODO
+
   if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-      http_response_code(405); // Método não permitido
+      http_response_code(405);
       echo json_encode(['status' => 'erro', 'mensagem' => 'Método não permitido.']);
       exit();
   }
 
   try {
-      // 3. CAPTURA DOS DADOS
+
       $cd_usuario = $_POST['cd_usuario'] ?? null;
 
       if (empty($cd_usuario)) {
-          http_response_code(400); // Requisição inválida
+          http_response_code(400); 
           echo json_encode(['status' => 'erro', 'mensagem' => 'RM do professor não fornecido.']);
           exit();
       }
 
-      // 4. EXECUÇÃO DA LÓGICA
       $usuarioController = new UsuarioController();
       $usuarioController->excluirProfessor($cd_usuario);
 
-      // 5. RESPOSTA DE SUCESSO
       echo json_encode(['status' => 'sucesso', 'mensagem' => 'Professor excluído com sucesso!']);
 
   } catch (Exception $e) {
-      // 6. RESPOSTA DE ERRO
+
       http_response_code(500);
       
       $mensagemErro = $e->getMessage();
-      // "Traduz" o erro de chave estrangeira
+  
       if (strpos($mensagemErro, 'Cannot delete or update a parent row') !== false) {
           $mensagemErro = 'Erro: Não é possível excluir este professor pois ele é o solicitante de um ou mais eventos. Cancele os eventos dele primeiro.';
       }

@@ -1,5 +1,4 @@
 <?php
-// api/get_coordenadores_curso.php
 
 require_once 'config.php';
 require_once 'verifica_sessao.php';
@@ -21,16 +20,14 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
 try {
     $cd_curso = $_GET['curso_id'] ?? null;
     
-    // Simulação dos dados: Em uma implementação real, você buscaria em uma
-    // tabela `cursos_has_coordenadores`
     $coordenadores_mock = [];
 
-    if ($cd_curso == '2') { // Se for "Desenvolvimento de Sistemas"
+    if ($cd_curso == '2') { 
         $coordenadores_mock = [
             ['nm_usuario' => 'André (0002)'],
             ['nm_usuario' => 'Karen Rodrigues (2001)']
         ];
-    } else if ($cd_curso == '1') { // Se for "Automação Industrial"
+    } else if ($cd_curso == '1') {
         $coordenadores_mock = [
             ['nm_usuario' => 'Beatriz Lima (2011)']
         ];

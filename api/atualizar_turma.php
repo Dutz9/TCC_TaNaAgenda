@@ -1,28 +1,28 @@
 <?php
-  // api/atualizar_turma.php
+
 
   require_once 'config.php';
-  require_once 'verifica_sessao.php'; // Garante que o usuário está logado
+  require_once 'verifica_sessao.php';
 
   header('Content-Type: application/json');
 
-  // 1. CHAVE: Permitir Coordenador OU Administrador
+
   $tipo_usuario_logado = $usuario_logado['tipo_usuario_ic_usuario'];
   if ($tipo_usuario_logado !== 'Coordenador' && $tipo_usuario_logado !== 'Administrador') {
-      http_response_code(403); // Proibido
+      http_response_code(403);
       echo json_encode(['status' => 'erro', 'mensagem' => 'Acesso negado. Apenas Coordenadores ou Administradores podem atualizar turmas.']);
       exit();
   }
 
-  // 2. VALIDAÇÃO DO MÉTODO
+
   if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-      http_response_code(405); // Método não permitido
+      http_response_code(405); 
       echo json_encode(['status' => 'erro', 'mensagem' => 'Método não permitido.']);
       exit();
   }
 
   try {
-      // 3. CAPTURA DOS DADOS
+
       $cd_turma = $_POST['cd_turma'] ?? null;
       $nm_turma = $_POST['nm_turma'] ?? null;
       $ic_serie = $_POST['ic_serie'] ?? null;
@@ -30,7 +30,7 @@
       $cd_sala = $_POST['cd_sala'] ?? null;
 
       if (empty($cd_turma) || empty($nm_turma) || empty($ic_serie) || empty($qt_alunos) || empty($cd_sala)) {
-          http_response_code(400); // Requisição inválida
+          http_response_code(400);
           echo json_encode(['status' => 'erro', 'mensagem' => 'Dados incompletos. Todos os campos são obrigatórios.']);
           exit();
       }
@@ -43,15 +43,15 @@
           'cd_sala' => $cd_sala
       ];
 
-      // 4. EXECUÇÃO DA LÓGICA
+
       $turmaController = new TurmaController();
       $turmaController->atualizarTurma($dadosTurma);
 
-      // 5. RESPOSTA DE SUCESSO
+ 
       echo json_encode(['status' => 'sucesso', 'mensagem' => 'Turma atualizada com sucesso!']);
 
   } catch (Exception $e) {
-      // 6. RESPOSTA DE ERRO (ex: "Nome já em uso")
+
       http_response_code(500); 
       
       $mensagemErro = $e->getMessage();
