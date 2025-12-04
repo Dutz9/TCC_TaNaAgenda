@@ -1,182 +1,181 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Garante que as 'pontes' de dados do PHP existem
+    // Garante que as variáveis do PHP existem
     if (typeof relacaoTurmaProfessor === 'undefined' || typeof usuario_logado === 'undefined' || typeof mapaAlunosTurma === 'undefined' || typeof modoEdicao === 'undefined' || typeof professoresSelecionados === 'undefined') {
-        console.error("Uma ou mais variáveis de dados (PHP) não foram encontradas. Verifique o <script> no arquivo PHP.");
+        console.error("Variáveis de dados PHP não encontradas.");
         return;
     }
 
-    // --- Elementos do Formulário ---
+    // --- Elementos ---
     const turmasElement = document.getElementById('selecao-turmas');
-    const displayProfessores = document.getElementById('display-professores');
-    const displayTotalAlunos = document.getElementById('display-total-alunos'); // Elemento para o total de alunos
-    const form = document.querySelector('.formulario-evento form');
+    const professoresElement = document.getElementById('selecao-professores'); // O novo <select> de professores
+    const displayTotalAlunos = document.getElementById('display-total-alunos');
+    
     const inputData = document.getElementById('data');
     const horarioInicioElem = document.getElementById('horario_inicio');
     const horarioFimElem = document.getElementById('horario_fim');
     const inputTitulo = document.getElementById('titulo');
 
-    // --- Elementos do Modal de Confirmação ---
-    const modalConfirm = document.getElementById('modal-confirm-remove-prof');
-    const modalConfirmText = document.getElementById('modal-prof-name');
-    const btnConfirmYes = document.getElementById('btn-confirm-yes');
-    const btnConfirmNo = document.getElementById('btn-confirm-no');
-    let professorParaRemover = null;
+    // Variáveis para as instâncias do Choices.js
+    let choicesTurmas = null;
+    let choicesProfessores = null;
 
-    // --- 1. LÓGICA DO SELETOR DE TURMAS (Choices.js) ---
-    if (turmasElement) {
-        const selectTurmas = new Choices(turmasElement, {
+    // --- INICIALIZAÇÃO DO CHOICES.JS ---
+    
+    // 1. Configura o select de PROFESSORES (vazio inicialmente)
+    if (professoresElement) {
+        choicesProfessores = new Choices(professoresElement, {
             removeItemButton: true,
             placeholder: true,
-            placeholderValue: 'Clique para selecionar ou digite para buscar...',
-            fuseOptions: {
-                keys: ['label'],
-                threshold: 0.3
-            }
+            placeholderValue: 'Selecione as turmas primeiro...',
+            noResultsText: 'Nenhum professor encontrado para estas turmas',
+            searchEnabled: true,
+            shouldSort: false // Mantém a ordem que inserirmos
+        });
+    }
+
+    // 2. Configura o select de TURMAS e adiciona o Listener
+    if (turmasElement) {
+        choicesTurmas = new Choices(turmasElement, {
+            removeItemButton: true,
+            placeholder: true,
+            placeholderValue: 'Clique para selecionar turmas...',
+            searchEnabled: true
         });
 
-        // "Escuta" mudanças nas turmas para atualizar professores e alunos
-        selectTurmas.passedElement.element.addEventListener('change', function() {
-            const turmasSelecionadasIds = Array.from(this.selectedOptions).map(option => option.value);
-            const professoresParaExibir = {};
-            let totalAlunos = 0; // Variável para a soma
+        // Quando as turmas mudam, atualizamos a lista de professores
+        turmasElement.addEventListener('change', function() {
+            atualizarListaProfessoresEAlunos();
+        });
+    }
 
-            form.querySelectorAll('input[name="professores_notificar[]"]').forEach(input => input.remove());
-            displayProfessores.innerHTML = '';
+    /**
+     * Função principal: Cruza Turmas -> Professores e Alunos
+     */
+    function atualizarListaProfessoresEAlunos() {
+        // Pega os IDs das turmas selecionadas
+        const turmasIds = choicesTurmas.getValue(true); // Retorna array de IDs (strings ou numbers)
+        
+        let totalAlunos = 0;
+        const professoresDisponiveisMap = new Map(); // Map para evitar duplicatas (ID -> Nome)
 
-            turmasSelecionadasIds.forEach(turmaId => {
-                // Soma os alunos
-                if (mapaAlunosTurma[turmaId]) {
-                    totalAlunos += parseInt(mapaAlunosTurma[turmaId], 10);
-                }
-                
-                // Monta a lista de professores
-                if (relacaoTurmaProfessor[turmaId]) {
-                    relacaoTurmaProfessor[turmaId].forEach(prof => {
-                        // Filtra o próprio usuário logado
-                        if (prof.id !== usuario_logado.cd_usuario) { 
-                            professoresParaExibir[prof.id] = prof;
-                        }
-                    });
-                }
-            });
-            
-            // Exibe o total de alunos
-            if(displayTotalAlunos) {
-                displayTotalAlunos.value = totalAlunos;
+        // Loop pelas turmas selecionadas
+        turmasIds.forEach(turmaId => {
+            // 1. Soma alunos
+            if (mapaAlunosTurma[turmaId]) {
+                totalAlunos += parseInt(mapaAlunosTurma[turmaId], 10);
             }
 
-            // Exibe a lista de professores
-            const professores = Object.values(professoresParaExibir);
-            if (professores.length > 0) {
-                professores.forEach(prof => {
-                    // Se estiver criando (não-edição), OU se estiver editando E o prof estava na lista, mostre-o.
-                    if (!modoEdicao || (modoEdicao && professoresSelecionados[prof.id])) {
-                        const profItem = document.createElement('div');
-                        profItem.className = 'professor-item';
-                        profItem.dataset.id = prof.id;
-                        profItem.innerHTML = `<p>${prof.nome}</p><span class="remove-prof-btn" data-nome="${prof.nome}" title="Remover professor da lista">&times;</span>`;
-                        displayProfessores.appendChild(profItem);
-
-                        const hiddenInput = document.createElement('input');
-                        hiddenInput.type = 'hidden';
-                        hiddenInput.name = 'professores_notificar[]';
-                        hiddenInput.value = prof.id;
-                        hiddenInput.id = `hidden-prof-${prof.id}`;
-                        form.appendChild(hiddenInput);
+            // 2. Coleta professores dessa turma
+            if (relacaoTurmaProfessor[turmaId]) {
+                relacaoTurmaProfessor[turmaId].forEach(prof => {
+                    // Não adiciona o próprio usuário logado na lista de notificação
+                    if (prof.id !== usuario_logado.cd_usuario) {
+                        professoresDisponiveisMap.set(prof.id, prof.nome);
                     }
                 });
-            } else {
-                displayProfessores.innerHTML = '<p>Nenhum outro professor encontrado para estas turmas.</p>';
             }
         });
 
-        // --- ATIVAÇÃO DO MODO DE EDIÇÃO ---
-        if (modoEdicao) {
-            // Dispara manualmente o evento 'change' para forçar o JS a ler as turmas
-            // que o PHP pré-selecionou, e assim preencher a contagem de alunos e a lista de professores.
-            selectTurmas.passedElement.element.dispatchEvent(new Event('change'));
+        // Atualiza input de alunos
+        if (displayTotalAlunos) {
+            displayTotalAlunos.value = totalAlunos;
+        }
+
+        // Atualiza o Select de Professores
+        if (choicesProfessores) {
+            // Salva quem já estava selecionado (para não perder a seleção se o usuário adicionar mais uma turma)
+            const selecionadosAnteriormente = choicesProfessores.getValue(true);
+            
+            // Limpa tudo
+            choicesProfessores.clearStore();
+            choicesProfessores.clearInput();
+
+            // Cria o novo array de opções para o Choices
+            const novasOpcoes = [];
+            professoresDisponiveisMap.forEach((nome, id) => {
+                // Lógica de Pré-seleção:
+                // 1. Se estivermos editando E o professor já estava salvo no banco -> Seleciona
+                // 2. Se o usuário já tinha selecionado ele manualmente antes de mudar a turma -> Mantém selecionado
+                let deveSelecionar = false;
+                
+                if (modoEdicao && professoresSelecionados[id]) {
+                    deveSelecionar = true;
+                } else if (selecionadosAnteriormente && selecionadosAnteriormente.includes(id)) {
+                    deveSelecionar = true;
+                }
+
+                novasOpcoes.push({
+                    value: id,
+                    label: nome,
+                    selected: deveSelecionar
+                });
+            });
+
+            // Atualiza o componente com as novas opções
+            choicesProfessores.setChoices(novasOpcoes, 'value', 'label', true);
+            
+            // Ajusta o placeholder se houver ou não opções
+            if (novasOpcoes.length > 0) {
+                professoresElement.setAttribute('placeholder', 'Clique para selecionar professores...');
+            } else {
+                professoresElement.setAttribute('placeholder', 'Nenhum professor disponível.');
+            }
         }
     }
 
-    // --- 2. LÓGICA DE REMOÇÃO DE PROFESSOR (COM CONFIRMAÇÃO) ---
-    if (displayProfessores) {
-        displayProfessores.addEventListener('click', (e) => {
-            if (e.target.classList.contains('remove-prof-btn')) {
-                professorParaRemover = e.target.closest('.professor-item');
-                modalConfirmText.textContent = e.target.dataset.nome;
-                modalConfirm.style.display = 'flex';
-            }
-        });
-    }
-    
-    const fecharModal = () => {
-        if (modalConfirm) modalConfirm.style.display = 'none';
-        professorParaRemover = null;
-    };
-    if (btnConfirmNo) btnConfirmNo.addEventListener('click', fecharModal);
-    if (modalConfirm) modalConfirm.addEventListener('click', (e) => { if (e.target === modalConfirm) fecharModal(); });
-
-    if (btnConfirmYes) {
-        btnConfirmYes.addEventListener('click', () => {
-            if (professorParaRemover) {
-                const profId = professorParaRemover.dataset.id;
-                document.getElementById(`hidden-prof-${profId}`)?.remove();
-                professorParaRemover.remove();
-            }
-            fecharModal();
-        });
+    // --- EXECUÇÃO INICIAL (Para carregar dados no Modo Edição) ---
+    if (modoEdicao) {
+        // Força a atualização para carregar os alunos e professores salvos
+        atualizarListaProfessoresEAlunos();
     }
 
-    // --- 3. VALIDAÇÃO DE DATA MÍNIMA ---
+
+    // --- VALIDAÇÕES (Data, Hora, Título) ---
+
+    // Validação de Data Mínima (Hoje)
     if (inputData) {
         const hoje = new Date();
         hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
         const dataMinima = hoje.toISOString().split('T')[0];
         
-        if (modoEdicao && inputData.value < dataMinima) {
-             // Se o evento é antigo, não define data mínima
-        } else {
-            inputData.setAttribute('min', dataMinima);
+        // Se for edição de evento passado, permite a data antiga. Se for novo, bloqueia passado.
+        if (!modoEdicao || (modoEdicao && inputData.value >= dataMinima)) {
+             inputData.setAttribute('min', dataMinima);
         }
     }
 
-    // --- 4. VALIDAÇÃO DINÂMICA DE HORA DE FIM ---
+    // Validação Dinâmica de Horário (Início < Fim)
     if (horarioInicioElem && horarioFimElem) {
         const ajustarHorarioFim = () => {
-            const horaInicioSelecionada = horarioInicioElem.value;
-            if (!horaInicioSelecionada) {
-                for (const option of horarioFimElem.options) {
-                    if (option.value) option.disabled = true;
-                }
+            const horaInicio = horarioInicioElem.value;
+            if (!horaInicio) {
                 horarioFimElem.value = "";
                 return;
             }
-            
             for (const option of horarioFimElem.options) {
                 if (option.value) {
-                    option.disabled = (option.value <= horaInicioSelecionada);
+                    // Desabilita horários anteriores ao início
+                    option.disabled = (option.value <= horaInicio);
                 }
             }
-
+            // Se a opção selecionada ficou inválida, limpa o campo
             if (horarioFimElem.options[horarioFimElem.selectedIndex]?.disabled) {
                 horarioFimElem.value = "";
             }
         };
         horarioInicioElem.addEventListener('change', ajustarHorarioFim);
-        ajustarHorarioFim();
+        ajustarHorarioFim(); // Roda ao carregar
     }
     
-    // --- 5. CONTADOR DE CARACTERES DO TÍTULO ---
+    // Contador de Caracteres do Título
     if (inputTitulo && inputTitulo.maxLength > 0) {
         const contador = document.createElement('small');
-        contador.id = 'titulo-contador';
-        contador.style.cssText = 'color: #888; font-size: 0.8em; margin-top: 5px; display: block;';
+        contador.style.cssText = 'color: #888; font-size: 0.8em; display: block; margin-top: 5px;';
         inputTitulo.parentNode.appendChild(contador);
         const maxLength = inputTitulo.getAttribute('maxlength');
         
         const updateCharCounter = () => {
-            const currentLength = inputTitulo.value.length;
-            const remaining = maxLength - currentLength;
+            const remaining = maxLength - inputTitulo.value.length;
             contador.textContent = `${remaining} caracteres restantes`;
         };
         inputTitulo.addEventListener('input', updateCharCounter);

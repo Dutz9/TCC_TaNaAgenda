@@ -259,8 +259,10 @@
 
                     <div class="linha-form">
                          <div class="campo">
-                            <label>Professores a Notificar (automático)</label>
-                            <div id="display-professores" class="display-box"><p>Carregando professores...</p></div>
+                            <label for="selecao-professores">Professores a Notificar (Selecione)</label>
+                            <select id="selecao-professores" name="professores_notificar[]" multiple>
+                                <option value="" disabled>Selecione primeiro as turmas...</option>
+                            </select>
                         </div>
                         <div class="campo">
                             <label>Total de Alunos (automático)</label>
