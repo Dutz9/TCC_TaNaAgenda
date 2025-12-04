@@ -74,7 +74,7 @@
 }
 
 .filtro-item.aberto .filtro-opcoes {
-    max-height: 200px !important;
+    max-height: 400px !important;
     overflow-y: auto;
     margin-top: 10px !important; 
 }
@@ -90,7 +90,7 @@
 }
 
 .legendas-calendario .filtro-item.aberto .filtro-opcoes {
-    max-height: 300px !important;
+    max-height: 400px !important;
 }
 
 .filtro-opcoes label {
