@@ -457,6 +457,19 @@
     background-color: #5a6268;
 }
 
+/* Dia Selecionado na Navegação */
+.dias-calendario-lado-direito a.selected {
+    background-color: #0479F9;
+    color: white;
+    font-weight: bold;
+}
+
+/* Se o dia selecionado for "hoje" também */
+.dias-calendario-lado-direito a.today.selected {
+    background-color: #022E5E;
+}
+
+
 /* =================================================================
    RESPONSIVIDADE DA AGENDA (MOBILE - MODO DIA ÚNICO)
    ================================================================= */

@@ -48,16 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const getEventTypeClass = (eventType) => {
         if (!eventType) return 'tipo-outro';
-        return 'tipo-' + eventType.toLowerCase().replace(/ /g, '-');
+        return 'tipo-' + eventType.toLowerCase().replace(/ /g, '-').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
-
-    function getMondayString(date) {
-        const d = new Date(date);
-        const dayOfWeek = d.getDay();
-        const diff = d.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-        const monday = new Date(d.setDate(diff));
-        return formatarDataParaFiltro(monday);
-    }
 
     // --- LÓGICA DO MODAL DE EVENTO INDIVIDUAL ---
     function showEventModal(eventData) {
@@ -93,10 +85,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- LÓGICA DO MINI-CALENDÁRIO ---
     const urlParams = new URLSearchParams(window.location.search);
     const weekParam = urlParams.get('week');
-    let dataInicial = new Date();
+    let dataInicial = new Date(); // Hoje
     if (weekParam) {
-        dataInicial = new Date(weekParam + 'T12:00:00');
+        dataInicial = new Date(weekParam + 'T12:00:00'); // Data da URL
     }
+    
+    // Estado interno do mini-calendário
     let dataAtualMiniCal = new Date(dataInicial);
 
     miniCalPrevBtn.addEventListener('click', () => {
@@ -114,6 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tomorrowDate = new Date(date);
         tomorrowDate.setDate(date.getDate() + 1);
         const tomorrowEvents = getEventsForDate(tomorrowDate);
+
         const todaySummaryContainer = document.querySelector(".resumo-geral-lado-direito:nth-of-type(1) .container-scroll-eventos");
         const tomorrowSummaryContainer = document.querySelector(".resumo-geral-lado-direito:nth-of-type(2) .container-scroll-eventos");
         
@@ -147,111 +142,90 @@ document.addEventListener('DOMContentLoaded', () => {
         const year = date.getFullYear();
         const dayOfWeek = date.getDay();
         const today = new Date();
-        const todayDate = today.getDate();
-        const todayMonth = today.getMonth();
-        const todayYear = today.getFullYear();
         
         const monthsPt = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
 
         miniCalHeaderMonth.innerText = monthsPt[month];
         miniCalHeaderYear.innerText = year;
         
-        const diasSemanaMini = document.querySelectorAll('.dia-semana');
-        diasSemanaMini.forEach(dia => dia.classList.remove('atual'));
-        if (month === todayMonth && year === todayYear) {
-            if (dayOfWeek >= 1 && dayOfWeek <= 6) {
-                diasSemanaMini[dayOfWeek - 1].classList.add('atual');
-            } else if (dayOfWeek === 0) {
-                diasSemanaMini[6].classList.add('atual');
-            }
-        }
-
         rightCalendarDays.innerHTML = '';
         const firstDayOfMonth = new Date(year, month, 1);
         const firstDayOfWeek = (firstDayOfMonth.getDay() + 6) % 7;
         const daysInMonth = new Date(year, month + 1, 0).getDate();
 
         for (let i = 0; i < firstDayOfWeek; i++) {
-            rightCalendarDays.appendChild(document.createElement('p'));
+            rightCalendarDays.appendChild(document.createElement('p')); 
         }
 
         const filtrosQueryString = window.location.search.split('?')[1] || '';
         const params = new URLSearchParams(filtrosQueryString);
+        
+        // Pega a data exata que está na URL (se houver) para destacar
+        const selectedDateStr = params.get('week');
+        
         params.delete('week');
         const filtrosAtuais = params.toString();
 
-       
-    for (let d = 1; d <= daysInMonth; d++) {
-        const dayLink = document.createElement('a');
-        dayLink.innerText = d < 10 ? `0${d}` : d;
-        dayLink.className = 'calendar-day-link';
+        for (let d = 1; d <= daysInMonth; d++) {
+            const dayLink = document.createElement('a');
+            dayLink.innerText = d < 10 ? `0${d}` : d;
+            dayLink.className = 'calendar-day-link';
 
-        const clickedDate = new Date(year, month, d);
-        
-        // --- NOVA LÓGICA: VERIFICA SE TEM EVENTO NESTE DIA ---
-        // Usa a função auxiliar existente para formatar a data como YYYY-MM-DD
-        const dateStr = formatarDataParaFiltro(clickedDate);
-        
-        // Verifica no array (que agora contém o mês todo) se existe algum evento nesta data
-        const hasEvent = eventosDoBanco.some(ev => ev.dt_evento === dateStr);
-        
-        // Se tiver, adiciona a classe que faz a linha azul aparecer
-        if (hasEvent) {
-            dayLink.classList.add('has-event');
+            const clickedDate = new Date(year, month, d);
+            const dateStr = formatarDataParaFiltro(clickedDate);
+            
+            // Verifica se tem evento (pontinho)
+            const hasEvent = eventosDoBanco.some(ev => ev.dt_evento === dateStr);
+            if (hasEvent) {
+                dayLink.classList.add('has-event');
+            }
+
+            // CORREÇÃO AQUI: O link agora vai para a data EXATA do dia, não para a segunda-feira
+            dayLink.href = `?week=${dateStr}&${filtrosAtuais}`;
+
+            // Destaque do dia "Hoje" (Fixo)
+            if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
+                dayLink.classList.add('today');
+            }
+
+            // Destaque do dia "Selecionado" (Se bater com a URL)
+            if (dateStr === selectedDateStr) {
+                dayLink.classList.add('selected');
+            }
+
+            rightCalendarDays.appendChild(dayLink);
         }
-        // --- FIM DA NOVA LÓGICA ---
-
-        const mondayString = getMondayString(clickedDate);
         
-        dayLink.href = `?week=${mondayString}&${filtrosAtuais}`;
-
-        if (d === todayDate && month === todayMonth && year === todayYear) {
-            dayLink.classList.add('today');
-        }
-
-        rightCalendarDays.appendChild(dayLink);
+        updateSummaries(new Date()); // Sempre hoje
     }
-        updateSummaries(dataInicial);
-    }
-    updateRightPanel(dataInicial);
 
+    updateRightPanel(dataAtualMiniCal);
 
-    // ============================================================
-    // LÓGICA DE NAVEGAÇÃO MOBILE (DIA A DIA)
-    // ============================================================
-    
+    // --- LÓGICA MOBILE ---
     const navPrev = document.getElementById('nav-prev');
     const navNext = document.getElementById('nav-next');
-    const navToday = document.getElementById('nav-today');
-    
-    // Controla o dia atual no mobile (0 a 5)
     let currentMobileIndex = (typeof mobileActiveIndexInicial !== 'undefined') ? mobileActiveIndexInicial : 0;
 
     function updateMobileView() {
         if (window.innerWidth > 768) return;
-        
-        // Esconde todos os dias (0 a 5)
         for (let i = 0; i < 6; i++) {
             document.querySelectorAll(`.col-dia-${i}`).forEach(el => el.classList.remove('mobile-active'));
         }
-        // Mostra o dia atual
+        if (currentMobileIndex > 5) currentMobileIndex = 5;
         document.querySelectorAll(`.col-dia-${currentMobileIndex}`).forEach(el => el.classList.add('mobile-active'));
     }
 
-    // Inicializa
     updateMobileView();
     window.addEventListener('resize', updateMobileView);
 
-    // Event Listeners para os botões
     if (navPrev) {
         navPrev.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
                 if (currentMobileIndex > 0) {
-                    e.preventDefault(); // Se não for Segunda, só troca o dia
+                    e.preventDefault();
                     currentMobileIndex--;
                     updateMobileView();
                 }
-                // Se for Segunda, deixa o link recarregar a semana anterior
             }
         });
     }
@@ -259,12 +233,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (navNext) {
         navNext.addEventListener('click', (e) => {
             if (window.innerWidth <= 768) {
-                if (currentMobileIndex < 5) { // Se não for Sábado
-                    e.preventDefault(); // Só troca o dia
+                if (currentMobileIndex < 5) {
+                    e.preventDefault();
                     currentMobileIndex++;
                     updateMobileView();
                 }
-                // Se for Sábado, deixa o link recarregar a próxima semana
             }
         });
     }

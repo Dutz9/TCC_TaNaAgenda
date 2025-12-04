@@ -558,6 +558,18 @@
 .legenda-cor.tipo-evento-esportivo { background-color: #FF9938; } 
 .legenda-cor.tipo-outro { background-color: #8D6E63; }
 
+/* Dia Selecionado na Navegação */
+.dias-calendario-lado-direito a.selected {
+    background-color: #0479F9;
+    color: white;
+    font-weight: bold;
+}
+
+/* Se o dia selecionado for "hoje" também */
+.dias-calendario-lado-direito a.today.selected {
+    background-color: #022E5E;
+}
+
 
 /* =================================================================
    RESPONSIVIDADE DA AGENDA (MOBILE - MODO DIA ÚNICO)
