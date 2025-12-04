@@ -5,34 +5,33 @@
     $mensagem = '';
     $tipo_mensagem = '';
 
-    // --- PROCESSAR MUDANÇA DE SENHA (SE FOR POST) ---
+  
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $senha_atual = $_POST['senha_atual'] ?? null;
         $senha_nova = $_POST['senha_nova'] ?? null;
         $senha_confirma = $_POST['senha_confirma'] ?? null;
 
         try {
-            // Validação 1: Campos vazios
+   
             if (empty($senha_atual) || empty($senha_nova) || empty($senha_confirma)) {
                 throw new Exception("Todos os campos são obrigatórios.");
             }
-            // Validação 2: Senhas novas não batem
+        
             if ($senha_nova !== $senha_confirma) {
                 throw new Exception("A 'Nova Senha' e a 'Confirmação' não são iguais.");
             }
             
-            // --- A NOVA VALIDAÇÃO (O QUE VOCÊ PEDIU) ---
+           
             if ($senha_atual === $senha_nova) {
                 throw new Exception("A nova senha não pode ser igual à senha atual.");
             }
-            // --- FIM DA NOVA VALIDAÇÃO ---
+         
 
-            // Validação 4: Senha nova curta
             if (strlen($senha_nova) < 3) {
                 throw new Exception("A nova senha deve ter pelo menos 3 caracteres.");
             }
 
-            // Se passou em tudo, tenta trocar no banco
+       
             $usuarioController = new UsuarioController();
             $usuarioController->mudarSenha($usuario_logado['cd_usuario'], $senha_atual, $senha_nova);
             
@@ -40,13 +39,13 @@
             $tipo_mensagem = 'sucesso';
 
         } catch (Exception $e) {
-            // O "tradutor" de erros amigáveis
+      
             $erro = $e->getMessage();
             
             if (strpos($erro, 'A senha atual está incorreta') !== false) {
                 $mensagem = "A senha atual está incorreta.";
             } else {
-                // Mostra outros erros (ex: "Senhas não são iguais", "Senha é igual à atual")
+
                 $mensagem = $erro;
             }
             $tipo_mensagem = 'erro';

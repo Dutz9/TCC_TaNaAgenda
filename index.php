@@ -2,7 +2,7 @@
 
 require_once 'config_local.php';
 
-// 2. LEITURA DOS FILTROS
+
 $filtros = [
     'periodo' => $_GET['periodo'] ?? [],
     'turma' => $_GET['turma'] ?? [],
@@ -13,7 +13,7 @@ foreach ($filtros as $chave => $valor) {
 }
 $filtros_url = http_build_query($filtros);
 
-// 3. CONFIGURAÇÃO DE DATAS
+
 date_default_timezone_set('America/Sao_Paulo');
 $hoje = new DateTime(); 
 
@@ -30,35 +30,34 @@ if ($dia_da_semana_num != 1) {
      $inicio_semana->modify('-' . ($dia_da_semana_num - 1) . ' days');
 }
 
-// --- CÁLCULO DOS LINKS DE NAVEGAÇÃO ---
 $link_semana_anterior = 'index.php?week=' . (clone $inicio_semana)->modify('-7 days')->format('Y-m-d') . '&' . $filtros_url;
 $link_proxima_semana = 'index.php?week=' . (clone $inicio_semana)->modify('+7 days')->format('Y-m-d') . '&' . $filtros_url;
 $link_hoje = 'index.php?' . $filtros_url;
 
 $dias_desta_semana = [];
-for ($i = 0; $i < 6; $i++) { // MUDANÇA: 6 DIAS (SEG-SÁB)
+for ($i = 0; $i < 6; $i++) { 
     $dia_atual = clone $inicio_semana;
     $dia_atual->modify("+$i days");
     $dias_desta_semana[] = $dia_atual;
 }
 
 $meses_pt = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-$dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']; // MUDANÇA: SEM DOMINGO
+$dias_semana_pt = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado']; 
 
 $mes_ano_inicio = $meses_pt[(int)$dias_desta_semana[0]->format('n') - 1] . ' ' . $dias_desta_semana[0]->format('Y');
-$mes_ano_fim = $meses_pt[(int)$dias_desta_semana[5]->format('n') - 1] . ' ' . $dias_desta_semana[5]->format('Y'); // MUDANÇA: ÍNDICE 5
+$mes_ano_fim = $meses_pt[(int)$dias_desta_semana[5]->format('n') - 1] . ' ' . $dias_desta_semana[5]->format('Y'); 
 
 if ($mes_ano_inicio == $mes_ano_fim) {
     $mes_ano_atual = $mes_ano_inicio;
 } else {
-    if ($dias_desta_semana[0]->format('Y') != $dias_desta_semana[5]->format('Y')) { // MUDANÇA: ÍNDICE 5
+    if ($dias_desta_semana[0]->format('Y') != $dias_desta_semana[5]->format('Y')) { 
         $mes_ano_atual = $mes_ano_inicio . ' / ' . $mes_ano_fim;
     } else {
         $mes_ano_atual = $meses_pt[(int)$dias_desta_semana[0]->format('n') - 1] . ' / ' . $meses_pt[(int)$dias_desta_semana[5]->format('n') - 1] . ' ' . $dias_desta_semana[5]->format('Y');
     }
 }
 
-// Mobile Active Index
+
 $mobile_active_index = 0;
 $hoje_str = $hoje->format('Y-m-d');
 foreach ($dias_desta_semana as $idx => $dia) {
@@ -68,16 +67,15 @@ foreach ($dias_desta_semana as $idx => $dia) {
     }
 }
 
-// 4. BUSCA DE DADOS
 $turmaController = new TurmaController();
 $lista_turmas_filtro = $turmaController->listar();
 $tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
 
-// 5. LÓGICA DE EVENTOS (BUSCA NO BANCO)
+
 $eventoController = new EventoController();
 $lista_eventos = $eventoController->listarAprovados($dias_desta_semana[0]->format('Y-m-d'), $dias_desta_semana[5]->format('Y-m-d'), $filtros);
 
-// 6. PROCESSAMENTO DO GRID
+
 $horarios_todos = [ "07:10", "08:00", "08:50", "10:00", "10:50", "11:40", "13:30", "14:20", "15:10", "16:20", "17:10", "18:00", "18:30", "19:20", "20:10", "21:20", "22:10" ];
 if (!empty($filtros['periodo'])) {
     $horarios_semana = [];
@@ -102,8 +100,7 @@ foreach ($lista_eventos as $evento) {
     }
 }
 
-// --- NOVA LÓGICA: BUSCA EVENTOS PARA O MINICALENDÁRIO (MÊS INTEIRO) ---
-// Precisamos de uma lista separada que cubra todo o mês para os "pontinhos" no JS
+
 $inicio_mes_js = clone $hoje;
 $inicio_mes_js->modify('first day of this month');
 $fim_mes_js = clone $hoje;
@@ -112,11 +109,11 @@ $fim_mes_js->modify('last day of this month');
 $lista_eventos_mes = $eventoController->listarAprovados(
     $inicio_mes_js->format('Y-m-d'), 
     $fim_mes_js->format('Y-m-d'), 
-    $filtros // Mantemos os mesmos filtros (turma, tipo) para consistência
+    $filtros 
 );
 
 
-// 7. DADOS PARA AS LEGENDAS
+
 $legendas_eventos = [
     ['tipo' => 'Palestra', 'cor' => 'tipo-palestra'],
     ['tipo' => 'Visita Técnica', 'cor' => 'tipo-visita-tecnica'],
@@ -130,10 +127,10 @@ $legendas_eventos = [
 ?>
 
 <script>
-    // AQUI ESTÁ A MUDANÇA: Passamos a lista do mês inteiro para o JS usar no minicalendário
+ 
     const eventosDoBanco = <?php echo json_encode($lista_eventos_mes); ?>; 
     
-    // (O grid principal em PHP usa $lista_eventos, que é só da semana, isso está correto e não muda)
+
     const mobileActiveIndexInicial = <?php echo $mobile_active_index; ?>;
 </script>
 
@@ -220,7 +217,7 @@ $legendas_eventos = [
                 </section>
             </form>
             
-            <!-- CHAVE: NOVA SEÇÃO DE LEGENDA -->
+     
         <section class="filtrar-calendario legenda-eventos">
     <div class="filtro-item">
         <div class="filtro-header">
@@ -239,7 +236,7 @@ $legendas_eventos = [
         
     
 </section>
-            <!-- FIM DA NOVA SEÇÃO DE LEGENDA -->
+     
             
         </section>
 

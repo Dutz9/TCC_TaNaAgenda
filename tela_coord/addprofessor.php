@@ -1,8 +1,6 @@
 <?php 
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
-
-    // Garante que apenas coordenadores acessem
     if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
         header('Location: ../tela_prof/agendaprof.php');
         exit();
@@ -12,7 +10,6 @@
     $tipo_mensagem = '';
     $usuarioController = new UsuarioController();
 
-    // --- PROCESSAMENTO DO FORMULÁRIO (POST) ---
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             $rm = $_POST['rm'] ?? null;
@@ -23,17 +20,14 @@
             $confirma_senha = $_POST['confirma_senha'] ?? null;
             $turmas = $_POST['turmas'] ?? [];
 
-            // --- Validações Corrigidas ---
             if (empty($rm) || empty($nome) || empty($email) || empty($senha) || empty($confirma_senha)) {
                 throw new Exception("Todos os campos, exceto telefone, são obrigatórios.");
             }
 
-            // --- CORREÇÃO (Bug 3) ---
-            // Verifica se as senhas são iguais
             if ($senha !== $confirma_senha) {
                 throw new Exception("As senhas não coincidem.");
             }
-            // --- FIM DA CORREÇÃO ---
+ 
 
             if (strlen($senha) < 3) {
                 throw new Exception("A senha deve ter pelo menos 3 caracteres.");
@@ -66,7 +60,6 @@
         }
     }
 
-    // --- CARREGAMENTO DE DADOS (GET) ---
     $turmaController = new TurmaController();
     $lista_turmas = $turmaController->listar();
 ?>

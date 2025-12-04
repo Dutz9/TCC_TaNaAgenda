@@ -6,7 +6,6 @@
     $mensagem = '';
     $tipo_mensagem = '';
 
-    // --- PROCESSAR ATUALIZAÇÃO (SE FOR POST) ---
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             $nome = $_POST['nome'];
@@ -15,14 +14,10 @@
             if (empty($nome)) {
                 throw new Exception("O nome não pode ficar em branco.");
             }
-            
-            // Atualiza no banco
+        
             $usuarioController->atualizarDados($usuario_logado['cd_usuario'], $nome, $telefone);
-            
-            // Atualiza a sessão para refletir o novo nome imediatamente
             $_SESSION['usuario_logado']['nm_usuario'] = $nome;
-            $usuario_logado['nm_usuario'] = $nome; // Atualiza a variável local também
-            
+            $usuario_logado['nm_usuario'] = $nome; 
             $mensagem = "Dados atualizados com sucesso!";
             $tipo_mensagem = 'sucesso';
             
@@ -32,12 +27,10 @@
         }
     }
 
-    // --- BUSCAR DADOS ATUAIS PARA EXIBIR ---
     $dados_usuario = $usuarioController->buscarDadosUsuario($usuario_logado['cd_usuario']);
-    // Se a busca falhar, usa os dados da sessão como fallback
     if (!$dados_usuario) {
         $dados_usuario = $usuario_logado;
-        $dados_usuario['cd_telefone'] = 'Não encontrado'; // Adiciona campo faltante
+        $dados_usuario['cd_telefone'] = 'Não encontrado';
     }
 ?>
 

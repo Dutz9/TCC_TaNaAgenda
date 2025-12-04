@@ -21,11 +21,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
  
       
             if ($dadosUsuario && count($dadosUsuario) > 0) {
-                
-                // Guarda os dados do usuário na sessão
+
                 $_SESSION['usuario'] = $dadosUsuario[0];
- 
-                // 5. Redireciona com base no tipo de usuário
                 $tipoUsuario = $_SESSION['usuario']['tipo_usuario_ic_usuario'];
  
                 if ($tipoUsuario == 'Professor') {
@@ -35,12 +32,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 
                 elseif ($tipoUsuario == 'Coordenador') {
                     header('Location: tela_coord/agendacoord.php');
-                    exit(); // Encerra o script após o redirecionamento
+                    exit(); 
                 } 
 
                 elseif ($tipoUsuario == 'Administrador') {
                     header('Location: tela_adm/agendaadm.php');
-                    exit(); // Encerra o script após o redirecionamento
+                    exit(); 
                 } 
                 
                 else {
@@ -49,12 +46,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
  
             } else {
-                // Isso não deveria acontecer se a procedure lança exceção, mas é uma segurança extra.
                 $mensagemErro = 'Login e/ou Senha Inválida.';
             }
  
         } catch (Exception $e) {
-            // Se a Stored Procedure retornar erro (login/senha inválidos), o catch vai pegar a mensagem
+          
             $mensagemErro = $e->getMessage();
         }
     } 

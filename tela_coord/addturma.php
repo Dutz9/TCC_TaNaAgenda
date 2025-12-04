@@ -1,8 +1,6 @@
 <?php 
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
-
-    // Garante que apenas coordenadores acessem
     if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
         header('Location: ../tela_prof/agendaprof.php');
         exit();
@@ -12,17 +10,13 @@
     $tipo_mensagem = '';
     $turmaController = new TurmaController();
 
-    // --- PROCESSAMENTO DO FORMULÁRIO (POST) ---
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
-            // Captura os dados do formulário
             $nm_turma = $_POST['nm_turma'] ?? null;
             $ic_serie = $_POST['ic_serie'] ?? null;
             $qt_alunos = $_POST['qt_alunos'] ?? null;
             $cd_sala = $_POST['cd_sala'] ?? null;
             $cd_curso = $_POST['cd_curso'] ?? null;
-
-            // Validações
             if (empty($nm_turma) || empty($ic_serie) || empty($qt_alunos) || empty($cd_sala) || empty($cd_curso)) {
                 throw new Exception("Todos os campos são obrigatórios.");
             }
@@ -38,17 +32,14 @@
                 'cd_curso' => $cd_curso
             ];
 
-            // Chama o controller para criar a turma
             $turmaController->criarTurma($dadosTurma);
-            
-            // Redireciona com mensagem de sucesso
+
             $_SESSION['mensagem_sucesso'] = "Turma '".htmlspecialchars($nm_turma)."' adicionada com sucesso!";
             header('Location: turmas.php');
             exit();
 
         } catch (Exception $e) {
             $erro = $e->getMessage();
-            // "Traduz" o erro do banco de dados
             if (strpos($erro, 'Erro: O nome (Sigla) desta turma já está em uso.') !== false) {
                 $mensagem = 'Erro: A Sigla (Nome) desta turma já está em uso.';
             } else {
@@ -58,8 +49,6 @@
         }
     }
 
-    // --- CARREGAMENTO DE DADOS (GET) ---
-    // Busca a lista de cursos para o dropdown
     $cursoController = new CursoController();
     $lista_cursos = $cursoController->listar();
 ?>

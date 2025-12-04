@@ -4,17 +4,14 @@ DELIMITER $$
 DROP PROCEDURE IF EXISTS listarUsuarios$$
 CREATE PROCEDURE listarUsuarios()
 BEGIN
-    -- Lista email, nome, tipo (usa enum direto da tabela usuarios para simplicidade)
     SELECT u.nm_email, u.nm_usuario, u.tipo_usuario_ic_usuario AS tipo_usuario
     FROM usuarios u
     ORDER BY u.nm_usuario;
 END$$
 
--- Procedure para listar professores
 DROP PROCEDURE IF EXISTS `listarProfessores`$$
 CREATE PROCEDURE `listarProfessores`()
 BEGIN
-    -- Lista todos os dados dos professores
     SELECT 
         u.cd_usuario, 
         u.nm_usuario, 
@@ -35,7 +32,6 @@ BEGIN
         u.nm_usuario, 
         u.nm_email, 
         u.cd_telefone,
-        -- Esta sub-consulta junta todas as turmas do professor em uma única string
         (SELECT GROUP_CONCAT(t.nm_turma SEPARATOR ', ') 
          FROM usuarios_has_turmas uht
          JOIN turmas t ON uht.turmas_cd_turma = t.cd_turma
@@ -46,7 +42,6 @@ BEGIN
     ORDER BY u.nm_usuario;
 END$$
 
--- Procedure para listar coordenadores
 DROP PROCEDURE IF EXISTS listarCoordenadores$$
 CREATE PROCEDURE listarCoordenadores()
 BEGIN
@@ -56,12 +51,11 @@ BEGIN
     ORDER BY u.nm_usuario;
 END$$
 
--- Procedure para criar usuário (corrigida: usa email para check duplicata; gera cd_usuario sequencial simples baseado em tipo)
 DROP PROCEDURE IF EXISTS criarUsuario$$
 CREATE PROCEDURE criarUsuario(
     IN pEmail VARCHAR(45), 
     IN pNome VARCHAR(45), 
-    IN pSenha VARCHAR(45),  -- Plain-text; futuro: use password_hash
+    IN pSenha VARCHAR(45),
     IN pTipo ENUM('Coordenador', 'Professor', 'Administrador')
 )
 BEGIN
@@ -70,7 +64,6 @@ BEGIN
         
     SELECT COUNT(*) INTO qtd FROM usuarios WHERE nm_email = pEmail;
     IF (qtd = 0) THEN
-        -- Gera cd_usuario simples: tipo + sequencial (ex.: PROF001)
         SET novoCdUsuario = CASE pTipo
             WHEN 'Professor' THEN CONCAT('PROF', LPAD((SELECT COUNT(*) + 1 FROM usuarios WHERE tipo_usuario_ic_usuario = 'Professor'), 3, '0'))
             WHEN 'Coordenador' THEN CONCAT('COORD', LPAD((SELECT COUNT(*) + 1 FROM usuarios WHERE tipo_usuario_ic_usuario = 'Coordenador'), 3, '0'))
@@ -83,7 +76,6 @@ BEGIN
     END IF;
 END$$
 
--- Procedure para excluir usuário (corrigida: usa email)
 DROP PROCEDURE IF EXISTS excluirUsuario$$
 CREATE PROCEDURE excluirUsuario(IN pEmail VARCHAR(45))
 BEGIN
@@ -97,16 +89,14 @@ BEGIN
     END IF;
 END$$
 
--- Procedure para verificar acesso/login (corrigida: plain-text; retorna cd_usuario etc. para sessão)
 DROP PROCEDURE IF EXISTS verificarAcesso$$
 CREATE PROCEDURE verificarAcesso(
     IN pLogin VARCHAR(45), 
-    IN pSenha VARCHAR(255)  -- Plain-text; futuro: compare com password_verify
+    IN pSenha VARCHAR(255)
 )
 BEGIN
     DECLARE qtd INT DEFAULT 0;
     
-    -- A MUDANÇA ESTÁ AQUI, NO "OR"
     SELECT COUNT(*) INTO qtd FROM usuarios 
     WHERE (nm_email = pLogin OR cd_usuario = pLogin) AND cd_senha = pSenha;
         
@@ -119,8 +109,6 @@ BEGIN
     END IF;
 END$$
 
--- Procedure para criar evento (nova: salva com status 'Solicitado')
--- Procedure para criar evento (VERSÃO CORRIGIDA SEM CARACTERES INVÁLIDOS)
 DROP PROCEDURE IF EXISTS `criarEvento`$$
 CREATE PROCEDURE `criarEvento`(
     IN pCdEvento VARCHAR(45),
@@ -129,7 +117,7 @@ CREATE PROCEDURE `criarEvento`(
     IN pHorarioInicio VARCHAR(45),
     IN pHorarioFim VARCHAR(45),
     IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
-    IN pDsDescricao TEXT, -- Mudança de VARCHAR(200) para TEXT
+    IN pDsDescricao TEXT,
     IN pCdUsuarioSolicitante VARCHAR(45)
 )
 BEGIN
@@ -137,7 +125,6 @@ BEGIN
     VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Solicitado', pCdUsuarioSolicitante, CURDATE());
 END$$
 
--- Procedure para aprovar evento (nova: atualiza status para coord)
 DROP PROCEDURE IF EXISTS aprovarEvento$$
 CREATE PROCEDURE aprovarEvento(IN pCdEvento VARCHAR(45))
 BEGIN
@@ -151,7 +138,6 @@ BEGIN
     END IF;
 END$$
 
--- Procedure para recusar evento (nova: similar a aprovar)
 DROP PROCEDURE IF EXISTS recusarEvento$$
 CREATE PROCEDURE recusarEvento(IN pCdEvento VARCHAR(45))
 BEGIN
@@ -165,7 +151,6 @@ BEGIN
     END IF;
 END$$
 
--- Procedure para registrar aprovação de professor (nova: para fluxo paralelo, via N:N)
 ALTER TABLE resolucao_eventos_usuarios 
 MODIFY COLUMN status_resolucao ENUM('Aprovado', 'Recusado', 'Pendente') NULL DEFAULT 'Pendente';
 DROP PROCEDURE IF EXISTS `registrarAprovacaoProfessor`$$
@@ -173,7 +158,7 @@ CREATE PROCEDURE `registrarAprovacaoProfessor`(
     IN pCdEvento VARCHAR(45),
     IN pCdUsuario VARCHAR(45),
     IN pStatus ENUM('Aprovado', 'Recusado', 'Pendente'),
-    IN pDsMotivo TEXT -- Novo parâmetro
+    IN pDsMotivo TEXT
 )
 BEGIN
     DECLARE qtd INT DEFAULT 0;
@@ -183,7 +168,7 @@ BEGIN
     IF (qtd > 0) THEN
         UPDATE resolucao_eventos_usuarios 
         SET status_resolucao = pStatus, 
-            ds_motivo = pDsMotivo -- Salva o motivo
+            ds_motivo = pDsMotivo
         WHERE eventos_cd_evento = pCdEvento AND usuarios_cd_usuario = pCdUsuario;
     ELSE
         INSERT INTO resolucao_eventos_usuarios (eventos_cd_evento, usuarios_cd_usuario, status_resolucao, ds_motivo) 
@@ -191,7 +176,6 @@ BEGIN
     END IF;
 END$$
 
--- Procedure para listar eventos solicitados (nova: para coord ver pendentes)
 DROP PROCEDURE IF EXISTS listarEventosSolicitados$$
 CREATE PROCEDURE listarEventosSolicitados()
 BEGIN
@@ -203,7 +187,7 @@ BEGIN
     ORDER BY e.dt_solicitacao DESC;
 END$$
 
--- Procedure para listar meus eventos (nova: para prof ver seus eventos por status)
+
 DROP PROCEDURE IF EXISTS listarMeusEventos$$
 CREATE PROCEDURE listarMeusEventos(IN pCdUsuario VARCHAR(45))
 BEGIN
@@ -218,7 +202,6 @@ DROP PROCEDURE IF EXISTS `listarEventosAprovados`$$
 CREATE PROCEDURE `listarEventosAprovados`(
     IN pDataInicio DATE,
     IN pDataFim DATE,
-    -- Os parâmetros agora são VARCHAR para aceitar listas (ex: "Manha,Tarde")
     IN pPeriodo VARCHAR(100),
     IN pCdTurma VARCHAR(255),
     IN pTipoEvento VARCHAR(255)
@@ -244,11 +227,11 @@ BEGIN
         e.status = 'Aprovado'
         AND e.dt_evento BETWEEN pDataInicio AND pDataFim
         
-        -- NOVOS FILTROS (agora usando FIND_IN_SET)
+   
         AND (pTipoEvento IS NULL OR FIND_IN_SET(e.tipo_evento, pTipoEvento))
         AND (pCdTurma IS NULL OR FIND_IN_SET(eht_filtro.turmas_cd_turma, pCdTurma))
         
-        -- Filtro de Período com lógica FIND_IN_SET
+
         AND (pPeriodo IS NULL
             OR (FIND_IN_SET('Manha', pPeriodo) AND e.horario_inicio < '13:00:00')
             OR (FIND_IN_SET('Tarde', pPeriodo) AND e.horario_inicio >= '13:00:00' AND e.horario_inicio < '18:30:00')
@@ -262,7 +245,7 @@ END$$
 DROP PROCEDURE IF EXISTS `listarTurmas`$$
 CREATE PROCEDURE `listarTurmas`()
 BEGIN
-    SELECT cd_turma, nm_turma, qt_alunos -- <-- ADICIONAMOS qt_alunos
+    SELECT cd_turma, nm_turma, qt_alunos 
     FROM turmas 
     ORDER BY nm_turma;
 END$$
@@ -275,7 +258,7 @@ CREATE PROCEDURE `criarEventoAprovado`(
     IN pHorarioInicio VARCHAR(45),
     IN pHorarioFim VARCHAR(45),
     IN pTipoEvento ENUM('Palestra', 'Visita tecnica', 'Reuniao', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'),
-    IN pDsDescricao TEXT, -- Mudança de VARCHAR(200) para TEXT
+    IN pDsDescricao TEXT, 
     IN pCdUsuarioSolicitante VARCHAR(45)
 )
 BEGIN
@@ -283,7 +266,7 @@ BEGIN
     VALUES (pCdEvento, pDtEvento, pNmEvento, pHorarioInicio, pHorarioFim, pTipoEvento, pDsDescricao, 'Aprovado', pCdUsuarioSolicitante, CURDATE());
 END$$
 
--- ATUALIZAÇÃO 2: LISTAR PARA COORDENADOR
+
 DROP PROCEDURE IF EXISTS `listarEventosParaCoordenador`$$
 CREATE PROCEDURE `listarEventosParaCoordenador`(
     IN pCdUsuario VARCHAR(25),
@@ -294,7 +277,7 @@ CREATE PROCEDURE `listarEventosParaCoordenador`(
     IN pDataFiltro ENUM('Todos', 'Proximos7Dias', 'EsteMes', 'MesPassado', 'ProximoMes')
 )
 BEGIN
-    -- AUMENTA O LIMITE DO GROUP_CONCAT PARA ESTA SESSÃO
+
     SET SESSION group_concat_max_len = 1000000;
 
     SELECT
@@ -346,26 +329,25 @@ BEGIN
 END$$
 
 
--- Procedure para o coordenador APROVAR um evento (versão atualizada)
 DROP PROCEDURE IF EXISTS `aprovarEventoDefinitivo`$$
 CREATE PROCEDURE `aprovarEventoDefinitivo`(IN pCdEvento VARCHAR(25), IN pCdCoordenador VARCHAR(10))
 BEGIN
     UPDATE eventos 
     SET 
         status = 'Aprovado',
-        cd_usuario_aprovador = pCdCoordenador -- <-- AQUI a mágica acontece
+        cd_usuario_aprovador = pCdCoordenador 
     WHERE 
         cd_evento = pCdEvento;
 END$$
 
--- Procedure para o coordenador RECUSAR um evento (versão atualizada)
+
 DROP PROCEDURE IF EXISTS `recusarEventoDefinitivo`$$
 CREATE PROCEDURE `recusarEventoDefinitivo`(IN pCdEvento VARCHAR(25), IN pCdCoordenador VARCHAR(10))
 BEGIN
     UPDATE eventos 
     SET 
         status = 'Recusado',
-        cd_usuario_aprovador = pCdCoordenador -- <-- E AQUI também
+        cd_usuario_aprovador = pCdCoordenador 
     WHERE 
         cd_evento = pCdEvento;
 END$$
@@ -375,18 +357,12 @@ CREATE PROCEDURE `cancelarSolicitacaoEvento`(
     IN pCdUsuarioSolicitante VARCHAR(10)
 )
 BEGIN
-    -- 1. Apaga primeiro as respostas dos professores (chaves estrangeiras)
     DELETE FROM resolucao_eventos_usuarios 
     WHERE eventos_cd_evento = pCdEvento;
     
-    -- 2. Apaga as turmas associadas (chaves estrangeiras)
     DELETE FROM eventos_has_turmas 
     WHERE eventos_cd_evento = pCdEvento;
     
-    -- 3. Finalmente, apaga o evento principal
-    --    (com uma dupla verificação de segurança:
-    --     só apaga se o ID do usuário for o mesmo do solicitante
-    --     E o status ainda for 'Solicitado')
     DELETE FROM eventos 
     WHERE cd_evento = pCdEvento 
       AND cd_usuario_solicitante = pCdUsuarioSolicitante
@@ -397,16 +373,14 @@ CREATE PROCEDURE `excluirEventoDefinitivo`(
     IN pCdEvento VARCHAR(25)
 )
 BEGIN
-    -- 1. Apaga primeiro as respostas dos professores (chaves estrangeiras)
+
     DELETE FROM resolucao_eventos_usuarios 
     WHERE eventos_cd_evento = pCdEvento;
     
-    -- 2. Apaga as turmas associadas (chaves estrangeiras)
+
     DELETE FROM eventos_has_turmas 
     WHERE eventos_cd_evento = pCdEvento;
     
-    -- 3. Finalmente, apaga o evento principal
-    -- (Sem verificação de status ou solicitante, pois o Coordenador tem poder total)
     DELETE FROM eventos 
     WHERE cd_evento = pCdEvento;
 END$$
@@ -423,18 +397,14 @@ BEGIN
         e.horario_fim,
         e.tipo_evento,
         e.ds_descricao,
-        -- Usamos GROUP_CONCAT para pegar os IDs das turmas como uma string (ex: "1,4,5")
         GROUP_CONCAT(DISTINCT eht.turmas_cd_turma) AS turmas_ids,
-        -- Usamos GROUP_CONCAT para pegar os IDs dos professores convidados
         GROUP_CONCAT(DISTINCT reu.usuarios_cd_usuario) AS professores_ids
     FROM eventos e
     LEFT JOIN eventos_has_turmas eht ON e.cd_evento = eht.eventos_cd_evento
     LEFT JOIN resolucao_eventos_usuarios reu ON e.cd_evento = reu.eventos_cd_evento
     WHERE
         e.cd_evento = pCdEvento
-        -- Condição de Segurança: Só pode editar se for o dono
         AND e.cd_usuario_solicitante = pCdUsuarioSolicitante
-        -- Condição de Segurança: Só pode editar se ainda estiver "Solicitado"
         AND e.status = 'Solicitado'
     GROUP BY
         e.cd_evento;
@@ -450,7 +420,6 @@ CREATE PROCEDURE `atualizarSolicitacaoEvento`(
     IN pDsDescricao TEXT
 )
 BEGIN
-    -- 1. Atualiza os dados principais do evento
     UPDATE eventos SET
         nm_evento = pNmEvento,
         dt_evento = pDtEvento,
@@ -461,11 +430,9 @@ BEGIN
     WHERE
         cd_evento = pCdEvento;
         
-    -- 2. Limpa as listas antigas de turmas e professores
     DELETE FROM eventos_has_turmas WHERE eventos_cd_evento = pCdEvento;
     DELETE FROM resolucao_eventos_usuarios WHERE eventos_cd_evento = pCdEvento;
     
-    -- As novas turmas e professores serão inseridos pelo Controller
 END$$
 
 CREATE PROCEDURE `buscarEventoParaEdicaoCoordenador`(
@@ -479,9 +446,7 @@ BEGIN
         e.horario_fim,
         e.tipo_evento,
         e.ds_descricao,
-        -- Pega os IDs das turmas como uma string (ex: "1,4,5")
         GROUP_CONCAT(DISTINCT eht.turmas_cd_turma) AS turmas_ids,
-        -- Pega os IDs dos professores convidados
         GROUP_CONCAT(DISTINCT reu.usuarios_cd_usuario) AS professores_ids
     FROM eventos e
     LEFT JOIN eventos_has_turmas eht ON e.cd_evento = eht.eventos_cd_evento
@@ -492,7 +457,6 @@ BEGIN
         e.cd_evento;
 END$$
 
--- 1. Procedure para BUSCAR todos os dados de um usuário
 DROP PROCEDURE IF EXISTS `buscarDadosUsuario`$$
 CREATE PROCEDURE `buscarDadosUsuario`(IN pCdUsuario VARCHAR(10))
 BEGIN
@@ -501,7 +465,6 @@ BEGIN
     WHERE cd_usuario = pCdUsuario;
 END$$
 
--- 2. Procedure para ATUALIZAR os dados (Nome e Telefone)
 DROP PROCEDURE IF EXISTS `atualizarDadosUsuario`$$
 CREATE PROCEDURE `atualizarDadosUsuario`(
     IN pCdUsuario VARCHAR(10),
@@ -524,43 +487,35 @@ CREATE PROCEDURE `mudarSenha`(
 )
 BEGIN
     DECLARE usuarioExiste INT DEFAULT 0;
-
-    -- 1. Verifica se o usuário existe E se a senha antiga está correta
     SELECT COUNT(*) INTO usuarioExiste 
     FROM usuarios 
     WHERE cd_usuario = pCdUsuario AND cd_senha = pSenhaAntiga;
-
-    -- 2. Se a contagem for 0, significa que a senha antiga está errada
     IF (usuarioExiste = 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'A senha atual está incorreta.';
     ELSE
-        -- 3. Se a senha antiga estiver correta, atualiza para a nova
         UPDATE usuarios 
         SET cd_senha = pSenhaNova
         WHERE cd_usuario = pCdUsuario;
     END IF;
 END$$
 
--- 1. PROCEDURE PARA ATUALIZAR UM PROFESSOR
 DROP PROCEDURE IF EXISTS `atualizarProfessor`$$
 CREATE PROCEDURE `atualizarProfessor`(
     IN pCdUsuario VARCHAR(10),
     IN pNome VARCHAR(45),
     IN pEmail VARCHAR(45),
     IN pTelefone VARCHAR(45),
-    IN pTurmasIDs VARCHAR(255) -- Nosso novo parâmetro (ex: "1,4,5")
+    IN pTurmasIDs VARCHAR(255) 
 )
 BEGIN
     DECLARE emailCount INT DEFAULT 0;
     
-    -- 1. Verifica se o NOVO email já existe em OUTRO usuário
     SELECT COUNT(*) INTO emailCount FROM usuarios 
     WHERE nm_email = pEmail AND cd_usuario != pCdUsuario;
 
     IF (emailCount > 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este e-mail já está em uso por outro usuário.';
     ELSE
-        -- 2. Atualiza os dados do usuário
         UPDATE usuarios SET
             nm_usuario = pNome,
             nm_email = pEmail,
@@ -568,15 +523,10 @@ BEGIN
         WHERE
             cd_usuario = pCdUsuario;
             
-        -- 3. ATUALIZA AS TURMAS
-        -- Primeiro, apaga todas as associações antigas deste professor
         DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = pCdUsuario;
         
-        -- Agora, reinsere as novas associações (se houver alguma)
+
         IF pTurmasIDs IS NOT NULL AND pTurmasIDs != '' THEN
-        
-            -- Esta é a lógica corrigida e mais segura para inserir múltiplos valores
-            -- a partir de uma string (ex: "1,4,5")
             SET @sql = NULL;
             SELECT
                 GROUP_CONCAT(
@@ -588,7 +538,6 @@ BEGIN
                     CONCAT('[', pTurmasIDs, ']'),
                     '$[*]' COLUMNS (turma_id INT PATH '$')
                 ) AS jt;
-
             IF @sql IS NOT NULL THEN
                 SET @sql = CONCAT('INSERT INTO usuarios_has_turmas (usuarios_cd_usuario, turmas_cd_turma) VALUES ', @sql);
                 PREPARE stmt FROM @sql;
@@ -601,40 +550,28 @@ BEGIN
     END IF;
 END$$
 
--- 2. PROCEDURE PARA EXCLUIR UM PROFESSOR (COM SEGURANÇA)
 DROP PROCEDURE IF EXISTS `excluirProfessor`$$
 CREATE PROCEDURE `excluirProfessor`(
     IN pCdUsuario VARCHAR(10)
 )
 BEGIN
-    -- 1. Remove o professor da tabela de aprovações de eventos
     DELETE FROM resolucao_eventos_usuarios WHERE usuarios_cd_usuario = pCdUsuario;
-    
-    -- 2. Remove o professor das turmas
     DELETE FROM usuarios_has_turmas WHERE usuarios_cd_usuario = pCdUsuario;
-    
-    -- 3. Tenta apagar o professor
-    -- NOTA: Se o professor for o 'criador' de um evento (cd_usuario_solicitante),
-    -- a restrição de chave estrangeira do banco VAI IMPEDIR a exclusão e
-    -- retornará um erro. Este é o comportamento correto para proteger o histórico.
     DELETE FROM usuarios WHERE cd_usuario = pCdUsuario;
 END$$
 
--- Procedure para criar professor (adaptada para a nova SP)
 DROP PROCEDURE IF EXISTS `criarProfessor`$$
 CREATE PROCEDURE `criarProfessor`(
-    IN pCdUsuario VARCHAR(10),  -- Este é o RM
+    IN pCdUsuario VARCHAR(10), 
     IN pNome VARCHAR(45),
     IN pEmail VARCHAR(45),
     IN pSenha VARCHAR(255),
     IN pTelefone VARCHAR(45)
 )
 BEGIN
-    -- CHAMA O NOVO COM TIPO FIXO: 'Professor'
     CALL criarProfessorCompleto(pCdUsuario, pNome, pEmail, pSenha, pTelefone, 'Professor');
 END$$
 
--- NOVO: SP UNIFICADA DE CRIAÇÃO (Permite Professor/Coordenador)
 DROP PROCEDURE IF EXISTS `criarProfessorCompleto`$$
 CREATE PROCEDURE `criarProfessorCompleto`(
     IN pCdUsuario VARCHAR(10),
@@ -675,7 +612,6 @@ BEGIN
         t.cd_sala,
         c.nm_curso,
         c.ic_periodo,
-        -- Esta sub-consulta conta quantos professores estão ligados a esta turma
         (SELECT COUNT(uht.usuarios_cd_usuario) 
          FROM usuarios_has_turmas uht 
          WHERE uht.turmas_cd_turma = t.cd_turma
@@ -690,7 +626,6 @@ CREATE PROCEDURE `listarProfessoresPorTurma`(
     IN pCdTurma INT
 )
 BEGIN
-    -- Busca o nome de todos os professores associados a um ID de turma específico
     SELECT 
         u.nm_usuario
     FROM usuarios_has_turmas uht
@@ -702,7 +637,6 @@ BEGIN
         u.nm_usuario;
 END$$
 
--- 1. PROCEDURE PARA ATUALIZAR UMA TURMA
 DROP PROCEDURE IF EXISTS `atualizarTurma`$$
 CREATE PROCEDURE `atualizarTurma`(
     IN pCdTurma INT,
@@ -712,7 +646,7 @@ CREATE PROCEDURE `atualizarTurma`(
     IN pCdSala VARCHAR(45)
 )
 BEGIN
-    -- Verifica se o novo nome da turma já existe em OUTRA turma
+
     DECLARE nomeCount INT DEFAULT 0;
     SELECT COUNT(*) INTO nomeCount FROM turmas
     WHERE nm_turma = pNmTurma AND cd_turma != pCdTurma;
@@ -730,20 +664,13 @@ BEGIN
     END IF;
 END$$
 
--- 2. PROCEDURE PARA EXCLUIR UMA TURMA (COM SEGURANÇA)
 DROP PROCEDURE IF EXISTS `excluirTurma`$$
 CREATE PROCEDURE `excluirTurma`(
     IN pCdTurma INT
 )
 BEGIN
-    -- 1. Remove as associações da turma com professores
     DELETE FROM usuarios_has_turmas WHERE turmas_cd_turma = pCdTurma;
-    
-    -- 2. Remove as associações da turma com eventos (CORRIGIDO)
-    -- Antes estava comparando o ID do Evento com o ID da Turma, o que gerava o erro.
     DELETE FROM eventos_has_turmas WHERE turmas_cd_turma = pCdTurma;
-    
-    -- 3. Finalmente, apaga a turma
     DELETE FROM turmas WHERE cd_turma = pCdTurma;
 END$$
 
@@ -753,19 +680,18 @@ CREATE PROCEDURE `criarTurma`(
     IN pIcSerie VARCHAR(10),
     IN pQtAlunos INT,
     IN pCdSala VARCHAR(45),
-    IN pCdCurso INT -- ID do curso (ex: 1 para "Desenvolvimento de Sistemas")
+    IN pCdCurso INT 
 )
 BEGIN
     DECLARE nomeCount INT DEFAULT 0;
 
-    -- 1. Verifica se o nome (sigla) da turma já existe
     SELECT COUNT(*) INTO nomeCount FROM turmas
     WHERE nm_turma = pNmTurma;
 
     IF (nomeCount > 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: O nome (Sigla) desta turma já está em uso.';
     ELSE
-        -- 2. Insere a nova turma
+
         INSERT INTO turmas (nm_turma, ic_serie, qt_alunos, cd_sala, cursos_cd_curso)
         VALUES (pNmTurma, pIcSerie, pQtAlunos, pCdSala, pCdCurso);
     END IF;
@@ -774,18 +700,11 @@ END$$
 DROP PROCEDURE IF EXISTS `listarCursos`$$
 CREATE PROCEDURE `listarCursos`()
 BEGIN
-    -- Lista todos os cursos para preencher o dropdown
     SELECT cd_curso, nm_curso, ic_periodo 
     FROM cursos 
     ORDER BY nm_curso;
 END$$
 
--- =================================================================
--- SPs para CURSOS
--- =================================================================
-
--- 1. SP: Listar Cursos com Contagem de Turmas e Coordenadores
--- (Adaptada da SP de Turmas - listarTurmasComContagem)
 DROP PROCEDURE IF EXISTS `listarCursosComContagem`$$
 CREATE PROCEDURE `listarCursosComContagem`()
 BEGIN
@@ -793,19 +712,15 @@ BEGIN
         c.cd_curso,
         c.nm_curso,
         c.ic_periodo,
-        -- Conta quantas turmas estão ligadas a este curso
         (SELECT COUNT(t.cd_turma) 
          FROM turmas t 
          WHERE t.cursos_cd_curso = c.cd_curso
         ) AS contagem_turmas,
         
-        -- CHAVE 1: Retorna a CONTAGEM de coordenadores para o CARD
         (SELECT COUNT(uhc.usuarios_cd_usuario)
          FROM usuarios_has_cursos uhc
          WHERE uhc.cursos_cd_curso = c.cd_curso
         ) AS contagem_coordenadores,
-        
-        -- CHAVE 2: Retorna a LISTA de nomes de coordenadores para o MODAL
         IFNULL((SELECT GROUP_CONCAT(u.nm_usuario SEPARATOR ', ')
          FROM usuarios_has_cursos uhc
          JOIN usuarios u ON uhc.usuarios_cd_usuario = u.cd_usuario
@@ -816,30 +731,25 @@ BEGIN
     ORDER BY c.nm_curso;
 END$$
 
--- 2. SP: Criar Curso
 DROP PROCEDURE IF EXISTS `criarCurso`$$
 CREATE PROCEDURE `criarCurso`(
     IN pNmCurso VARCHAR(45),
     IN pIcPeriodo ENUM('Manha', 'Tarde', 'Noite')
-    -- Futuramente, adicione duração
+
 )
 BEGIN
     DECLARE nomeCount INT DEFAULT 0;
-
-    -- 1. Verifica se o nome do curso já existe
     SELECT COUNT(*) INTO nomeCount FROM cursos
     WHERE nm_curso = pNmCurso;
 
     IF (nomeCount > 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este curso já está cadastrado.';
     ELSE
-        -- 2. Insere o novo curso
         INSERT INTO cursos (nm_curso, ic_periodo)
         VALUES (pNmCurso, pIcPeriodo);
     END IF;
 END$$
 
--- 3. SP: Atualizar Curso
 DROP PROCEDURE IF EXISTS `atualizarCurso`$$
 CREATE PROCEDURE `atualizarCurso`(
     IN pCdCurso INT,
@@ -848,8 +758,6 @@ CREATE PROCEDURE `atualizarCurso`(
 )
 BEGIN
     DECLARE nomeCount INT DEFAULT 0;
-
-    -- 1. Verifica se o novo nome já existe em OUTRO curso
     SELECT COUNT(*) INTO nomeCount FROM cursos
     WHERE nm_curso = pNmCurso AND cd_curso != pCdCurso;
 
@@ -864,31 +772,21 @@ BEGIN
     END IF;
 END$$
 
--- 4. SP: Excluir Curso (Com segurança)
 DROP PROCEDURE IF EXISTS `excluirCurso`$$
 CREATE PROCEDURE `excluirCurso`(
     IN pCdCurso INT
 )
 BEGIN
     DECLARE turmaCount INT DEFAULT 0;
-
-    -- 1. Verifica se existem turmas ligadas a este curso
     SELECT COUNT(*) INTO turmaCount FROM turmas
     WHERE cursos_cd_curso = pCdCurso;
 
     IF (turmaCount > 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Não é possível excluir o curso pois ele possui turmas vinculadas.';
     ELSE
-        -- 2. Apaga o curso
         DELETE FROM cursos WHERE cd_curso = pCdCurso;
     END IF;
 END$$
-
--- (MANTER A SP listarCursos para o dropdown de Turmas - Não precisa alterar)
-
-
--- 1. SP: Listar TODOS Professores E Coordenadores com suas Associações
--- (Para ser usada pela página professoresadm.php)
 DROP PROCEDURE IF EXISTS `listarFuncionariosComAssociacoes`$$
 CREATE PROCEDURE `listarFuncionariosComAssociacoes`()
 BEGIN
@@ -898,15 +796,11 @@ BEGIN
         u.nm_email, 
         u.cd_telefone,
         u.tipo_usuario_ic_usuario AS tipo_usuario,
-        
-        -- Associações de TURMAS (Apenas para PROFESSORES) - Retorna a string de nomes separados por ' | '
         (SELECT GROUP_CONCAT(t.nm_turma SEPARATOR ' | ') 
          FROM usuarios_has_turmas uht
          JOIN turmas t ON uht.turmas_cd_turma = t.cd_turma
          WHERE uht.usuarios_cd_usuario = u.cd_usuario
         ) AS turmas_associadas_nomes,
-        
-        -- Associações de CURSOS (Apenas para COORDENADORES) - Retorna a string de nomes separados por ' | '
         (SELECT GROUP_CONCAT(c.nm_curso SEPARATOR ' | ')
          FROM usuarios_has_cursos uhc
          JOIN cursos c ON uhc.cursos_cd_curso = c.cd_curso
@@ -918,14 +812,13 @@ BEGIN
     ORDER BY FIELD(u.tipo_usuario_ic_usuario, 'Coordenador', 'Professor'), u.nm_usuario;
 END$$
 
--- 2. SP: Atualizar Coordenador (Dados e Associações de Cursos)
 DROP PROCEDURE IF EXISTS `atualizarCoordenador`$$
 CREATE PROCEDURE `atualizarCoordenador`(
     IN pCdUsuario VARCHAR(10),
     IN pNome VARCHAR(45),
     IN pEmail VARCHAR(45),
     IN pTelefone VARCHAR(45),
-    IN pCursosIDs VARCHAR(255) -- IDs de Cursos (ex: "1,4,5")
+    IN pCursosIDs VARCHAR(255) 
 )
 BEGIN
     DECLARE emailCount INT DEFAULT 0;
@@ -936,7 +829,6 @@ BEGIN
     IF (emailCount > 0) THEN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Erro: Este e-mail já está em uso por outro usuário.';
     ELSE
-        -- 1. Atualiza os dados do usuário (Nome, Email, Telefone)
         UPDATE usuarios SET
             nm_usuario = pNome,
             nm_email = pEmail,
@@ -944,7 +836,6 @@ BEGIN
         WHERE
             cd_usuario = pCdUsuario;
             
-        -- 2. ATUALIZA AS ASSOCIAÇÕES DE CURSOS
         DELETE FROM usuarios_has_cursos WHERE usuarios_cd_usuario = pCdUsuario;
         
         IF pCursosIDs IS NOT NULL AND pCursosIDs != '' THEN
@@ -971,14 +862,13 @@ BEGIN
     END IF;
 END$$
 
--- 3. Atualizar Professor (reusada, mas aqui para referência)
 DROP PROCEDURE IF EXISTS `atualizarProfessor`$$
 CREATE PROCEDURE `atualizarProfessor`(
     IN pCdUsuario VARCHAR(10),
     IN pNome VARCHAR(45),
     IN pEmail VARCHAR(45),
     IN pTelefone VARCHAR(45),
-    IN pTurmasIDs VARCHAR(255) -- IDs de Turmas (ex: "1,4,5")
+    IN pTurmasIDs VARCHAR(255)
 )
 BEGIN
     DECLARE emailCount INT DEFAULT 0;
@@ -1038,8 +928,7 @@ BEGIN
         u.tipo_usuario_ic_usuario = 'Professor';
 END$$
 
--- Procedure para listar eventos relevantes para o PROFESSOR
--- ATUALIZAÇÃO 1: LISTAR PARA PROFESSOR
+
 DROP PROCEDURE IF EXISTS `listarEventosParaProfessor`$$
 CREATE PROCEDURE `listarEventosParaProfessor`(
     IN pCdUsuario VARCHAR(25),
@@ -1050,7 +939,7 @@ CREATE PROCEDURE `listarEventosParaProfessor`(
     IN pDataFiltro ENUM('Todos', 'Proximos7Dias', 'EsteMes', 'MesPassado', 'ProximoMes')
 )
 BEGIN
-    -- AUMENTA O LIMITE DO GROUP_CONCAT PARA ESTA SESSÃO (1MB)
+
     SET SESSION group_concat_max_len = 1000000;
 
     SELECT
@@ -1060,8 +949,6 @@ BEGIN
         solicitante.tipo_usuario_ic_usuario AS tipo_solicitante,
         (SELECT GROUP_CONCAT(t_inner.nm_turma SEPARATOR ', ') FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS turmas_envolvidas,
         (SELECT SUM(t_inner.qt_alunos) FROM eventos_has_turmas eht_inner JOIN turmas t_inner ON eht_inner.turmas_cd_turma = t_inner.cd_turma WHERE eht_inner.eventos_cd_evento = e.cd_evento) AS total_alunos,
-        
-        -- O GROUP_CONCAT AQUI AGORA TEM MAIS ESPAÇO
         (SELECT CONCAT('[', GROUP_CONCAT(JSON_OBJECT('nome', u.nm_usuario, 'status', reu.status_resolucao, 'motivo', IFNULL(reu.ds_motivo, ''))), ']') 
          FROM resolucao_eventos_usuarios reu JOIN usuarios u ON reu.usuarios_cd_usuario = u.cd_usuario 
          WHERE reu.eventos_cd_evento = e.cd_evento AND u.cd_usuario != e.cd_usuario_solicitante

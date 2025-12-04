@@ -7,23 +7,17 @@
         exit();
     }
 
-    // --- LÓGICA DE FEEDBACK (TOAST) ---
     if (isset($_SESSION['mensagem_sucesso'])) {
         $mensagem_toast = $_SESSION['mensagem_sucesso'];
         unset($_SESSION['mensagem_sucesso']);
     }
-
-    // 1. BUSCA OS DADOS DOS CURSOS (NOVA LÓGICA)
     $cursoController = new CursoController();
     $lista_cursos = $cursoController->listarComContagem(); 
-
-    // 2. BUSCA A LISTA DE COORDENADORES (Opcional, mas útil para o modal)
     $usuarioController = new UsuarioController();
     $lista_coordenadores = $usuarioController->listarCoordenadores();
 ?>
 
 <script>
-    // 3. CRIA A "PONTE DE DADOS" PARA O JAVASCRIPT
     const cursosDaPagina = <?php echo json_encode($lista_cursos); ?>;
     const coordenadoresDaPagina = <?php echo json_encode($lista_coordenadores); ?>;
 </script>
@@ -37,7 +31,6 @@
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
     <link rel="stylesheet" href="../css/coordenador.css"> 
-    <!-- ADICIONA O NOVO CSS ESPECÍFICO DE CURSOS -->
     <link rel="stylesheet" href="../css/cursos.css"> 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js" defer></script>
@@ -70,7 +63,7 @@
                 <img src="../image/icones/professores.png" alt="">
                     <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
-                <div class="menu-cursos ativo"> <!-- ATIVO AQUI -->
+                <div class="menu-cursos ativo">
                 <img src="../image/icones/cursos.png" alt="">
                     <a href="cursos.php"><p>Cursos</p></a>
                 </div> 
@@ -85,8 +78,6 @@
                 <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
             </div>
         </section>
-
-    <!-- Usando a classe genérica area-notificacoes -->
     <section class="area-notificacoes"> 
         <div id="feedback-bar" class="feedback-bar"></div>
         
@@ -98,10 +89,7 @@
                 <input type="text" id="search-curso" placeholder="Nome do Curso ou Período">
             </div>
         </div>
-    
-        <!-- CHAVE: Usamos a classe de grid de 2 colunas para Cursos -->
         <div id="admin-card-container" class="admin-card-container cursos-grid-container">
-            <!-- Botão de Adicionar aponta para addcurso.php -->
             <a href="addcurso.php" class="admin-card card-adicionar">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#ffffff" d="M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512zM232 344l0-64-64 0c-13.3 0-24-10.7-24-24s10.7-24 24-24l64 0 0-64c0-13.3 10.7-24 24-24s24 10.7 24 24l0 64 64 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-64 0 0 64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/></svg>
             </a>
@@ -109,11 +97,9 @@
                 <p class="sem-eventos" style="grid-column: 1 / -1; text-align: center;">Nenhum curso cadastrado.</p>
             <?php endif; ?>
             
-            <!-- Os cards serão renderizados pelo JavaScript -->
         </div>
     </section>
 
-    <!-- MODAL DE EDIÇÃO/EXCLUSÃO (ADAPTADO DE turmas.php) -->
     <div id="modal-overlay" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="modal-left">
@@ -126,7 +112,6 @@
                 </div>
                 <div class="responses-section">
                     <h4>Coordenadores Vinculados</h4>
-                    <!-- CHAVE: Usando a classe padrão do modal -->
                     <div id="coordenadores-vinculados-lista" class="professores-vinculados"> 
                         <p>Carregando...</p>
                     </div>
@@ -156,7 +141,6 @@
                             <option value="Noite">Noite</option>
                         </select>
                     </div> 
-                    <!-- Campo de Duração (Removido do BD por simplicidade no momento, mas podemos usar) -->
                     <div class="form-group">
                         <label for="modal-curso-duracao">Duração:</label>
                         <input type="text" id="modal-curso-duracao" value="3 Módulos/Anos" readonly>

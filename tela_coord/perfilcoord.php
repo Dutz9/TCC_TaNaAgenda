@@ -2,7 +2,7 @@
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // Garante que apenas coordenadores acessem esta página
+ 
     if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
         header('Location: ../tela_prof/agendaprof.php');
         exit();
@@ -12,7 +12,6 @@
     $mensagem = '';
     $tipo_mensagem = '';
 
-    // --- PROCESSAR ATUALIZAÇÃO (SE FOR POST) ---
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
             $nome = $_POST['nome'];
@@ -22,23 +21,17 @@
                 throw new Exception("O nome não pode ficar em branco.");
             }
             
-            // Atualiza no banco
             $usuarioController->atualizarDados($usuario_logado['cd_usuario'], $nome, $telefone);
-            
-            // Atualiza a sessão para refletir o novo nome imediatamente
             $_SESSION['usuario_logado']['nm_usuario'] = $nome;
-            $usuario_logado['nm_usuario'] = $nome; // Atualiza a variável local também
+            $usuario_logado['nm_usuario'] = $nome; 
             
             $mensagem = "Dados atualizados com sucesso!";
             $tipo_mensagem = 'sucesso';
-            
         } catch (Exception $e) {
             $mensagem = "Erro ao atualizar: " . $e->getMessage();
             $tipo_mensagem = 'erro';
         }
     }
-
-    // --- BUSCAR DADOS ATUAIS PARA EXIBIR ---
     $dados_usuario = $usuarioController->buscarDadosUsuario($usuario_logado['cd_usuario']);
     if (!$dados_usuario) {
         $dados_usuario = $usuario_logado;

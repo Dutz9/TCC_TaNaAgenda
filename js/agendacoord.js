@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- LÓGICA DOS FILTROS ACORDEÃO ---
+
     const formFiltrosAgenda = document.getElementById('form-filtros-agenda');
     if (formFiltrosAgenda) {
         document.querySelectorAll('.filtro-header').forEach(header => {
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // --- ELEMENTOS PRINCIPAIS ---
+
     const modalOverlay = document.getElementById('modal-overlay');
     const modalContent = modalOverlay.querySelector('.modal-content');
     const dayModalOverlay = document.getElementById('day-modal-overlay');
@@ -28,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const miniCalPrevBtn = document.getElementById('mini-cal-prev');
     const miniCalNextBtn = document.getElementById('mini-cal-next');
 
-    // --- FUNÇÕES AUXILIARES ---
     function formatarDataParaFiltro(dateObject) {
         const dia = String(dateObject.getDate()).padStart(2, '0');
         const mes = String(dateObject.getMonth() + 1).padStart(2, '0');
@@ -51,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return 'tipo-' + eventType.toLowerCase().replace(/ /g, '-').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     };
 
-    // --- LÓGICA DO MODAL DE EVENTO INDIVIDUAL ---
+
     function showEventModal(eventData) {
         modalContent.innerHTML = `
             <h3>${eventData.nome}</h3>
@@ -82,15 +81,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === dayModalOverlay) dayModalOverlay.style.display = 'none';
     });
 
-    // --- LÓGICA DO MINI-CALENDÁRIO ---
     const urlParams = new URLSearchParams(window.location.search);
     const weekParam = urlParams.get('week');
-    let dataInicial = new Date(); // Hoje
+    let dataInicial = new Date();
     if (weekParam) {
-        dataInicial = new Date(weekParam + 'T12:00:00'); // Data da URL
+        dataInicial = new Date(weekParam + 'T12:00:00');
     }
     
-    // Estado interno do mini-calendário
+
     let dataAtualMiniCal = new Date(dataInicial);
 
     miniCalPrevBtn.addEventListener('click', () => {
@@ -160,7 +158,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const filtrosQueryString = window.location.search.split('?')[1] || '';
         const params = new URLSearchParams(filtrosQueryString);
         
-        // Pega a data exata que está na URL (se houver) para destacar
         const selectedDateStr = params.get('week');
         
         params.delete('week');
@@ -174,21 +171,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const clickedDate = new Date(year, month, d);
             const dateStr = formatarDataParaFiltro(clickedDate);
             
-            // Verifica se tem evento (pontinho)
             const hasEvent = eventosDoBanco.some(ev => ev.dt_evento === dateStr);
             if (hasEvent) {
                 dayLink.classList.add('has-event');
             }
 
-            // CORREÇÃO AQUI: O link agora vai para a data EXATA do dia, não para a segunda-feira
+
             dayLink.href = `?week=${dateStr}&${filtrosAtuais}`;
 
-            // Destaque do dia "Hoje" (Fixo)
+
             if (d === today.getDate() && month === today.getMonth() && year === today.getFullYear()) {
                 dayLink.classList.add('today');
             }
 
-            // Destaque do dia "Selecionado" (Se bater com a URL)
+
             if (dateStr === selectedDateStr) {
                 dayLink.classList.add('selected');
             }
@@ -196,12 +192,12 @@ document.addEventListener('DOMContentLoaded', () => {
             rightCalendarDays.appendChild(dayLink);
         }
         
-        updateSummaries(new Date()); // Sempre hoje
+        updateSummaries(new Date());
     }
 
     updateRightPanel(dataAtualMiniCal);
 
-    // --- LÓGICA MOBILE ---
+
     const navPrev = document.getElementById('nav-prev');
     const navNext = document.getElementById('nav-next');
     let currentMobileIndex = (typeof mobileActiveIndexInicial !== 'undefined') ? mobileActiveIndexInicial : 0;

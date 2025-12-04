@@ -9,7 +9,7 @@
     $turmas_selecionadas = [];
     $professores_selecionados_map = [];
 
-    // --- DETECÇÃO DO MODO (CRIAR vs EDITAR) ---
+
     if (isset($_GET['edit']) && !empty($_GET['edit'])) {
         $modo_edicao = true;
         $cd_evento_edicao = $_GET['edit'];
@@ -33,7 +33,6 @@
         }
     }
 
-    // --- CARREGAMENTO DE DADOS PARA OS FORMULÁRIOS ---
     $turmaController = new TurmaController();
     $lista_turmas = $turmaController->listar();
     $usuarioController = new UsuarioController();
@@ -49,7 +48,7 @@
         $mapa_alunos_turma[$turma['cd_turma']] = $turma['qt_alunos'];
     }
 
-    // --- PROCESSAMENTO DO FORMULÁRIO (POST) ---
+   
     $mensagem = '';
     $tipo_mensagem = '';
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -70,15 +69,13 @@
                 'cd_usuario_solicitante' => $usuario_logado['cd_usuario']
             ];
 
-            // --- A LÓGICA DE DECISÃO ESTÁ AQUI ---
+  
             if ($modo_edicao) {
-                // MODO DE ATUALIZAÇÃO
-                // Passa o ID do evento e os novos dados para o controller
                 $eventoController->atualizarSolicitacao($cd_evento_edicao, $dadosEvento);
                 $_SESSION['mensagem_sucesso'] = "Evento atualizado com sucesso!";
             } else {
-                // MODO DE CRIAÇÃO
-                $dadosEvento['cd_evento'] = uniqid('EVT_'); // Só precisa de um novo ID se for criação
+        
+                $dadosEvento['cd_evento'] = uniqid('EVT_'); 
                 $eventoController->criar($dadosEvento);
                 $_SESSION['mensagem_sucesso'] = "Evento solicitado com sucesso!";
             }

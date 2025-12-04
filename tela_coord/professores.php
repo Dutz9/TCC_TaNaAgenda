@@ -2,28 +2,26 @@
 require_once '../api/config.php'; 
 require_once '../api/verifica_sessao.php'; 
 
-// 1. GARANTE QUE É COORDENADOR
 if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
     header('Location: ../tela_prof/agendaprof.php');
     exit();
 }
 
-// --- LÓGICA DE FEEDBACK (TOAST) ---
 if (isset($_SESSION['mensagem_sucesso'])) {
     $mensagem_toast = $_SESSION['mensagem_sucesso'];
     unset($_SESSION['mensagem_sucesso']);
 }
 
-// 2. BUSCA OS DADOS DOS PROFESSORES
-$usuarioController = new UsuarioController();
-$lista_professores = $usuarioController->listarProfessores(); // Chama 'listarProfessoresComTurmas'
 
-// 3. BUSCA A LISTA DE TODAS AS TURMAS (PARA O MODAL)
+$usuarioController = new UsuarioController();
+$lista_professores = $usuarioController->listarProfessores(); 
+
+
 $turmaController = new TurmaController();
 $lista_todas_turmas = $turmaController->listar();
 ?>
 <script>
-    // 4. CRIA A "PONTE DE DADOS" PARA O JAVASCRIPT
+
     const professoresDaPagina = <?php echo json_encode($lista_professores); ?>;
     const todasAsTurmas = <?php echo json_encode($lista_todas_turmas); ?>;
 </script>

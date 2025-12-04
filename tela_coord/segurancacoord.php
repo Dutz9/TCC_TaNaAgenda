@@ -2,7 +2,7 @@
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // Segurança extra: Garante que apenas coordenadores acessem
+
     if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Coordenador') {
         header('Location: ../tela_prof/agendaprof.php');
         exit();
@@ -11,14 +11,13 @@
     $mensagem = '';
     $tipo_mensagem = '';
 
-    // --- PROCESSAR MUDANÇA DE SENHA (SE FOR POST) ---
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $senha_atual = $_POST['senha_atual'] ?? null;
         $senha_nova = $_POST['senha_nova'] ?? null;
         $senha_confirma = $_POST['senha_confirma'] ?? null;
 
         try {
-            // 1. Validações básicas no PHP
             if (empty($senha_atual) || empty($senha_nova) || empty($senha_confirma)) {
                 throw new Exception("Todos os campos são obrigatórios.");
             }
@@ -32,7 +31,6 @@
                 throw new Exception("A nova senha deve ter pelo menos 3 caracteres.");
             }
 
-            // 2. Tenta trocar a senha no banco
             $usuarioController = new UsuarioController();
             $usuarioController->mudarSenha($usuario_logado['cd_usuario'], $senha_atual, $senha_nova);
             
@@ -40,7 +38,6 @@
             $tipo_mensagem = 'sucesso';
 
         } catch (Exception $e) {
-            // O "tradutor" de erros amigáveis
             $erro = $e->getMessage();
             
             if (strpos($erro, 'A senha atual está incorreta') !== false) {

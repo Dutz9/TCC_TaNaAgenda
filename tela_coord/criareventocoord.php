@@ -13,8 +13,6 @@
     $cd_evento_edicao = null;
     $turmas_selecionadas = [];
     $professores_selecionados_map = [];
-
-    // --- DETECÇÃO DO MODO (CRIAR vs EDITAR) ---
     if (isset($_GET['edit']) && !empty($_GET['edit'])) {
         $modo_edicao = true;
         $cd_evento_edicao = $_GET['edit'];
@@ -36,7 +34,6 @@
         }
     }
 
-    // --- CARREGAMENTO DE DADOS PARA OS FORMULÁRIOS ---
     $turmaController = new TurmaController();
     $lista_turmas = $turmaController->listar();
     $usuarioController = new UsuarioController();
@@ -52,7 +49,6 @@
         $mapa_alunos_turma[$turma['cd_turma']] = $turma['qt_alunos'];
     }
 
-    // --- PROCESSAMENTO DO FORMULÁRIO (POST) ---
     $mensagem = '';
     $tipo_mensagem = '';
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -98,7 +94,6 @@
 ?>
 <script>
 
-    // A "PONTE DE DADOS" COMPLETA E CORRETA
     const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
     const mapaAlunosTurma = <?php echo json_encode($mapa_alunos_turma); ?>;
     const usuario_logado = <?php echo json_encode($usuario_logado); ?>;

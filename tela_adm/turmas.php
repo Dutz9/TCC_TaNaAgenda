@@ -7,22 +7,16 @@
         exit();
     }
 
-    // --- LÓGICA DE FEEDBACK (TOAST) ---
     if (isset($_SESSION['mensagem_sucesso'])) {
         $mensagem_toast = $_SESSION['mensagem_sucesso'];
         unset($_SESSION['mensagem_sucesso']);
     }
-
-    // 1. BUSCA OS DADOS DAS TURMAS
     $turmaController = new TurmaController();
     $lista_turmas = $turmaController->listarComContagem(); 
-
-    // 2. BUSCA A LISTA DE TODAS AS TURMAS (PARA O MODAL)
     $lista_todas_turmas_para_modal = $turmaController->listar();
 ?>
 
 <script>
-    // 3. CRIA A "PONTE DE DADOS" PARA O JAVASCRIPT
     const turmasDaPagina = <?php echo json_encode($lista_turmas); ?>;
     const todasAsTurmas = <?php echo json_encode($lista_todas_turmas_para_modal); ?>;
 </script>

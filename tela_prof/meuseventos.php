@@ -1,16 +1,14 @@
 <?php
 
-    // 1. CONFIGURAÇÃO E SEGURANÇA
+
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // 2. BUSCA DE DADOS PARA FILTROS
-    // Precisamos da lista de turmas para preencher o dropdown de filtro
     $turmaController = new TurmaController();
     $lista_turmas_filtro = $turmaController->listar();
     $tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
 
-    // 3. LEITURA DOS FILTROS DA URL (via GET)
+
     $filtros = [
         'status' => $_GET['status'] ?? null,
         'solicitante' => $_GET['solicitante'] ?? null,
@@ -18,20 +16,17 @@
         'tipo' => $_GET['tipo'] ?? null,
         'data' => $_GET['data'] ?? null
     ];
-    // Limpa filtros vazios (ex: ?status="")
+
     foreach ($filtros as $chave => $valor) {
         if (empty($valor)) {
             $filtros[$chave] = null;
         }
     }
 
-    // 4. BUSCA DOS DADOS PRINCIPAIS (AGORA COM FILTROS)
     $eventoController = new EventoController();
     $cd_usuario_logado = $usuario_logado['cd_usuario'];
-    // Passa o array de filtros para o controller
     $lista_eventos = $eventoController->listarParaProfessor($cd_usuario_logado, $filtros);
 
-    // 5. LÓGICA PARA MENSAGEM DE FEEDBACK (TOAST)
     if (isset($_SESSION['mensagem_sucesso'])) {
         $mensagem_toast = $_SESSION['mensagem_sucesso'];
         unset($_SESSION['mensagem_sucesso']);
@@ -40,7 +35,7 @@
 ?>
 
 <script>
-    // Ponte de dados do PHP para o JavaScript
+
     const eventosDaPagina = <?php echo json_encode($lista_eventos); ?>;
     const usuario_logado = <?php echo json_encode($usuario_logado); ?>;
 </script>
@@ -140,14 +135,10 @@
                         $dt_solicitacao = (new DateTime($evento['dt_solicitacao']))->format('d/m/Y');
                         $dt_evento = (new DateTime($evento['dt_evento']))->format('d/m/Y');
                         $cor_status = 'status-' . strtolower($evento['status']);
-
-                        // --- NOVA LÓGICA DE CARD LIDO ---
-                        // Define a classe do card. Se o evento não for meu E eu já respondi, marca como 'respondido'
                         $classe_card = 'notificacao';
                         if ($evento['cd_usuario_solicitante'] != $cd_usuario_logado && $evento['minha_resposta'] !== 'Pendente' && $evento['minha_resposta'] !== null) {
                             $classe_card = 'notificacao card-respondido';
                         }
-                        // --- FIM DA NOVA LÓGICA ---
                     ?>
                         <div class="<?php echo $classe_card; ?>">
                             <h3><?php echo htmlspecialchars($evento['nm_evento']); ?></h3>
@@ -162,14 +153,12 @@
                                 
                                 <div class="opcoes-resposta">
                                     <?php 
-                                    // CONDIÇÃO CORRIGIDA:
-                                    // Se o evento não for meu E a minha resposta for 'Aprovado' ou 'Recusado'
                                     if ($evento['cd_usuario_solicitante'] != $cd_usuario_logado && ($evento['minha_resposta'] === 'Aprovado' || $evento['minha_resposta'] === 'Recusado')): 
                                         $cor_minha_resposta = ($evento['minha_resposta'] == 'Aprovado') ? 'status-aprovado' : 'status-recusado';
                                     ?>
                                         <p class="<?php echo $cor_minha_resposta; ?>">Sua resposta: <?php echo $evento['minha_resposta']; ?></p>
                                     <?php 
-                                    // Se o evento não for meu E a minha resposta for 'Pendente' (ou seja, preciso agir)
+
                                     elseif ($evento['status'] == 'Solicitado' && $evento['cd_usuario_solicitante'] != $cd_usuario_logado && $evento['minha_resposta'] === 'Pendente'): 
                                     ?>
                                         <p class="status-solicitado"></p>
@@ -190,7 +179,7 @@
         </div>
     </div>
 
-        <!-- NOVO MODAL: MOTIVO DA RECUSA -->
+
         <div id="modal-motivo-recusa" class="modal-overlay" style="display: none;">
         <div class="modal-content-confirm">
             <h3>Motivo da Recusa</h3>
@@ -205,9 +194,9 @@
         </div>
     </div>
 
-    <!-- NOVO MODAL: VISUALIZAR MOTIVO (POP-UP) -->
+
     <div id="modal-visualizar-motivo" class="modal-overlay" style="display: none;">
-        <div class="modal-content-confirm" style="max-width: 600px;"> <!-- Um pouco mais largo -->
+        <div class="modal-content-confirm" style="max-width: 600px;"> 
             <h3>Motivo da Recusa</h3>
             <div class="area-texto-leitura">
                 <p id="conteudo-motivo-leitura"></p>
@@ -234,7 +223,7 @@
 
     <?php if (isset($mensagem_toast)): ?>
     <script>
-        // Espera um instante para garantir que a função showToast já foi carregada
+ 
         setTimeout(() => {
             showToast("<?php echo addslashes($mensagem_toast); ?>", 'sucesso');
         }, 100);

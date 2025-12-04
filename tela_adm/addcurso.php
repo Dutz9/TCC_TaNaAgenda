@@ -2,7 +2,6 @@
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // Garante que apenas administradores acessem
     if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Administrador') {
         header('Location: ../tela_prof/agendaprof.php');
         exit();
@@ -11,23 +10,18 @@
     $mensagem = '';
     $tipo_mensagem = '';
     
-    // Instancia o Controller (presume-se que CursoController.php foi atualizado)
+
     $cursoController = new CursoController();
 
-    // --- PROCESSAMENTO DO FORMULÁRIO (POST) ---
+
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         try {
-            // CAPTURA DOS DADOS DO FORMULÁRIO ESTÁTICO:
-            // O campo "Nome do curso" usa name="titulo" no HTML (vamos capturar como nm_curso)
             $nm_curso = $_POST['titulo'] ?? null; 
-            // O campo "Período" usa id/name="periodo" no HTML (vamos capturar como ic_periodo)
             $ic_periodo = $_POST['periodo'] ?? null; 
-            
-            // --- VALIDAÇÕES BÁSICAS ---
+ 
             if (empty($nm_curso) || empty($ic_periodo)) {
                 throw new Exception("O nome do curso e o período são obrigatórios.");
             }
-            // Mapeamento dos valores do SELECT (manha/tarde/noite) para os ENUMs do BD (Manha/Tarde/Noite)
             $mapa_periodo = [
                 'manha' => 'Manha',
                 'tarde' => 'Tarde',
@@ -41,20 +35,17 @@
             
             $dadosCurso = [
                 'nm_curso' => $nm_curso,
-                'ic_periodo' => $periodo_db // Usa o valor do ENUM corrigido
+                'ic_periodo' => $periodo_db 
             ];
 
-            // 4. EXECUÇÃO DA LÓGICA (cria o curso)
             $cursoController->criarCurso($dadosCurso);
             
-            // 5. REDIRECIONA COM MENSAGEM DE SUCESSO
             $_SESSION['mensagem_sucesso'] = "Curso '".htmlspecialchars($nm_curso)."' adicionado com sucesso!";
             header('Location: cursos.php');
             exit();
 
         } catch (Exception $e) {
             $erro = $e->getMessage();
-            // "Traduz" o erro do banco de dados (da SP)
             if (strpos($erro, 'Erro: Este curso já está cadastrado.') !== false) {
                 $mensagem = 'Erro: Este curso já está cadastrado.';
             } else {
@@ -62,7 +53,6 @@
             }
             $tipo_mensagem = 'erro';
             
-            // É útil reter os valores em caso de erro, mas neste formulário simples não o faremos.
         }
     }
 ?>
@@ -75,7 +65,6 @@
     <title>Adicionar Curso - TáNaAgenda</title>
     <link id="favicon" rel="shortcut icon" href="../image/Favicon-light.png">
     <link rel="stylesheet" href="../css/global.css">
-    <!-- CHAVE: Importamos criarevento.css para as regras de layout de 2 colunas -->
     <link rel="stylesheet" href="../css/criarevento.css"> 
     <link rel="stylesheet" href="../css/addcurso.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -124,15 +113,11 @@
                 <a href="../logout.php"><div class="menu-sair"><p>SAIR</p></div></a> 
             </div>
         </section>
-        
-        <!-- CHAVE 1: Adicione o wrapper conteudo-principal para herdar o layout base -->
         <div class="conteudo-principal">
-            <!-- CHAVE 2: Use a classe formulario-evento para herdar as regras de linha e campo do criarevento.css -->
             <section class="formulario-evento"> 
                 
                 <h2>Adicionar Curso</h2>
 
-                <!-- Exibe a mensagem de erro/sucesso do PHP -->
                 <?php if (!empty($mensagem)): ?>
                     <div class="mensagem <?php echo $tipo_mensagem; ?>">
                         <?php echo htmlspecialchars($mensagem); ?>
@@ -143,12 +128,10 @@
                     <div class="linha-form">
                         <div  class="campo">
                             <label  for="titulo">Nome do curso</label>
-                            <!-- ATENÇÃO: name="titulo" para o PHP capturar -->
                             <input  type="text" id="titulo" name="titulo" placeholder="Curso" required>
                         </div>
                         <div class="campo">
                             <label for="duracao-curso">Duração do curso</label>
-                            <!-- Este campo é apenas informativo e não é enviado -->
                             <select id="duracao-curso" disabled>
                                 <option value="3-anos" selected>3 anos (Padrão)</option>
                                 <option value="1-ano">1 ano</option>
@@ -161,7 +144,6 @@
                     <div class="linha-form">
                         <div class="campo">
                             <label for="periodo">Período</label>
-                            <!-- ATENÇÃO: name="periodo" para o PHP capturar -->
                             <select id="periodo" name="periodo" required>
                                 <option value="" disabled selected>Selecione</option>
                                 <option value="manha">Manhã</option>
@@ -169,14 +151,11 @@
                                 <option value="noite">Noite</option>
                             </select>
                         </div>
-                        <!-- Campo em branco para manter o alinhamento de 2 colunas -->
                         <div class="campo"></div> 
                     </div>
 
                     <div class="botoes">
-                        <!-- Botão Cancelar (volta sem enviar) -->
                         <a href="cursos.php" class="botao-cancelar">Cancelar</a>
-                        <!-- Botão Enviar (submete o formulário) -->
                         <button type="submit" class="botao-enviar">Adicionar Curso</button>
                     </div>
                 </form>

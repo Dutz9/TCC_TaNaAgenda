@@ -1,17 +1,12 @@
 <?php
-
-    // 1. CONFIGURAÇÃO E SEGURANÇA
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // 2. BUSCA DE DADOS PARA FILTROS
-    // Precisamos da lista de turmas para preencher o dropdown de filtro
     $turmaController = new TurmaController();
     $lista_turmas_filtro = $turmaController->listar();
-    // Lista dos tipos de evento que definimos no banco
+
     $tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
 
-    // 3. LEITURA DOS FILTROS DA URL (via GET)
     $filtros = [
         'status' => $_GET['status'] ?? null,
         'solicitante' => $_GET['solicitante'] ?? null,
@@ -19,20 +14,16 @@
         'tipo' => $_GET['tipo'] ?? null,
         'data' => $_GET['data'] ?? null
     ];
-    // Limpa filtros vazios (ex: ?status="")
+
     foreach ($filtros as $chave => $valor) {
         if (empty($valor)) {
             $filtros[$chave] = null;
         }
     }
 
-    // 4. BUSCA DOS DADOS PRINCIPAIS (AGORA COM FILTROS)
     $eventoController = new EventoController();
     $cd_usuario_logado = $usuario_logado['cd_usuario'];
-    // Passa o array de filtros para o controller
     $lista_eventos = $eventoController->listarParaCoordenador($cd_usuario_logado, $filtros);
-
-    // 5. LÓGICA PARA MENSAGEM DE FEEDBACK (TOAST)
     if (isset($_SESSION['mensagem_sucesso'])) {
         $mensagem_toast = $_SESSION['mensagem_sucesso'];
         unset($_SESSION['mensagem_sucesso']);
@@ -41,7 +32,6 @@
 ?>
 
 <script>
-    // Ponte de dados para o JavaScript
     const eventosDaPagina = <?php echo json_encode($lista_eventos); ?>;
     const usuario_logado = <?php echo json_encode($usuario_logado); ?>;
 </script>
@@ -145,16 +135,10 @@
                         $dt_solicitacao = (new DateTime($evento['dt_solicitacao']))->format('d/m/Y');
                         $dt_evento = (new DateTime($evento['dt_evento']))->format('d/m/Y');
                         $cor_status = 'status-' . strtolower($evento['status']);
-
-                        // --- LÓGICA CORRETA PARA O CARD DO COORDENADOR ---
-                        $classe_card = 'notificacao'; // Classe padrão
-
-                        // Se o status do evento NÃO é mais "Solicitado" (ou seja, já foi Aprovado ou Recusado),
-                        // então ele já foi tratado e deve ser esmaecido.
+                        $classe_card = 'notificacao';
                         if ($evento['status'] !== 'Solicitado') {
                             $classe_card = 'notificacao card-respondido'; 
                         }
-                        // --- FIM DA LÓGICA CORRETA ---
                     ?>
                         <div class="<?php echo $classe_card; ?>">
                             <h3><?php echo htmlspecialchars($evento['nm_evento']); ?></h3>
@@ -197,15 +181,12 @@
     
     <?php if (isset($mensagem_toast)): ?>
     <script>
-        // Espera um pequeno instante para garantir que a função showFeedback já foi carregada pelo script externo.
         setTimeout(() => {
             showFeedback("<?php echo addslashes($mensagem_toast); ?>", 'sucesso');
         }, 100);
     </script>
     <?php endif; ?>
     <div class="menu-overlay" id="menu-overlay"></div>
-
-    <!-- NOVO MODAL: VISUALIZAR MOTIVO (POP-UP) -->
     <div id="modal-visualizar-motivo" class="modal-overlay" style="display: none;">
         <div class="modal-content-confirm" style="max-width: 600px;">
             <h3>Motivo da Recusa</h3>

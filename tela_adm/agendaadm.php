@@ -1,6 +1,5 @@
 <?php
     
-    // 1. CONFIGURAÇÃO E SEGURANÇA
     require_once '../api/config.php';
     require_once '../api/verifica_sessao.php';
 
@@ -9,7 +8,6 @@
         exit();
     }
 
-    // 2. LEITURA DOS FILTROS (VEM ANTES DAS DATAS)
     $filtros = [
         'periodo' => $_GET['periodo'] ?? [],
         'turma' => $_GET['turma'] ?? [],
@@ -20,9 +18,8 @@
     }
     $filtros_url = http_build_query($filtros);
 
-    // 3. CONFIGURAÇÃO DE DATAS (COM LÓGICA DE NAVEGAÇÃO)
     date_default_timezone_set('America/Sao_Paulo');
-    $hoje = new DateTime(); // Referência para o dia atual
+    $hoje = new DateTime();   
 
     if (isset($_GET['week']) && !empty($_GET['week'])) {
         try { $data_base = new DateTime($_GET['week']); } 
@@ -37,7 +34,6 @@
         $inicio_semana->modify('-' . ($dia_da_semana_num - 1) . ' days');
     }
 
-    // --- CÁLCULO DOS LINKS DE NAVEGAÇÃO ---
     $link_semana_anterior = 'agendaadm.php?week=' . (clone $inicio_semana)->modify('-7 days')->format('Y-m-d') . '&' . $filtros_url;
     $link_proxima_semana = 'agendaadm.php?week=' . (clone $inicio_semana)->modify('+7 days')->format('Y-m-d') . '&' . $filtros_url;
     $link_hoje = 'agendaadm.php?' . $filtros_url;
@@ -67,18 +63,16 @@
         }
     }
 
-    // 4. BUSCA DE DADOS PARA OS FILTROS
     $turmaController = new TurmaController();
     $lista_turmas_filtro = $turmaController->listar();
     $tipos_evento = ['Palestra', 'Visita Técnica', 'Reunião', 'Prova', 'Conselho de Classe', 'Evento Esportivo', 'Outro'];
 
-    // 5. LÓGICA DE EVENTOS (BUSCA NO BANCO)
+
     $data_inicio_semana = $dias_desta_semana[0]->format('Y-m-d');
     $data_fim_semana = $dias_desta_semana[5]->format('Y-m-d');
     $eventoController = new EventoController();
     $lista_eventos = $eventoController->listarAprovados($data_inicio_semana, $data_fim_semana, $filtros);
 
-    // 6. PROCESSAMENTO PARA O GRID
     $horarios_todos = [ "07:10", "08:00", "08:50", "10:00", "10:50", "11:40", "13:30", "14:20", "15:10", "16:20", "17:10", "18:00", "18:30", "19:20", "20:10", "21:20", "22:10" ];
     if (!empty($filtros['periodo'])) {
         $horarios_semana = [];
@@ -102,9 +96,6 @@
             $calendario_grid[$horario_inicio][$data_evento_chave][] = $evento;
         }
     }
-
-    // --- NOVA LÓGICA: BUSCA EVENTOS PARA O MINICALENDÁRIO (MÊS INTEIRO) ---
-// Precisamos de uma lista separada que cubra todo o mês para os "pontinhos" no JS
 $inicio_mes_js = clone $hoje;
 $inicio_mes_js->modify('first day of this month');
 $fim_mes_js = clone $hoje;
@@ -113,10 +104,9 @@ $fim_mes_js->modify('last day of this month');
 $lista_eventos_mes = $eventoController->listarAprovados(
     $inicio_mes_js->format('Y-m-d'), 
     $fim_mes_js->format('Y-m-d'), 
-    $filtros // Mantemos os mesmos filtros (turma, tipo) para consistência
+    $filtros 
 );
 
-    // 7. DADOS PARA AS LEGENDAS
 $legendas_eventos = [
     ['tipo' => 'Palestra', 'cor' => 'tipo-palestra'],
     ['tipo' => 'Visita Técnica', 'cor' => 'tipo-visita-tecnica'],
@@ -129,10 +119,7 @@ $legendas_eventos = [
 ?>
 
 <script>
-    // MUDANÇA IMPORTANTE: Use $lista_eventos_mes aqui
     const eventosDoBanco = <?php echo json_encode($lista_eventos_mes); ?>;
-    
-    // Mantém a lógica mobile (verifica se a variável existe antes de imprimir para não dar erro)
     const mobileActiveIndexInicial = <?php echo isset($mobile_active_index) ? $mobile_active_index : 0; ?>;
 </script>
 
@@ -175,7 +162,7 @@ $legendas_eventos = [
                 <img src="../image/icones/professores.png" alt="">
                     <a href="professoresadm.php"><p>Professores e Coordenadores</p></a>
                 </div> 
-                <div class="menu-cursos"> <!-- ATIVO AQUI -->
+                <div class="menu-cursos"> 
                 <img src="../image/icones/cursos.png" alt="">
                     <a href="cursos.php"><p>Cursos</p></a>
                 </div> 
@@ -244,9 +231,6 @@ $legendas_eventos = [
                     </div>
                 </section>
             </form>
-
-                        
-            <!-- CHAVE: NOVA SEÇÃO DE LEGENDA -->
         <section class="filtrar-calendario legenda-eventos">
     <div class="filtro-item">
         <div class="filtro-header">
@@ -265,7 +249,6 @@ $legendas_eventos = [
         
     
 </section>
-            <!-- FIM DA NOVA SEÇÃO DE LEGENDA -->
         </section>
 
         <section class="calendario">
@@ -273,7 +256,6 @@ $legendas_eventos = [
                 <div class="header-parte-de-cima">
                     <div class="navegacao-calendario">
                         <a href="<?php echo $link_semana_anterior; ?>" class="nav-btn" title="Semana Anterior">&lt;</a>
-                        <!-- <a href="<?php echo $link_hoje; ?>" class="nav-btn today">Hoje</a> -->
                         <a href="<?php echo $link_proxima_semana; ?>" class="nav-btn" title="Próxima Semana">&gt;</a>
                     </div>
                     <h3><?php echo $mes_ano_atual; ?></h3>

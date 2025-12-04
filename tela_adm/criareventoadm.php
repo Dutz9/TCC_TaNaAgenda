@@ -2,7 +2,6 @@
     require_once '../api/config.php'; 
     require_once '../api/verifica_sessao.php'; 
 
-    // CHAVE: Garante que apenas Administradores acessem
     if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Administrador') {
         header('Location: ../tela_prof/agendaprof.php');
         exit();
@@ -15,12 +14,9 @@
     $turmas_selecionadas = [];
     $professores_selecionados_map = [];
 
-    // --- DETECÇÃO DO MODO (CRIAR vs EDITAR) ---
     if (isset($_GET['edit']) && !empty($_GET['edit'])) {
         $modo_edicao = true;
         $cd_evento_edicao = $_GET['edit'];
-        
-        // CHAVE: Administradores usam a mesma busca do Coordenador
         $dados_edicao = $eventoController->buscarParaEditarCoordenador($cd_evento_edicao);
         
         if ($dados_edicao === null) {
@@ -38,7 +34,6 @@
         }
     }
 
-    // --- CARREGAMENTO DE DADOS PARA OS FORMULÁRIOS ---
     $turmaController = new TurmaController();
     $lista_turmas = $turmaController->listar();
     $usuarioController = new UsuarioController();
@@ -53,8 +48,6 @@
     foreach ($lista_turmas as $turma) {
         $mapa_alunos_turma[$turma['cd_turma']] = $turma['qt_alunos'];
     }
-
-    // --- PROCESSAMENTO DO FORMULÁRIO (POST) ---
     $mensagem = '';
     $tipo_mensagem = '';
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -79,13 +72,12 @@
                 $eventoController->atualizarSolicitacao($cd_evento_edicao, $dadosEvento);
                 $_SESSION['mensagem_sucesso'] = "Evento atualizado com sucesso!";
             } else {
-                // CHAVE: Cria como APROVADO, igual ao Coordenador
                 $dadosEvento['cd_evento'] = uniqid('EVT_');
                 $eventoController->criarAprovado($dadosEvento);
                 $_SESSION['mensagem_sucesso'] = "Evento criado e publicado com sucesso!";
             }
             
-            header('Location: eventosadm.php'); // CHAVE: Redireciona para eventosadm.php
+            header('Location: eventosadm.php'); 
             exit();
 
         } catch (PDOException $e) {
@@ -101,7 +93,6 @@
 ?>
 <script>
 
-    // A "PONTE DE DADOS" COMPLETA E CORRETA
     const relacaoTurmaProfessor = <?php echo json_encode($relacao_turma_prof); ?>;
     const mapaAlunosTurma = <?php echo json_encode($mapa_alunos_turma); ?>;
     const usuario_logado = <?php echo json_encode($usuario_logado); ?>;
@@ -135,7 +126,7 @@
 
     <main>
         <section class="area-lado">
-            <!-- CHAVE: Menu de ADM -->
+
             <a class="area-lado-logo" href="agendaadm.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu">
                 <div class="menu-agenda">
@@ -168,7 +159,6 @@
         
         <div class="conteudo-principal">
             <section class="formulario-evento">
-                <!-- CHAVE: Ação aponta para criareventoadm.php -->
                 <form action="criareventoadm.php<?php echo $modo_edicao ? '?edit=' . $cd_evento_edicao : ''; ?>" method="POST">
                     <h2><?php echo $modo_edicao ? 'Editar Evento' : 'Criar Evento'; ?> (ADM)</h2>
 

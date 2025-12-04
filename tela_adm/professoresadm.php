@@ -2,30 +2,25 @@
 require_once '../api/config.php'; 
 require_once '../api/verifica_sessao.php'; 
 
-// 1. CHAVE: GARANTE QUE É ADMINISTRADOR
 if ($usuario_logado['tipo_usuario_ic_usuario'] !== 'Administrador') {
     header('Location: ../tela_prof/agendaprof.php');
     exit();
 }
 
-// --- LÓGICA DE FEEDBACK (TOAST) ---
+
 if (isset($_SESSION['mensagem_sucesso'])) {
     $mensagem_toast = $_SESSION['mensagem_sucesso'];
     unset($_SESSION['mensagem_sucesso']);
 }
 
-// 2. BUSCA OS DADOS UNIFICADOS (Professores E Coordenadores)
 $usuarioController = new UsuarioController();
 $lista_funcionarios = $usuarioController->listarFuncionariosComAssociacoes(); 
-
-// 3. BUSCA AS LISTAS COMPLETAS PARA OS DROPDOWNS DO MODAL
 $turmaController = new TurmaController();
 $lista_todas_turmas = $turmaController->listar();
 $cursoController = new CursoController();
-$lista_todos_cursos = $cursoController->listar(); // Lista de Cursos para Coordenador
+$lista_todos_cursos = $cursoController->listar(); 
 ?>
 <script>
-    // 4. CRIA A "PONTE DE DADOS" PARA O JAVASCRIPT
     const funcionariosDaPagina = <?php echo json_encode($lista_funcionarios); ?>;
     const todasAsTurmas = <?php echo json_encode($lista_todas_turmas); ?>;
     const todosOsCursos = <?php echo json_encode($lista_todos_cursos); ?>;
@@ -57,7 +52,6 @@ $lista_todos_cursos = $cursoController->listar(); // Lista de Cursos para Coorde
 
     <main>
     <section class="area-lado">
-            <!-- Navegação ADM -->
             <a class="area-lado-logo" href="agendaadm.php"><img src="../image/logotipo fundo azul.png" alt=""></a>
             <div class="area-menu">
                 <div class="menu-agenda">
@@ -111,7 +105,6 @@ $lista_todos_cursos = $cursoController->listar(); // Lista de Cursos para Coorde
         </div>
     </section>
 
-    <!-- MODAL DE EDIÇÃO UNIFICADO -->
     <div id="modal-overlay" class="modal-overlay" style="display: none;">
         <div class="modal-content">
             <div class="modal-left">
@@ -146,7 +139,6 @@ $lista_todos_cursos = $cursoController->listar(); // Lista de Cursos para Coorde
                     <input type="tel" id="modal-user-telefone" value="">
                 </div>
                 
-                <!-- DROPDOWNS DINÂMICOS -->
                 <div id="dropdown-turmas-container" class="form-group" style="display:none;">
                     <label for="modal-user-turmas">Turmas Associadas:</label>
                     <select id="modal-user-turmas" name="turmas[]" multiple></select>
